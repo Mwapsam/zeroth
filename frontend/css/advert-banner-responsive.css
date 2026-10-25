@@ -1,0 +1,111 @@
+/* ================================================================
+   ADVERT BANNER — RESPONSIVE STYLESHEET
+   Layered on top of css/style.css so the marquee banner collapses
+   gracefully on tablet, mobile and short-viewport devices without
+   breaking the rotation logic driven by js/app.js.
+   ================================================================ */
+
+/* ---- Base: full-width, no horizontal page overflow ---- */
+.adverts-banner{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+    position:relative;
+    box-sizing:border-box;
+}
+
+.adverts-track{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 22px;
+    box-sizing:border-box;
+    will-change:transform;
+    animation-timing-function:linear;
+}
+
+.adverts-banner img,
+.adverts-banner a img{
+    max-width:100%;
+    height:auto;
+    display:block;
+}
+
+/* ---- Tablet (≤ 1024px) ---- */
+@media (max-width:1024px){
+    .adverts-banner{min-height:60px}
+    .adverts-track{
+        padding:10px 16px;
+        gap:12px;
+        font-size:14px;
+    }
+}
+
+/* ---- Small tablet / large phone (≤ 768px) ---- */
+@media (max-width:768px){
+    .adverts-banner{
+        min-height:56px;
+        border-radius:0;
+    }
+    .adverts-track{
+        padding:8px 12px;
+        gap:10px;
+        font-size:13px;
+
+        /* switch from wrap to single-line horizontal scroll */
+        flex-wrap:nowrap;
+        justify-content:flex-start;
+        overflow-x:auto;
+        overflow-y:hidden;
+        scrollbar-width:none;
+        -ms-overflow-style:none;
+        -webkit-overflow-scrolling:touch;
+        scroll-snap-type:x proximity;
+    }
+    .adverts-track::-webkit-scrollbar{display:none}
+    .adverts-track > *{
+        flex:0 0 auto;
+        scroll-snap-align:start;
+    }
+}
+
+/* ---- Phone (≤ 480px) ---- */
+@media (max-width:480px){
+    .adverts-banner{min-height:48px}
+    .adverts-track{
+        padding:6px 10px;
+        gap:8px;
+        font-size:12px;
+        line-height:1.3;
+    }
+    .adverts-banner .advert-item,
+    .adverts-banner .ad{
+        font-size:12px;
+    }
+}
+
+/* ---- Very small phone (≤ 360px) ---- */
+@media (max-width:360px){
+    .adverts-track{
+        padding:5px 8px;
+        gap:6px;
+        font-size:11px;
+    }
+}
+
+/* ---- Landscape phone: keep banner from eating vertical space ---- */
+@media (max-height:520px) and (orientation:landscape){
+    .adverts-banner{min-height:40px}
+    .adverts-track{
+        padding:4px 12px;
+        font-size:12px;
+    }
+}
+
+/* ---- Reduced motion: freeze marquee animations ---- */
+@media (prefers-reduced-motion:reduce){
+    .adverts-track{
+        animation:none !important;
+        transition:none !important;
+    }
+}

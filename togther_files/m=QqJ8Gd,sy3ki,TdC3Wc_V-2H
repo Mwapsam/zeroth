@@ -1,0 +1,13 @@
+loaded_h_0(function(_){var window=this;
+_.v("QqJ8Gd");
+var p3b;
+_.q3b=function(a,b,c=!1,d,e){d=d||a.ka;if(!_.o3b(a,d))return!1;try{var f=c?_.ax(a.Aa,d):null;var g=d.createElement("textarea");g.value=b;g.setAttribute("readonly","");_.on(g,"height",0);d.body.appendChild(g);if(a.Ba)g.select();else{let h=d.createRange();h.selectNodeContents(g);a.oa.getSelection().removeAllRanges();a.oa.getSelection().addRange(h);g.setSelectionRange(0,b.length)}d.addEventListener("copy",h=>{h.clipboardData.setData("text/plain",b);e&&h.clipboardData.setData(e,b);h.preventDefault()},{once:!0,
+capture:!0});return p3b(a,d)}finally{g&&_.en(g),f&&f.restore()}};p3b=function(a,b){b=b||a.ka;try{return _.o3b(a,b)?b.execCommand("copy"):!1}catch(c){return!1}};_.o3b=function(a,b){b=b||a.ka;b=b.queryCommandSupported("copy");!b&&a.wa&&(a.wa=!0);return b};
+_.cx=class extends _.Ao{static Ra(){return{service:{focus:_.$w,window:_.yo}}}constructor(a){super();this.Bn=null;this.ka=a.service.window.getDocument();this.oa=a.service.window.get();this.Aa=a.service.focus;this.Ba=!_.ra()&&!_.La.QMa();this.wa=!1}copy(a,b=!1,c,d){c=c||this.ka;return a?_.q3b(this,a,b,c,d):p3b(this,c)}};_.eg(_.bx,_.cx);
+_.x();
+_.v("TdC3Wc");
+var WKq;WKq=async function(a,b,c){var d=(0,_.Tf)(),e=d();d=d(1);try{a:switch(c){case 0:var f="yuChW";break a;case 1:f="yuChW YEw87d";break a;default:f=null}(c=f)&&d(await e(_.vaj(a,"snackbar",_.ISg))).Kq({label:b,vG:!0,Bb:c})}finally{e()}};
+_.XKq=class extends _.Ao{static Ra(){return{service:{clipboard:_.cx,window:_.HKq}}}constructor(a){super();this.lB=a.service.clipboard;this.ka=a.service.window}copy(a,b=0){this.lB.copy(a,!1,this.ka.getDocument())?(a=_.na(),_.ka(a,"SamsungBrowser")||(_.ka(a,"Version/0.")||_.ka(a,"Version/1.")||_.ka(a,"Version/2.")||_.ka(a,"Version/3."))&&(_.ka(a,"SAMSUNG")||_.ka(a,"SM-")||_.ka(a,"SGH-"))||WKq(this,"Text copied to clipboard",b)):WKq(this,"Failed to copy text",b)}};_.eg(_.VKq,_.XKq);
+_.x();
+});
+// Google Inc.
