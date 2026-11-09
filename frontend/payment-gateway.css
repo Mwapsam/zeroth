@@ -1,0 +1,291 @@
+/* ================================================================
+   PAYMENT GATEWAY MODAL STYLES
+   Universal payment overlay for all checkout flows
+   ================================================================ */
+
+.payment-gateway-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10050; /* High z-index to sit above other modals */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(10, 20, 30, 0.6);
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.payment-gateway-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.payment-gateway-container {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.3s ease;
+}
+
+.payment-gateway-modal.visible .payment-gateway-container {
+    transform: scale(1) translateY(0);
+}
+
+.payment-gateway-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.payment-gateway-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.payment-gateway-title .fa-lock {
+    color: #1f7a3d;
+}
+
+.payment-gateway-header .window-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    border-radius: 8px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-gateway-header .window-close-btn:hover {
+    background: #e2e8f0;
+    color: #1a202c;
+}
+
+.payment-gateway-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.payment-gateway-summary {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.payment-gateway-summary-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.payment-gateway-summary-amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin: 0;
+}
+
+.payment-gateway-summary-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.payment-gateway-methods-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin: 0 0 4px;
+    text-align: left;
+}
+
+.payment-gateway-methods-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.payment-method-option {
+    position: relative;
+    display: block;
+}
+
+.payment-method-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+}
+
+.payment-method-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 8px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+    height: 100%;
+}
+
+.payment-method-label img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.payment-method-label .pm-emoji {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.payment-method-option input:checked + .payment-method-label {
+    border-color: #1f7a3d;
+    background: #f0fdf4;
+    color: #14532d;
+    box-shadow: 0 0 0 2px rgba(31, 122, 61, 0.15);
+}
+
+.payment-method-option input:focus-visible + .payment-method-label {
+    outline: 2px solid #1f7a3d;
+    outline-offset: 2px;
+}
+
+.payment-dynamic-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+.payment-dynamic-form .form-group {
+    margin: 0;
+}
+
+.payment-dynamic-form .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.payment-dynamic-form .form-group input,
+.payment-dynamic-form .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.payment-dynamic-form .form-group input:focus,
+.payment-dynamic-form .form-group select:focus {
+    outline: none;
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 3px rgba(31, 122, 61, 0.12);
+}
+
+.payment-card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.payment-gateway-footer {
+    padding: 16px 24px 24px;
+}
+
+.payment-pay-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    background: #1f7a3d;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.payment-pay-btn:hover {
+    background: #176a33;
+}
+.payment-pay-btn:active {
+    transform: scale(0.98);
+}
+.payment-pay-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.payment-feedback {
+    text-align: center;
+    padding: 10px;
+    font-weight: 500;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 12px;
+}
+.payment-feedback.error {
+    color: #991b1b;
+    background-color: #fee2e2;
+}
+.payment-feedback.success {
+    color: #166534;
+    background-color: #dcfce7;
+}
+
+@media (max-width: 480px) {
+    .payment-gateway-container {
+        border-radius: 12px;
+    }
+    .payment-gateway-header,
+    .payment-gateway-body,
+    .payment-gateway-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    .payment-gateway-methods-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
