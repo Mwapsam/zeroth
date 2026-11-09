@@ -1594,3 +1594,406 @@
     .service-item.advert-hub-featured:hover { transform: none !important; }
     .advert-hub-success .check { animation: none !important; }
 }
+/* ================================================================
+   ADVERT HUB — RESPONSIVE FIX
+   Adds the missing 641–1024px tablet breakpoint, fixes the action
+   bar wrap, makes tabs scrollable on touch, and prevents overflow.
+   ================================================================ */
+
+/* --- Baseline: never let the modal overflow the viewport --- */
+.advert-hub-modal,
+.advert-hub-create-modal,
+.advert-hub-detail-modal {
+    padding: clamp(8px, 2vw, 24px);
+    overflow: hidden;              /* container handles its own scroll */
+}
+
+.advert-hub-container,
+.advert-hub-create-container,
+.advert-hub-detail-container {
+    width: 100%;
+    max-width: min(1150px, 100%);
+    max-height: min(94vh, 94dvh);
+    box-sizing: border-box;
+}
+
+/* --- Action bar: search + select must wrap cleanly --- */
+.advert-hub-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.advert-hub-actions .advert-hub-search-box {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+.advert-hub-actions .advert-hub-select {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* --- Tabs: scrollable on touch, no clipped last tab --- */
+.advert-hub-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+}
+.advert-hub-tabs::-webkit-scrollbar { display: none; }
+.advert-hub-tab {
+    flex: 0 0 auto;                /* don't shrink tabs into illegibility */
+    min-height: 42px;              /* proper touch target */
+}
+
+/* --- Content area: no horizontal overflow from long text/images --- */
+.advert-hub-content,
+.advert-hub-create-body,
+.advert-hub-detail-body {
+    overflow-x: hidden;
+    min-height: 0;                 /* allows flex child to scroll */
+}
+.advert-hub-card-title,
+.advert-hub-card-desc,
+.advert-hub-card-loc {
+    word-break: break-word;
+}
+.advert-hub-card-img img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* --- Grid: fluid columns at every size --- */
+.advert-hub-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+}
+
+/* --- Tablet breakpoint (previously missing) --- */
+@media (max-width: 1024px) {
+    .advert-hub-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+        gap: 14px;
+    }
+    .advert-hub-actions {
+        padding: 12px 16px;
+    }
+    .advert-hub-tab {
+        font-size: 0.8rem;
+        padding: 10px 14px;
+    }
+}
+
+/* --- Small tablet / large phone --- */
+@media (max-width: 768px) {
+    .advert-hub-modal,
+    .advert-hub-create-modal,
+    .advert-hub-detail-modal {
+        padding: 0;
+        align-items: stretch;
+    }
+    .advert-hub-container,
+    .advert-hub-create-container,
+    .advert-hub-detail-container {
+        max-width: 100%;
+        max-height: 100vh;
+        max-height: 100dvh;
+        border-radius: 0;
+    }
+    .advert-hub-header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+    }
+    .advert-hub-header-title {
+        font-size: 1rem;
+    }
+    .advert-hub-tabs {
+        padding: 8px 10px 0;
+    }
+    .advert-hub-tab {
+        font-size: 0.75rem;
+        padding: 9px 12px;
+        min-height: 40px;
+    }
+    .advert-hub-tab-count {
+        display: none;             /* declutter on small screens */
+    }
+    .advert-hub-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .advert-hub-actions .advert-hub-search-box,
+    .advert-hub-actions .advert-hub-select {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+    .advert-hub-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+        gap: 12px;
+    }
+    .advert-hub-content {
+        padding: 14px;
+    }
+    .advert-hub-card-title { font-size: 0.85rem; }
+    .advert-hub-card-price { font-size: 0.82rem; }
+
+    /* Create modal */
+    .advert-hub-create-body { padding: 14px 16px; }
+    .advert-hub-form-row,
+    .advert-hub-form-row.three { grid-template-columns: 1fr; }
+    .advert-hub-create-actions {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+    }
+    .advert-hub-create-actions .advert-hub-btn {
+        flex: 1 1 100%;
+    }
+    .advert-hub-tier-select {
+        grid-template-columns: 1fr;
+    }
+    .advert-hub-steps {
+        padding: 10px 16px;
+        gap: 6px;
+    }
+    .advert-hub-step {
+        font-size: 0.7rem;
+    }
+
+    /* Detail modal */
+    .advert-hub-detail-body { padding: 0 16px 16px; }
+    .advert-hub-detail-actions {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+    }
+    .advert-hub-detail-actions .advert-hub-btn { flex: 1 1 100%; }
+    .advert-hub-detail-header-text h2 { font-size: 1rem; }
+    .advert-hub-detail-price { font-size: 1.4rem; }
+}
+
+/* --- Small phone --- */
+@media (max-width: 480px) {
+    .advert-hub-grid {
+        grid-template-columns: 1fr;
+    }
+    .advert-hub-tab {
+        font-size: 0.7rem;
+        padding: 8px 10px;
+    }
+    .advert-hub-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+    .advert-hub-price-card.featured-plan {
+        transform: none;           /* avoid clipping the "MOST POPULAR" badge */
+    }
+    .advert-hub-my-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .advert-hub-my-actions {
+        justify-content: flex-start;
+    }
+}
+
+/* --- Reduced motion (safe addition) --- */
+@media (prefers-reduced-motion: reduce) {
+    .advert-hub-card,
+    .advert-hub-card-img img,
+    .advert-hub-price-card { transition: none !important; }
+    .advert-hub-card:hover { transform: none !important; }
+}
+/* ---- Ad image uploader ---- */
+.adv-image-upload {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    padding: 16px;
+    background: #f7fbf8;
+    border: 2px dashed #b7e0c4;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+}
+.adv-image-upload:hover,
+.adv-image-upload:focus-visible,
+.adv-image-upload.dragover {
+    background: #eef9f1;
+    border-color: #1f7a3d;
+    outline: none;
+}
+.adv-image-upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #1f7a3d;
+    font-weight: 600;
+    text-align: center;
+}
+.adv-image-upload-placeholder i { font-size: 1.6rem; }
+.adv-image-upload-placeholder small { color: #5b6b61; font-weight: 400; }
+
+.adv-image-preview {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.adv-image-preview img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.adv-image-remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: #c0392b;
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.adv-image-url-fallback { margin-top: 8px; font-size: .82rem; color: #5b6b61; }
+.adv-image-url-fallback summary { cursor: pointer; }
+.adv-image-url-fallback input {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border: 1.5px solid #d9e2dc;
+    border-radius: 10px;
+}
+/* ===== Advert cards ===== */
+.advert-hub-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    padding: 4px;
+}
+
+@media (max-width: 480px) {
+    .advert-hub-grid { grid-template-columns: 1fr; gap: 10px; }
+}
+
+.advert-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    border: 1px solid #e6ecea;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.advert-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.1);
+}
+
+.advert-card-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #1f7a3d, #2fa35a);
+    overflow: hidden;
+}
+.advert-card-media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.advert-card-noimg::after {
+    content: '📢';
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-size: 42px;
+}
+
+.advert-card-cat {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(0,0,0,.55); color: #fff;
+    font-size: .7rem; padding: 3px 8px; border-radius: 999px;
+    text-transform: capitalize;
+}
+.advert-card-tier {
+    position: absolute; top: 8px; right: 8px;
+    font-size: .65rem; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; color: #fff;
+}
+.advert-card-tier--silver { background: #9ca3af; }
+.advert-card-tier--gold   { background: #d4a72c; }
+
+.advert-card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; }
+.advert-card-title {
+    font-size: .98rem; margin: 0; line-height: 1.25;
+    color: #1a202c;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.advert-card-desc {
+    margin: 0; font-size: .8rem; color: #4a5568; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.advert-card-meta {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    font-size: .75rem; color: #4a5568; align-items: center;
+}
+.advert-card-price { font-weight: 700; color: #1f7a3d; }
+.advert-card-loc   { display: inline-flex; align-items: center; gap: 4px; }
+
+.advert-card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px; margin-top: 4px; padding-top: 8px;
+    border-top: 1px solid #eef2f0; font-size: .75rem;
+}
+.advert-card-contact { color: #1f7a3d; text-decoration: none; font-weight: 600; }
+.advert-card-time    { color: #94a3b8; }
+
+/* ===== My Ads rows ===== */
+.advert-myad-row {
+    display: flex; gap: 12px; align-items: center;
+    padding: 10px; border-radius: 10px;
+    border: 1px solid #eef2f0; background: #fff;
+    margin-bottom: 8px;
+}
+.advert-myad-thumb {
+    width: 64px; height: 64px; flex-shrink: 0; border-radius: 8px;
+    overflow: hidden; background: #f1f5f9;
+    display: grid; place-items: center;
+}
+.advert-myad-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.advert-myad-thumb-fallback { font-size: 26px; }
+.advert-myad-main { flex: 1; min-width: 0; }
+.advert-myad-title-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.advert-myad-title-row h4 {
+    margin: 0; font-size: .9rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.advert-myad-meta { margin: 2px 0 0; font-size: .75rem; color: #64748b; }
+.advert-myad-btn {
+    background: transparent; border: 1px solid #e6ecea;
+    border-radius: 8px; width: 34px; height: 34px;
+    cursor: pointer; color: #64748b;
+}
+.advert-myad-btn--del:hover { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
+
+.advert-myad-status {
+    font-size: .65rem; padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: .03em; font-weight: 700;
+}
+.advert-myad-status--active  { background: #dcfce7; color: #15803d; }
+.advert-myad-status--pending { background: #fef9c3; color: #a16207; }
+.advert-myad-status--expired { background: #f1f5f9; color: #64748b; }
+
+/* ===== Mobile tweaks ===== */
+@media (max-width: 480px) {
+    .advert-myad-row { gap: 10px; padding: 8px; }
+    .advert-myad-thumb { width: 52px; height: 52px; }
+    .advert-card-body { padding: 10px 12px 12px; }
+    .advert-card-title { font-size: .92rem; }
+}
