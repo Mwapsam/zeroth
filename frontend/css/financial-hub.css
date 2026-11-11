@@ -1720,3 +1720,98 @@
         font-size: 0.76rem;
     }
 }
+/* ==============================================================
+   FINANCIAL HUB — CURRENCY SELECTOR
+   ============================================================== */
+.financial-currency-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+    border-left: 1px solid #e6ecea;
+    margin-left: 4px;
+    min-width: 0;
+}
+
+.financial-currency-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .72rem;
+    color: #4a5568;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.financial-currency-label i {
+    color: #1f7a3d;
+    font-size: .8rem;
+}
+
+.financial-currency-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>")
+        no-repeat right 8px center;
+    border: 1px solid #d9e2dc;
+    border-radius: 8px;
+    padding: 6px 26px 6px 9px;
+    font-size: .78rem;
+    font-weight: 600;
+    color: #1f7a3d;
+    cursor: pointer;
+    min-width: 158px;
+    max-width: 220px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    text-overflow: ellipsis;
+}
+
+.financial-currency-select:hover {
+    border-color: #1f7a3d;
+}
+
+.financial-currency-select:focus {
+    outline: none;
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 3px rgba(31, 122, 61, .15);
+}
+
+/* Currency-sensitive inline amounts */
+.fin-ccy-amount {
+    white-space: nowrap;
+    transition: color .2s ease;
+}
+
+/* Tablet — let the topbar wrap */
+@media (max-width: 900px) {
+    .financial-topbar {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .financial-currency-wrap {
+        border-left: 0;
+        padding-left: 0;
+    }
+}
+
+/* Mobile — currency row spans full width */
+@media (max-width: 640px) {
+    .financial-currency-wrap {
+        flex: 1 1 100%;
+        border-top: 1px solid #e6ecea;
+        padding: 8px 0 0;
+        margin-left: 0;
+        margin-top: 4px;
+        order: 10;
+        justify-content: space-between;
+    }
+    .financial-currency-label {
+        flex: 0 0 auto;
+    }
+    .financial-currency-select {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+    }
+}

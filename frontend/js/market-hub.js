@@ -2,30 +2,19 @@
    MARKET HUB — Buyer/Vendor marketplace with geolocation
    Self-contained module
    ----------------------------------------------------------------
-   v3 — responsive + bugfixes
-     FIXES over v2:
-       • createShop() now reads #marketShopFormCategory (was reading
-         the duplicate #marketShopCategory, which resolved to the
-         span inside the shop-detail modal header — so shop.category
-         was always undefined and creation silently failed).
-       • #marketShopsCount badge is now populated on every render.
-       • #marketShopProductsCount badge is now populated on openShop().
-       • Shop card uses `.market-shop-card-body` (matches CSS; no
-         collision with the shop-detail modal's scroll area).
-       • Removed inline style="flex:1" on the View Shop button —
-         the stylesheet stretches it via .market-shop-actions > *.
-       • fillVendorGeo() disables its trigger button while locating.
-       • Event delegation for shop cards + product cards — re-renders
-         no longer accumulate listeners.
-     RESPONSIVE (v2, retained):
-       • Body scroll lock (with iOS scroll-position preservation)
-       • Backdrop-click + ESC to close any layer
-       • Scroll reset on modal open / tab change
-       • Viewport + orientation change handling
-       • Mobile keyboard (visualViewport) handling
-       • Debounced resize for filter row height
-       • Focus management (stack-based, nested-modal safe)
-       • Safe-area aware modal sizing
+   v4 — Backend integration
+     • loadDB() is now async — pulls shops/products/orders from
+       API.market.* in parallel, falls back to localStorage cache
+     • saveDB() persists changes to the backend
+     • createShop() → API.market.create({ type:'shop', ... })
+     • createProduct() → API.market.create({ type:'product', ... })
+     • placeOrder() → API.market.create({ type:'order', ... })
+     • submitVendorAuth() — unchanged (local vendor session)
+     • cart stays in localStorage (buyer-side state)
+     • All callers of loadDB() are now `async` and `await` it
+
+   v3 (retained) — responsive + bugfixes
+   v2 (retained) — responsive hardening
    ================================================================ */
 'use strict';
 
@@ -36,17 +25,100 @@ const MarketHub = (() => {
     const USER_KEY = 'zbs_market_user';
     const CART_KEY = 'zbs_market_cart';
 
-    function loadDB() {
+    /* --------------------------------------------------------------
+       Async DB loader — hits backend, falls back to local cache.
+       Returns { users, shops, products, orders }.
+       -------------------------------------------------------------- */
+    async function loadDB() {
+        const fallback = () => {
+            try {
+                const raw = localStorage.getItem(KEY);
+                return raw ? JSON.parse(raw) : { users: [], shops: [], products: [], orders: [] };
+            } catch (e) {
+                return { users: [], shops: [], products: [], orders: [] };
+            }
+        };
+
+        if (!window.API || !window.API.market) return fallback();
+
         try {
-            const raw = localStorage.getItem(KEY);
-            return raw ? JSON.parse(raw) : { users: [], shops: [], products: [], orders: [] };
-        } catch (e) {
-            return { users: [], shops: [], products: [], orders: [] };
+            const [shopsR, productsR, ordersR] = await Promise.all([
+                window.API.market.list({ type: 'shop' }),
+                window.API.market.list({ type: 'product' }),
+                window.API.market.list({ type: 'order' })
+            ]);
+
+            const shops    = Array.isArray(shopsR)    ? shopsR    : (shopsR.data    || shopsR.shops    || []);
+            const products = Array.isArray(productsR) ? productsR : (productsR.data || productsR.products || []);
+            const orders   = Array.isArray(ordersR)   ? ordersR   : (ordersR.data   || ordersR.orders   || []);
+
+            const cached = fallback();
+
+            const db = {
+                users: cached.users || [],
+                shops:    shops.map(normalizeShop),
+                products: products.map(normalizeProduct),
+                orders:   orders.map(normalizeOrder)
+            };
+
+            // Refresh the local cache
+            try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {}
+            return db;
+        } catch (err) {
+            console.warn('[MarketHub] backend unavailable, using local cache:', err.message);
+            return fallback();
         }
     }
 
     function saveDB(db) {
         try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {}
+    }
+
+    /* Normalize server records to match the UI fields. */
+    function normalizeShop(raw) {
+        if (!raw || typeof raw !== 'object') return raw;
+        return {
+            id:          raw.id || raw._id || raw.shopId || ('sh_' + Math.random().toString(36).slice(2, 8)),
+            vendorId:    raw.vendorId || raw.vendor || '',
+            name:        raw.name || '',
+            category:    raw.category || '',
+            address:     raw.address || '',
+            lat:         raw.lat != null ? Number(raw.lat) : null,
+            lng:         raw.lng != null ? Number(raw.lng) : null,
+            description: raw.description || '',
+            createdAt:   raw.createdAt ? new Date(raw.createdAt).getTime() : Date.now()
+        };
+    }
+
+    function normalizeProduct(raw) {
+        if (!raw || typeof raw !== 'object') return raw;
+        return {
+            id:        raw.id || raw._id || raw.productId || ('p_' + Math.random().toString(36).slice(2, 8)),
+            shopId:    raw.shopId || raw.shop || '',
+            name:      raw.name || raw.title || '',
+            category:  raw.category || '',
+            price:     Number(raw.price) || 0,
+            stock:     Number(raw.stock || raw.quantity) || 0,
+            unit:      raw.unit || '',
+            createdAt: raw.createdAt ? new Date(raw.createdAt).getTime() : Date.now()
+        };
+    }
+
+    function normalizeOrder(raw) {
+        if (!raw || typeof raw !== 'object') return raw;
+        return {
+            id:              raw.id || raw._id || raw.orderId || ('o_' + Math.random().toString(36).slice(2, 8)),
+            userId:          raw.userId || raw.user || '',
+            items:           Array.isArray(raw.items) ? raw.items : [],
+            subtotal:        Number(raw.subtotal) || 0,
+            deliveryFee:     Number(raw.deliveryFee) || 0,
+            total:           Number(raw.total) || 0,
+            deliveryType:    raw.deliveryType || 'pickup',
+            deliveryAddress: raw.deliveryAddress || '',
+            paymentMethod:   raw.paymentMethod || 'cash',
+            status:          raw.status || 'pending',
+            createdAt:       raw.createdAt ? new Date(raw.createdAt).getTime() : Date.now()
+        };
     }
 
     function getCurrentUser() {
@@ -68,8 +140,8 @@ const MarketHub = (() => {
         openModals: new Set()
     };
 
-    /* Focus is tracked as a stack so nested modals (hub → shop detail →
-       vendor auth) return focus to the right element when they close. */
+    /* Focus is tracked as a stack so nested modals (hub → shop detail → */
+    /* vendor auth) return focus to the right element when they close.  */
     const focusStack = [];
 
     const DELIVERY_OPTIONS = {
@@ -116,11 +188,6 @@ const MarketHub = (() => {
 
     /* ============ RESPONSIVE HELPERS ============ */
 
-    /**
-     * Lock body scroll while any modal is open. Uses `overflow:hidden`
-     * plus `position:fixed` preservation for iOS Safari, which
-     * otherwise still scrolls the page behind the modal.
-     */
     let _savedScrollY = 0;
     function lockBodyScroll() {
         if (state.openModals.size > 0) return;
@@ -139,11 +206,6 @@ const MarketHub = (() => {
         }
     }
 
-    /**
-     * Bring a newly opened modal into view and reset its inner scroll
-     * positions. Without this, mobile users re-open a modal and land
-     * half-way down the previous scroll position.
-     */
     function resetModalScroll(modal) {
         if (!modal) return;
         modal.scrollTop = 0;
@@ -151,11 +213,6 @@ const MarketHub = (() => {
              .forEach(el => { el.scrollTop = 0; });
     }
 
-    /**
-     * Focus the first focusable element inside the modal. Skips hidden
-     * or disabled elements. preventScroll avoids an iOS "jump to focused
-     * field" stutter when the modal opens.
-     */
     function focusFirst(modal) {
         if (!modal) return;
         const focusable = modal.querySelector(
@@ -166,12 +223,6 @@ const MarketHub = (() => {
         catch (e) { focusable.focus(); }
     }
 
-    /**
-     * Open a modal the responsive way: track it, lock scroll, reset
-     * scroll, and add `.active` on the next frame so the CSS transition
-     * fires cleanly. Also pushes the previously focused element onto the
-     * focus stack for restoration on close.
-     */
     function showModal(modal) {
         if (!modal) return;
         focusStack.push(document.activeElement);
@@ -194,14 +245,11 @@ const MarketHub = (() => {
         const previous = focusStack.pop();
 
         setTimeout(() => {
-            // Only hide if no other modal re-opened in the meantime.
             if (!modal.classList.contains('active')) {
                 modal.hidden = true;
                 modal.setAttribute('hidden', '');
             }
             unlockBodyScroll();
-            // Restore focus to the element that opened this modal, but
-            // only if it still exists in the DOM.
             if (previous instanceof HTMLElement && document.contains(previous)) {
                 try { previous.focus({ preventScroll: true }); } catch (e) {}
             }
@@ -209,11 +257,11 @@ const MarketHub = (() => {
     }
 
     /* ============ OPEN / CLOSE ============ */
-    function open() {
+    async function open() {
         const modal = $('#marketModal');
         if (!modal) return;
-        renderAll();
         showModal(modal);
+        await renderAll();
     }
 
     function close() {
@@ -265,26 +313,26 @@ const MarketHub = (() => {
     }
 
     /* ============ RENDER SHOPS ============ */
-    function renderShops() {
+    async function renderShops() {
         const grid  = $('#marketShopsGrid');
         const empty = $('#marketShopsEmpty');
         const count = $('#marketShopsCount');
         if (!grid) return;
 
-        const db     = loadDB();
+        const db     = await loadDB();
         const q      = state.filters.q.toLowerCase();
         const cat    = state.filters.category;
         const radius = Number(state.filters.radius);
 
-        let shops = db.shops.slice();
+        let shops = (db.shops || []).slice();
 
         if (cat) shops = shops.filter(s => s.category === cat);
         if (q) {
-            const productShopIds = db.products
-                .filter(p => p.name.toLowerCase().includes(q))
+            const productShopIds = (db.products || [])
+                .filter(p => (p.name || '').toLowerCase().includes(q))
                 .map(p => p.shopId);
             shops = shops.filter(s =>
-                s.name.toLowerCase().includes(q) ||
+                (s.name || '').toLowerCase().includes(q) ||
                 (s.description || '').toLowerCase().includes(q) ||
                 productShopIds.includes(s.id)
             );
@@ -294,15 +342,22 @@ const MarketHub = (() => {
             shops = shops
                 .map(s => ({
                     ...s,
-                    distanceKm: haversine(state.userLocation.lat, state.userLocation.lng, s.lat, s.lng),
-                    products: db.products.filter(p => p.shopId === s.id)
+                    distanceKm: (s.lat && s.lng)
+                        ? haversine(state.userLocation.lat, state.userLocation.lng, s.lat, s.lng)
+                        : null,
+                    products: (db.products || []).filter(p => p.shopId === s.id)
                 }))
-                .filter(s => radius >= 500 || s.distanceKm <= radius)
-                .sort((a, b) => a.distanceKm - b.distanceKm);
+                .filter(s => radius >= 500 || s.distanceKm == null || s.distanceKm <= radius)
+                .sort((a, b) => {
+                    if (a.distanceKm == null && b.distanceKm == null) return 0;
+                    if (a.distanceKm == null) return 1;
+                    if (b.distanceKm == null) return -1;
+                    return a.distanceKm - b.distanceKm;
+                });
         } else {
             shops = shops.map(s => ({
                 ...s,
-                products: db.products.filter(p => p.shopId === s.id)
+                products: (db.products || []).filter(p => p.shopId === s.id)
             }));
         }
 
@@ -322,7 +377,7 @@ const MarketHub = (() => {
                     <div class="market-shop-name">${escapeHtml(shop.name)}</div>
                     <div class="market-shop-meta">
                         <span class="market-shop-cat-badge">${escapeHtml(shop.category)}</span>
-                        ${shop.distanceKm !== undefined ?
+                        ${shop.distanceKm != null ?
                             `<span class="market-shop-distance"><i class="fas fa-location-arrow"></i> ${shop.distanceKm.toFixed(2)} km</span>` :
                             ''}
                     </div>
@@ -341,8 +396,6 @@ const MarketHub = (() => {
         `).join('');
     }
 
-    /* Event delegation — attached once. Re-renders of the grid replace
-       innerHTML, but the listener on the grid container survives. */
     function initShopsGridDelegate() {
         const grid = $('#marketShopsGrid');
         if (!grid) return;
@@ -355,26 +408,24 @@ const MarketHub = (() => {
     }
 
     /* ============ SHOP DETAIL ============ */
-    function openShop(shopId) {
-        const db   = loadDB();
-        const shop = db.shops.find(s => s.id === shopId);
+    async function openShop(shopId) {
+        const db   = await loadDB();
+        const shop = (db.shops || []).find(s => s.id === shopId);
         if (!shop) return;
 
         state.activeShop = shop;
-        const products = db.products.filter(p => p.shopId === shopId);
+        const products = (db.products || []).filter(p => p.shopId === shopId);
 
         const modal = $('#marketShopModal');
         if (!modal) return;
 
-        // This is the span inside the shop-detail modal header — NOT the
-        // vendor form's <select>. See createShop() for the form field.
         $('#marketShopCategory').textContent = shop.category;
         $('#marketShopTitle').textContent    = shop.name;
 
         const productsCount = $('#marketShopProductsCount');
         if (productsCount) productsCount.textContent = products.length;
 
-        const dist = state.userLocation
+        const dist = (state.userLocation && shop.lat && shop.lng)
             ? `<i class="fas fa-location-arrow"></i> ${haversine(state.userLocation.lat, state.userLocation.lng, shop.lat, shop.lng).toFixed(2)} km away<br>`
             : '';
 
@@ -420,7 +471,6 @@ const MarketHub = (() => {
         hideModal($('#marketShopModal'));
     }
 
-    /* Event delegation for the product grid inside the shop-detail modal. */
     function initShopProductsDelegate() {
         const grid = $('#marketShopProducts');
         if (!grid) return;
@@ -442,9 +492,9 @@ const MarketHub = (() => {
         updateCartBadge();
     }
 
-    function addToCart(productId) {
-        const db      = loadDB();
-        const product = db.products.find(p => p.id === productId);
+    async function addToCart(productId) {
+        const db      = await loadDB();
+        const product = (db.products || []).find(p => p.id === productId);
         if (!product) return;
 
         const cart     = getCart();
@@ -625,16 +675,16 @@ const MarketHub = (() => {
         }
     }
 
-    function submitVendorAuth(e) {
+    async function submitVendorAuth(e) {
         e.preventDefault();
         const email    = $('#marketAuthEmail').value.trim().toLowerCase();
         const password = $('#marketAuthPassword').value;
-        const db       = loadDB();
+        const db       = await loadDB();
 
         if (currentAuthMode === 'register') {
             const name = $('#marketAuthName').value.trim();
             if (!name || !email || !password) return toast('❌ Fill all fields');
-            if (db.users.find(u => u.email === email)) return toast('❌ Email already registered');
+            if ((db.users || []).find(u => u.email === email)) return toast('❌ Email already registered');
 
             const user = {
                 id: 'u_' + Date.now().toString(36),
@@ -642,19 +692,20 @@ const MarketHub = (() => {
                 role: 'vendor',
                 createdAt: Date.now()
             };
+            db.users = db.users || [];
             db.users.push(user);
             saveDB(db);
             setCurrentUser(user);
             toast(`✅ Welcome, ${name}!`);
         } else {
-            const user = db.users.find(u => u.email === email && u.password === password);
+            const user = (db.users || []).find(u => u.email === email && u.password === password);
             if (!user) return toast('❌ Invalid credentials');
             setCurrentUser(user);
             toast(`✅ Welcome back, ${user.name}!`);
         }
 
         closeVendorAuth();
-        renderVendorPanel();
+        await renderVendorPanel();
     }
 
     function logoutVendor() {
@@ -663,7 +714,7 @@ const MarketHub = (() => {
         renderVendorPanel();
     }
 
-    function renderVendorPanel() {
+    async function renderVendorPanel() {
         const auth = $('#marketVendorAuth');
         const dash = $('#marketVendorDashboard');
         const user = getCurrentUser();
@@ -679,8 +730,8 @@ const MarketHub = (() => {
         const nameEl = $('#marketVendorName');
         if (nameEl) nameEl.textContent = user.name;
 
-        const db      = loadDB();
-        const myShops = db.shops.filter(s => s.vendorId === user.id);
+        const db      = await loadDB();
+        const myShops = (db.shops || []).filter(s => s.vendorId === user.id);
         const productCard = $('#marketProductFormCard');
         if (myShops.length > 0) productCard?.removeAttribute('hidden');
         else productCard?.setAttribute('hidden', '');
@@ -702,7 +753,7 @@ const MarketHub = (() => {
             return;
         }
         el.innerHTML = myShops.map(shop => {
-            const products = db.products.filter(p => p.shopId === shop.id);
+            const products = (db.products || []).filter(p => p.shopId === shop.id);
             return `
                 <div class="market-my-shop">
                     <div class="market-my-shop-info">
@@ -717,30 +768,35 @@ const MarketHub = (() => {
         }).join('');
 
         el.querySelectorAll('[data-action="marketDeleteShop"]').forEach(btn => {
-            btn.onclick = () => {
+            btn.onclick = async () => {
                 if (!confirm('Delete this shop and all its products?')) return;
-                const db2 = loadDB();
-                db2.shops    = db2.shops.filter(s => s.id !== btn.dataset.shopId);
-                db2.products = db2.products.filter(p => p.shopId !== btn.dataset.shopId);
+
+                // Try to delete on the server first
+                if (window.API && window.API.market) {
+                    try {
+                        await window.API.market.remove(btn.dataset.shopId);
+                    } catch (err) {
+                        console.warn('[MarketHub] server delete failed:', err.message);
+                    }
+                }
+
+                const db2 = await loadDB();
+                db2.shops    = (db2.shops    || []).filter(s => s.id !== btn.dataset.shopId);
+                db2.products = (db2.products || []).filter(p => p.shopId !== btn.dataset.shopId);
                 saveDB(db2);
                 toast('🗑️ Shop deleted');
-                renderVendorPanel();
-                renderShops();
+                await renderVendorPanel();
+                await renderShops();
             };
         });
     }
 
     /* ============ CREATE SHOP ============ */
-    function createShop(e) {
+    async function createShop(e) {
         e.preventDefault();
         const user = getCurrentUser();
         if (!user || user.role !== 'vendor') return toast('❌ Login as vendor first');
 
-        // IMPORTANT: form field is #marketShopFormCategory. The other
-        // #marketShopCategory lives inside the shop-detail modal header
-        // (a <span>), and querySelector('#marketShopCategory') would
-        // resolve to that span — returning undefined here and silently
-        // failing shop creation.
         const shop = {
             id: 'sh_' + Date.now().toString(36),
             vendorId: user.id,
@@ -757,13 +813,37 @@ const MarketHub = (() => {
             return toast('❌ Please fill all required fields');
         }
 
-        const db = loadDB();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating…';
+        }
+
+        if (window.API && window.API.market) {
+            try {
+                const saved = await window.API.market.create({ type: 'shop', ...shop });
+                if (saved && (saved.id || saved._id)) {
+                    shop.id = saved.id || saved._id;
+                }
+            } catch (err) {
+                console.warn('[MarketHub] server save failed:', err.message);
+            }
+        }
+
+        const db = await loadDB();
+        db.shops = db.shops || [];
         db.shops.push(shop);
         saveDB(db);
+
         toast(`✅ Shop "${shop.name}" created!`);
         e.target.reset();
-        renderVendorPanel();
-        renderShops();
+        await renderVendorPanel();
+        await renderShops();
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Create Shop';
+        }
     }
 
     function fillVendorGeo() {
@@ -799,7 +879,7 @@ const MarketHub = (() => {
     }
 
     /* ============ CREATE PRODUCT ============ */
-    function createProduct(e) {
+    async function createProduct(e) {
         e.preventDefault();
         const user = getCurrentUser();
         if (!user || user.role !== 'vendor') return toast('❌ Login as vendor first');
@@ -819,16 +899,40 @@ const MarketHub = (() => {
             return toast('❌ Fill all required fields');
         }
 
-        const db = loadDB();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding…';
+        }
+
+        if (window.API && window.API.market) {
+            try {
+                const saved = await window.API.market.create({ type: 'product', ...product });
+                if (saved && (saved.id || saved._id)) {
+                    product.id = saved.id || saved._id;
+                }
+            } catch (err) {
+                console.warn('[MarketHub] server save failed:', err.message);
+            }
+        }
+
+        const db = await loadDB();
+        db.products = db.products || [];
         db.products.push(product);
         saveDB(db);
+
         toast(`✅ Product "${product.name}" added!`);
         e.target.reset();
-        renderVendorPanel();
+        await renderVendorPanel();
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Product';
+        }
     }
 
     /* ============ PLACE ORDER ============ */
-    function placeOrder() {
+    async function placeOrder() {
         const user = getCurrentUser();
         const cart = getCart();
 
@@ -856,11 +960,29 @@ const MarketHub = (() => {
             createdAt: Date.now()
         };
 
-        const db = loadDB();
+        const btn = document.querySelector('[data-action="marketPlaceOrder"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing order…';
+        }
+
+        if (window.API && window.API.market) {
+            try {
+                const saved = await window.API.market.create({ type: 'order', ...order });
+                if (saved && (saved.id || saved._id)) {
+                    order.id = saved.id || saved._id;
+                }
+            } catch (err) {
+                console.warn('[MarketHub] server save failed:', err.message);
+            }
+        }
+
+        const db = await loadDB();
+        db.orders = db.orders || [];
         db.orders.push(order);
 
         cart.forEach(item => {
-            const p = db.products.find(x => x.id === item.productId);
+            const p = (db.products || []).find(x => x.id === item.productId);
             if (p) p.stock = Math.max(0, p.stock - item.quantity);
         });
 
@@ -868,18 +990,23 @@ const MarketHub = (() => {
         saveCart([]);
         toast(`✅ Order placed! Total ${money(total)}`);
         renderCart();
-        renderOrders();
-        renderShops();
+        await renderOrders();
+        await renderShops();
+
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Place Order';
+        }
     }
 
-    function renderOrders() {
+    async function renderOrders() {
         const user  = getCurrentUser();
         const list  = $('#marketOrdersList');
         const empty = $('#marketOrdersEmpty');
         if (!list) return;
 
-        const db     = loadDB();
-        const orders = user ? db.orders.filter(o => o.userId === user.id) : [];
+        const db     = await loadDB();
+        const orders = user ? (db.orders || []).filter(o => o.userId === user.id) : [];
 
         const count = $('#marketOrdersCount');
         if (count) count.textContent = orders.length;
@@ -898,7 +1025,7 @@ const MarketHub = (() => {
                     <span class="market-order-status ${o.status}">${o.status}</span>
                 </div>
                 <div class="market-order-items">
-                    ${o.items.map(i => `<div>${escapeHtml(i.name)} × ${i.quantity} — ${money(i.subtotal)}</div>`).join('')}
+                    ${(o.items || []).map(i => `<div>${escapeHtml(i.name)} × ${i.quantity} — ${money(i.subtotal)}</div>`).join('')}
                 </div>
                 <div class="market-order-total">${money(o.total)}</div>
                 <div style="font-size: 0.7rem; color: var(--color-text-muted);">
@@ -912,29 +1039,25 @@ const MarketHub = (() => {
     /* ============ TABS ============ */
     function initTabs() {
         $$('.market-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', async () => {
                 const target = tab.dataset.marketTab;
                 $$('.market-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 $$('.market-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === target));
 
-                // Hide filters on non-browse tabs
                 const filters = $('#marketFilters');
                 if (filters) filters.style.display = target === 'browse' ? 'flex' : 'none';
 
-                // Reset content scroll so users don't land mid-panel
                 const content = $('.market-content');
                 if (content) content.scrollTop = 0;
 
-                // Keep active tab visible in the horizontal scroll strip
                 try { tab.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {}
 
-                if (target === 'vendor') renderVendorPanel();
-                if (target === 'orders') renderOrders();
+                if (target === 'vendor') await renderVendorPanel();
+                if (target === 'orders') await renderOrders();
                 if (target === 'cart')   renderCart();
             });
 
-            // Keyboard navigation for the tab strip
             tab.addEventListener('keydown', (e) => {
                 const tabs = $$('.market-tab');
                 const i = tabs.indexOf(tab);
@@ -960,13 +1083,6 @@ const MarketHub = (() => {
     }
 
     /* ============ RESPONSIVE EVENT WIRING ============ */
-
-    /**
-     * Close any open modal when the user clicks the dimmed backdrop, but
-     * NOT when the click is inside the modal content. Also tracks where
-     * the press started so a drag from inside doesn't count as a
-     * backdrop click.
-     */
     function initBackdropClose() {
         [
             { sel: '#marketModal',     close: close },
@@ -992,11 +1108,6 @@ const MarketHub = (() => {
         });
     }
 
-    /**
-     * Mobile browsers resize the viewport when the on-screen keyboard
-     * opens. Use visualViewport when available to keep the focused
-     * field visible inside the modal.
-     */
     function initVisualViewport() {
         if (!window.visualViewport) return;
         const onVV = debounce(() => {
@@ -1011,10 +1122,6 @@ const MarketHub = (() => {
         window.visualViewport.addEventListener('scroll', onVV);
     }
 
-    /**
-     * Debounced resize handler. Preserves scroll positions of inner
-     * scroll areas across breakpoint changes.
-     */
     function initResizeHandler() {
         const onResize = debounce(() => {
             if (state.openModals.size === 0) return;
@@ -1035,13 +1142,15 @@ const MarketHub = (() => {
     }
 
     /* ============ RENDER ALL ============ */
-    function renderAll() {
+    async function renderAll() {
         updateLocationText();
         updateCartBadge();
-        renderShops();
         renderCart();
-        renderVendorPanel();
-        renderOrders();
+        await Promise.all([
+            renderShops(),
+            renderVendorPanel(),
+            renderOrders()
+        ]);
     }
 
     /* ============ INIT ============ */

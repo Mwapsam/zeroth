@@ -3615,3 +3615,394 @@
 /* Disclaimer */
 .luse-disclaimer{ font-size:11px; color:#6b7280; padding:10px 12px; background:#f8fafc; border-radius:8px; }
 .luse-disclaimer a{ color:#1f7a3d; font-weight:600; }
+/* ---------- Clickable advert items ---------- */
+.advert-item {
+  cursor: pointer;
+}
+
+/* ---------- Advert Detail Modal ---------- */
+.advert-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  /* Block all pointer events from the page behind while open */
+  isolation: isolate;
+}
+
+.advert-detail-modal[hidden] { display: none; }
+
+/* Backdrop — explicitly below the container, never over the close button */
+.advert-detail-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+/* Container — relative, isolated stacking context, no clipping of the close btn */
+.advert-detail-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  isolation: isolate;
+  animation: advertDetailIn 0.25s ease;
+}
+
+@keyframes advertDetailIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ---------- CLOSE BUTTON — bullet-proof ---------- */
+.advert-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 20;                    /* above media + body + tag */
+  width: 44px;                    /* WCAG 2.5.5 minimum */
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;           /* never inherit "none" */
+  touch-action: manipulation;     /* kill 300ms tap delay */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.advert-detail-close:hover,
+.advert-detail-close:focus-visible {
+  background: #d00;
+  transform: scale(1.06);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.advert-detail-close:active {
+  transform: scale(0.96);
+}
+
+/* ---------- Media ---------- */
+.advert-detail-media {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.advert-detail-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.advert-detail-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Body ---------- */
+.advert-detail-body {
+  position: relative;
+  z-index: 1;
+  padding: 24px 28px 28px;
+}
+
+.advert-detail-brand {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1f7a3d;
+  margin-bottom: 6px;
+}
+
+.advert-detail-title {
+  font-size: 1.6rem;
+  margin: 0 0 12px;
+  color: #111;
+}
+
+.advert-detail-text {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: #444;
+  margin: 0 0 18px;
+}
+
+.advert-detail-meta {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 0;
+}
+
+.advert-detail-meta li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #f1f5f2;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.advert-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.advert-detail-cta,
+.advert-detail-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  min-height: 44px;
+  touch-action: manipulation;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.advert-detail-cta {
+  background: #1f7a3d;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(31, 122, 61, 0.3);
+}
+.advert-detail-cta:hover { transform: translateY(-2px); }
+
+.advert-detail-secondary {
+  background: #eef0ee;
+  color: #333;
+}
+.advert-detail-secondary:hover { background: #dfe3df; }
+
+body.advert-modal-open { overflow: hidden; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .advert-detail-modal { padding: 10px; }
+
+  .advert-detail-container {
+    max-height: 94vh;
+    border-radius: 12px;
+  }
+
+  .advert-detail-body { padding: 18px 18px 22px; }
+  .advert-detail-title { font-size: 1.25rem; }
+  .advert-detail-media { aspect-ratio: 4 / 3; }
+
+  .advert-detail-close {
+    top: 8px;
+    right: 8px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    font-size: 22px;
+  }
+
+  .advert-detail-cta,
+  .advert-detail-secondary {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .advert-detail-modal { padding: 0; }
+  .advert-detail-container {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  .advert-detail-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .advert-detail-container,
+  .advert-detail-close,
+  .advert-detail-cta,
+  .advert-detail-secondary {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+/* Dropzone */
+.agri-photo-dropzone {
+  border: 2px dashed var(--agri-primary, #1f7a3d);
+  background: rgba(31, 122, 61, 0.06);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  color: var(--agri-primary, #1f7a3d);
+  font-weight: 600;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.agri-photo-dropzone[hidden] { display: none; }
+
+.agri-photo-dropzone i { font-size: 1.6rem; }
+
+/* Empty state */
+.agri-photo-empty {
+  text-align: center;
+  padding: 16px 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.agri-photo-empty i { font-size: 1.6rem; color: #9ca3af; }
+.agri-photo-empty p { margin: 6px 0 2px; font-weight: 600; color: #374151; }
+.agri-photo-empty small { color: #9ca3af; }
+
+/* Sticky publish bar */
+.agri-photo-publish-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, #ecfdf5, #f0fdf4);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.agri-photo-publish-bar[hidden] { display: none; }
+
+.agri-photo-publish-info {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.9rem; color: #166534; font-weight: 600;
+}
+
+.agri-photo-publish-actions { display: flex; gap: 8px; }
+
+/* Photo tile */
+.agri-photo-tile {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  cursor: grab;
+}
+
+.agri-photo-tile img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.agri-photo-tile.is-cover::after {
+  content: "COVER";
+  position: absolute; top: 4px; left: 4px;
+  background: var(--agri-primary, #1f7a3d);
+  color: #fff; font-size: 0.6rem; font-weight: 700;
+  padding: 2px 6px; border-radius: 6px; letter-spacing: 0.5px;
+}
+
+.agri-photo-tile-remove {
+  position: absolute; top: 4px; right: 4px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); color: #fff; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.8rem;
+}
+/* --- My Shares button must be clickable --- */
+.sidebar-nav-link[data-action="openMyShares"],
+.sidebar-nav-link[data-action="openMyShares"] * {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+.sidebar-nav-link[data-action="openMyShares"] {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Ensure closed overlay doesn't block clicks */
+.sidebar-overlay:not(.active),
+.sidebar-overlay[hidden] {
+  pointer-events: none !important;
+  display: none !important;
+}
+
+/* Ensure My Shares modal shows when hidden=false */
+#mySharesModal:not([hidden]),
+#mySharesDetailModal:not([hidden]) {
+  display: flex !important;
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+}
+#mySharesModal[hidden],
+#mySharesDetailModal[hidden] {
+  display: none !important;
+}

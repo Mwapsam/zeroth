@@ -486,13 +486,13 @@ button,
    v3.4.0 — border-bottom removed. No horizontal line under header.
    ================================================================ */
 .floating-header {
-    position: fixed;
+    position:fixed;
     top: 0; left: 0; right: 0;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    /* border-bottom: 2px solid var(--color-border);  ← REMOVED v3.4.0 */
+    border-bottom: 2px solid var(--color-border); 
     padding: 4px 8px;
     height: var(--header-height);
     display: flex;
@@ -708,7 +708,187 @@ button,
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
+/* ================================================================
+   §08b. HEADER — 3-column layout
+   [ brand ] [ advert banner (flex:1) ] [ floating-user-info ]
+   The banner starts at the right of .brand (company name / logo)
+   and ends at the left of .floating-user-info (Rentals etc.)
+   ================================================================ */
 
+/* Make the header inner a 3-column flex row */
+.floating-header-inner {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    flex-wrap: nowrap;
+}
+
+/* --- LEFT: brand keeps its natural size, doesn't stretch --- */
+.floating-header-inner > .brand {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 45%;          /* never crowd the banner offscreen */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+.floating-header-inner > .brand .brand-name {
+    min-width: 0;
+    overflow: hidden;
+}
+.floating-header-inner > .brand .company-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- RIGHT: floating nav keeps its natural size --- */
+.floating-header-inner > .floating-nav {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+.floating-header-inner > .floating-nav .floating-user-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+/* --- MIDDLE: banner stretches between brand and user-info --- */
+.adverts-banner--inline {
+    /* override the old sticky banner rules */
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    /* flexible bridge */
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+}
+
+/* Ticker-pill look on desktop */
+@media (min-width: 1025px) {
+    .adverts-banner--inline {
+        background: var(--color-bg-alt);
+        border: 1px solid var(--color-border);
+        padding: 2px 4px;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+}
+
+/* --- Track (marquee) --- */
+.adverts-banner--inline .adverts-track {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: clamp(8px, 1vw, 16px);
+    width: max-content;
+    min-width: 100%;
+    padding: 0 clamp(6px, 1vw, 12px);
+    box-sizing: border-box;
+    animation: scrollAdverts 30s linear infinite;
+    will-change: transform;
+}
+.adverts-banner--inline:hover .adverts-track {
+    animation-play-state: paused;
+}
+
+/* --- Pills --- */
+.adverts-banner--inline .advert-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: #fff;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 26px;
+    max-height: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    color: inherit;
+}
+.adverts-banner--inline .advert-item .advert-img,
+.adverts-banner--inline .advert-item img {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50%;
+    object-fit: contain;
+    background: #fff;
+    flex-shrink: 0;
+    padding: 1px;
+}
+.adverts-banner--inline .advert-item .advert-text {
+    font-size: clamp(9px, 0.72vw, 11.5px);
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.1;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.adverts-banner--inline .advert-item .advert-tag {
+    font-size: clamp(7px, 0.55vw, 9px);
+    font-weight: 700;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: rgba(250, 248, 248, 0.82);
+    color: var(--color-text);
+    flex-shrink: 0;
+    line-height: 1.4;
+}
+.adverts-banner--inline .advert-item .advert-tag.tag-hot   { background: #dc3545; color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-new   { background: #28a745; color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-sale  { background: #ff6b35; color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-best  { background: #ffc107; color: #000; }
+.adverts-banner--inline .advert-item .advert-tag.tag-fire  { background: #ea580c; color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-star  { background: var(--color-primary-dark); color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-cool  { background: #0ea5e9; color: #fff; }
+.adverts-banner--inline .advert-item .advert-tag.tag-plain { background: #94a3b8; color: #fff; }
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+@media (max-width: 1024px) {
+    .floating-header-inner > .brand { max-width: 40%; }
+    .adverts-banner--inline .advert-item .advert-text { max-width: 110px; }
+}
+@media (max-width: 820px) {
+    .floating-header-inner > .brand { max-width: 35%; }
+    .adverts-banner--inline .advert-item .advert-tag { display: none; }
+    .adverts-banner--inline .advert-item { padding: 2px 6px; }
+    .adverts-banner--inline .advert-item .advert-img,
+    .adverts-banner--inline .advert-item img { width: 16px !important; height: 16px !important; }
+    .adverts-banner--inline .advert-item .advert-text { font-size: 10px; max-width: 90px; }
+}
+/* On phones the banner disappears entirely — the FABs / Advertise
+   button still cover the functionality */
+@media (max-width: 640px) {
+    .adverts-banner--inline { display: none !important; }
+    .floating-header-inner > .brand { max-width: none; flex: 1 1 auto; }
+}
 /* ================================================================
    09. SIDEBAR — RESPONSIVE & TOUCH-OPTIMIZED (v3.3.1)
    ================================================================ */
@@ -1496,7 +1676,7 @@ button,
     background: #fff;
 }
 .cat-badge.ground { border-color: var(--color-accent); color: var(--color-accent); }
-.cat-badge.brokerage { border-color: var(--color-primary); color: var(--color-primary-dark); }
+.cat-badge.brokerage { border-color: red; color: black; }
 .cat-badge.sky { border-color: var(--color-accent-light); color: var(--color-accent); }
 .cat-icon-wrapper img { width: clamp(50px, 6vw, 80px); height: clamp(50px, 6vw, 80px); object-fit: contain; }
 
@@ -1670,7 +1850,7 @@ button,
 .trustee- img {
     width: clamp(40px, 4vw, 60px);
     height: clamp(40px, 4vw, 60px);
-    border-radius: 80%;
+    border-radius: 100%;
     object-fit: cover;
     border: 1px solid var(--color-border);
 }
@@ -2288,7 +2468,7 @@ button,
     position: absolute;
     top: -6px;
     right: -6px;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: linear-gradient(135deg, #1cce6c, #064913c7);
     color: #fff;
     font-size: clamp(0.4rem, 0.55vw, 0.6rem);
     font-weight: 800;
@@ -2300,7 +2480,7 @@ button,
     justify-content: center;
     border: 2px solid #fff;
     line-height: 1;
-    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.5);
+    box-shadow: 0 2px 6px rgba(21, 100, 9, 0.5);
     animation: badgeBounce 2s ease-in-out infinite;
     z-index: 5;
 }
@@ -2424,7 +2604,7 @@ button,
     position: absolute;
     bottom: -4px;
     right: -4px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #f73920ed, #e76244ec);
     color: #fff;
     font-size: clamp(0.55rem, 0.7vw, 0.75rem);
     font-weight: 800;
@@ -2436,7 +2616,7 @@ button,
     justify-content: center;
     border: 2px solid #fff;
     line-height: 1;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+    box-shadow: 0 2px 6px rgba(74, 24, 4, 0.914);
     z-index: 5;
     padding: 0;
     transition: transform 0.2s ease;
@@ -2686,9 +2866,9 @@ button,
 
 .footer-search-btn {
     position: relative;
-    width: clamp(80px, 4.5vw, 100px);
-    height: clamp(25px, 4.5vw, 40px);
-    border-radius: 13px;
+    width: clamp(80px, 4.5vw, 150px);
+    height: clamp(40px, 4.5vw, 60px);
+    border-radius: 15px;
     border: 1px solid var(--color-border);
     background: var(--color-bg-alt);
     color: var(--color-text-muted);
@@ -3072,6 +3252,7 @@ button,
 .partners-header {
     margin-bottom: clamp(20px, 3vw, 40px);
     position: relative;
+
 }
 .partners-header-content {
     display: flex;
@@ -3102,7 +3283,7 @@ button,
     height: clamp(50px, 5vw, 72px);
     border-radius: 50%;
     position: absolute;
-    right: 640px;
+    right: 750px;
     border: 2px solid rgba(10, 198, 255, 0.856);
     object-fit: cover;
     flex-shrink: 0;
@@ -3117,7 +3298,7 @@ button,
     font-weight: 700;
     color: rgba(3, 3, 3, 0.856);
     position: absolute;
-    right: 480px;
+    right: 595px;
     top: 10px;
     margin: 0;
     line-height: 1;
@@ -3126,7 +3307,8 @@ button,
     font-size: clamp(0.6rem, 0.8vw, 0.9rem);
     color: rgba(11, 12, 11, 0.856);
     position: absolute;
-    right: 400px;
+    right: 450px;
+    top:17px;
     margin: 0;
     line-height: 5.3;
 }
@@ -3145,7 +3327,7 @@ button,
     animation: starSpin 8s linear infinite;
     display: inline-block;
     position: absolute;
-    right: 460px;
+    right: 560px;
     top: 9px;
 }
 @keyframes starSpin {
@@ -14873,3 +15055,42 @@ body.partner-modal-open { overflow: hidden; }
     .advert-img{ object-fit:contain; background:#fff; border-radius:4px; }
     .partner-logo-img{ object-fit:contain; background:#fff; border-radius:6px; padding:4px; }
     .cat-icon-wrapper img{ object-fit:cover; border-radius:12px; }
+    /* ================================================================
+   HEADER FIX — prevent advert banner from covering brand name/tagline
+   ================================================================ */
+
+/* Brand must NEVER shrink below its content width */
+.floating-header-inner > .brand {
+    flex: 0 0 auto !important;        /* don't grow, don't shrink */
+    min-width: max-content !important; /* never compress below text width */
+    max-width: none !important;        /* remove the 45% cap */
+    overflow: visible !important;      /* allow text to breathe */
+    gap: 6px;
+    z-index: 2;                        /* sit above the banner */
+}
+
+/* Brand name and tagline must not be clipped */
+.floating-header-inner > .brand .brand-name {
+    overflow: visible !important;
+    min-width: max-content;
+}
+
+.floating-header-inner > .brand .company-name,
+.floating-header-inner > .brand .company-tagline {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Banner gets only the leftover space — never overlaps brand */
+.adverts-banner--inline {
+    flex: 1 1 0px !important;   /* grow from zero, not from content */
+    min-width: 0 !important;    /* can shrink, but only into its own area */
+    overflow: hidden !important; /* clip its own content, not the brand */
+    z-index: 1;
+}
+
+/* Make sure the ticker track doesn't push the layout */
+.adverts-banner--inline .adverts-track {
+    min-width: 0 !important;
+}

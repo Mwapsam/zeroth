@@ -1,0 +1,126 @@
+# ============================================================
+# ZEROTH FRONTEND — .gitignore
+# ============================================================
+
+# ---------- Node ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.yarn/
+.pnp.*
+package-lock.json.bak
+.npmrc.local
+
+# ---------- Environment files ----------
+# Never commit secrets. If you need to ship defaults, use a
+# .env.example instead.
+.env
+.env.*
+!.env.example
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# ---------- Build / dist ----------
+dist/
+build/
+out/
+.output/
+.next/
+.nuxt/
+.svelte-kit/
+.cache/
+.parcel-cache/
+.turbo/
+.vercel/
+.netlify/
+
+# ---------- Deploy caches ----------
+.netlify/
+.deploy*/
+.vercel/
+
+# ---------- Logs ----------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# ---------- Uploads (local only) ----------
+# If you serve user uploads from the frontend, exclude them.
+uploads/
+!uploads/.gitkeep
+
+# ---------- OS junk ----------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*~
+
+# ---------- Editor / IDE ----------
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.iml
+*.swp
+*.swo
+*.swn
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.code-workspace
+
+# ---------- Test / coverage ----------
+coverage/
+.nyc_output/
+.nyc_output*
+*.lcov
+*.tap
+test-results/
+playwright-report/
+.playwright/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+cypress.env.json
+
+# ---------- Sensitive keys / certs ----------
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets.*
+credentials.*
+
+# ---------- Lint / cache ----------
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# ---------- Misc ----------
+*.bak
+*.tmp
+*.temp
+*.orig
+*.rej
+*#*#
+*.#*
+.cache-loader/

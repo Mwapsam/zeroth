@@ -1030,3 +1030,170 @@
 @media (prefers-reduced-motion: reduce) {
     .shub-resize-handle::after { transition: none !important; }
 }
+/* Active conversation row */
+.shub-msg { cursor: pointer; }
+.shub-msg.active { background: rgba(108, 92, 231, 0.12); border-left: 3px solid #6c5ce7; }
+
+.shub-unread-pill {
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-left: auto;
+}
+
+/* Conversation header */
+.shub-conversation-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #232c3f;
+    position: sticky;
+    top: 0;
+    background: #0e1421;
+    z-index: 2;
+}
+.shub-back-btn {
+    background: #151b28;
+    border: 1px solid #232c3f;
+    color: #e9eefb;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.shub-typing {
+    font-size: 0.72rem;
+    color: #8b97ad;
+    font-style: italic;
+    margin-left: auto;
+}
+
+/* Message bubbles */
+.shub-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+.shub-message { display: flex; flex-direction: column; max-width: 75%; }
+.shub-message.mine   { align-self: flex-end; align-items: flex-end; }
+.shub-message.theirs { align-self: flex-start; align-items: flex-start; }
+
+.shub-message-bubble {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+.shub-message.mine   .shub-message-bubble { background: #6c5ce7; color: #fff; border-bottom-right-radius: 4px; }
+.shub-message.theirs .shub-message-bubble { background: #151b28; color: #e9eefb; border: 1px solid #232c3f; border-bottom-left-radius: 4px; }
+
+.shub-message-atts { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.shub-att-img { max-width: 240px; max-height: 240px; border-radius: 8px; border: 1px solid #232c3f; }
+.shub-att-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: #151b28;
+    border: 1px solid #232c3f;
+    border-radius: 8px;
+    color: #e9eefb;
+    font-size: 0.82rem;
+    text-decoration: none;
+}
+.shub-att-file:hover { border-color: #6c5ce7; }
+
+.shub-message-time { font-size: 0.62rem; color: #5f6b81; margin-top: 2px; }
+/* ---------- 58.9b SEND BUTTON (with image + text badge) ---------- */
+.shub-send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    border: none;
+    flex-shrink: 0;
+    cursor: pointer;
+    background: linear-gradient(140deg, #8b5cff, #22d3ee);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(124, 92, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+    overflow: visible; /* Important to let the badge stick out */
+}
+
+.shub-send-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+}
+.shub-send-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.shub-send-btn.sending {
+    animation: shub-spin 0.9s linear infinite;
+}
+
+@keyframes shub-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Wrapper for the image and badge */
+.shub-send-icon-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+/* Image fills the button */
+.shub-send-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 13px;
+    display: block;
+}
+
+
+/* The "send" text badge */
+.shub-send-badge {
+    position: absolute;
+    bottom: -3px; /* Pulls it below the image */
+    right: 4px;  /* Pulls it past the right edge */
+    background-color: #1f7a3d; /* ZBS Green */
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid #0e1421; /* Matches the dark theme background so it looks cut out */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    line-height: 1.2;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.shub-send-btn:hover .shub-send-badge {
+    background-color: #155c2e;
+    transform: scale(1.05);
+}

@@ -911,3 +911,857 @@
     .bet-spinner { animation: none !important; }
     .bet-live-badge { animation: none !important; }
 }
+/* =========================================================
+   MULTI-COMPANY BETTING
+   ========================================================= */
+.bet-company-manager {
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.bet-company-manager-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.bet-company-manager-title {
+    font-size: .92rem;
+    font-weight: 700;
+    color: #1a202c;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.bet-company-manager-title i { color: #1f7a3d; }
+.bet-company-manager-count {
+    display: inline-block;
+    min-width: 22px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #1f7a3d;
+    color: #fff;
+    font-size: .7rem;
+    text-align: center;
+}
+.bet-company-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #1f7a3d;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+}
+.bet-company-add-btn:hover { background: #175f30; transform: translateY(-1px); }
+
+.bet-company-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.bet-company-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    border: 2px solid #e5e7eb;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+.bet-company-chip .bet-company-chip-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1f7a3d;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    font-weight: 800;
+}
+.bet-company-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    cursor: pointer;
+    font-size: .75rem;
+    line-height: 1;
+    transition: background .15s;
+}
+.bet-company-chip-remove:hover { background: #fecaca; }
+
+.bet-company-empty {
+    text-align: center;
+    padding: 16px 8px;
+    color: #64748b;
+}
+.bet-company-empty i { font-size: 2rem; opacity: .5; }
+.bet-company-empty p { margin: 8px 0 4px; font-weight: 600; }
+.bet-company-empty small { font-size: .78rem; }
+
+/* Event cards with per-company rows */
+.bet-event-multi {
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+}
+.bet-event-multi-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.bet-event-multi-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+.bet-event-multi-info { flex: 1; }
+.bet-event-multi-name { font-weight: 700; color: #1a202c; font-size: .95rem; }
+.bet-event-multi-meta { font-size: .72rem; color: #64748b; margin-top: 2px; }
+
+.bet-event-company-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    margin-bottom: 6px;
+}
+.bet-event-company-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1f7a3d;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .68rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.bet-event-company-name {
+    font-size: .82rem;
+    font-weight: 600;
+    color: #1a202c;
+    min-width: 90px;
+}
+.bet-event-company-outcomes {
+    display: flex;
+    flex: 1;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.bet-outcome-mini-btn {
+    flex: 1 1 80px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    cursor: pointer;
+    text-align: center;
+    font-size: .78rem;
+    transition: all .15s;
+    min-width: 80px;
+}
+.bet-outcome-mini-btn:hover { border-color: #1f7a3d; }
+.bet-outcome-mini-btn.selected {
+    background: #1f7a3d;
+    color: #fff;
+    border-color: #1f7a3d;
+}
+.bet-outcome-mini-label {
+    display: block;
+    font-weight: 600;
+}
+.bet-outcome-mini-odds {
+    display: block;
+    font-size: .7rem;
+    opacity: .8;
+}
+
+/* Bet slip */
+.bet-slip-summary {
+    background: #f8fafc;
+    border: 2px solid #1f7a3d;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 16px;
+}
+.bet-slip-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.bet-slip-summary-header span {
+    font-weight: 700;
+    color: #1a202c;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.bet-slip-clear-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.bet-slip-items { margin-bottom: 10px; }
+.bet-slip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: .82rem;
+    gap: 8px;
+}
+.bet-slip-item-remove {
+    background: transparent;
+    border: none;
+    color: #b91c1c;
+    cursor: pointer;
+    padding: 4px;
+    font-size: .9rem;
+}
+.bet-slip-totals {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px dashed #cbd5e1;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 12px;
+}
+.bet-slip-actions {
+    display: flex;
+    gap: 10px;
+}
+.bet-slip-actions .bet-place-confirm-btn { flex: 1; }
+.bet-slip-actions .bet-place-cancel-btn { flex: 0 0 auto; }
+
+/* Add company modal */
+.bet-popular-companies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+}
+.bet-popular-company-btn {
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 600;
+    font-size: .82rem;
+    transition: all .15s;
+}
+.bet-popular-company-btn:hover { border-color: #1f7a3d; background: #f0fdf4; }
+.bet-popular-company-btn.already-added {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: .6;
+}
+.bet-add-company-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+.bet-add-company-input-row input { flex: 1; }
+/* ==============================================================
+   BET HUB — COMPANY SELECTOR + ADD FORM
+   ============================================================== */
+
+/* ---- Toolbar (dropdown + buttons) ---- */
+.bet-company-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border: 1px solid #e6ecea;
+    border-radius: 10px;
+    margin: 0 0 12px;
+}
+
+.bet-company-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+.bet-company-select-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .74rem;
+    font-weight: 600;
+    color: #4a5568;
+    white-space: nowrap;
+}
+
+.bet-company-select-label i {
+    color: #1f7a3d;
+}
+
+.bet-company-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>")
+        no-repeat right 9px center;
+    border: 1px solid #d9e2dc;
+    border-radius: 8px;
+    padding: 7px 28px 7px 10px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #1f7a3d;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.bet-company-select:hover { border-color: #1f7a3d; }
+
+.bet-company-select:focus {
+    outline: none;
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 3px rgba(31,122,61,.15);
+}
+
+.bet-company-add-btn,
+.bet-company-manage-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+    white-space: nowrap;
+}
+
+.bet-company-add-btn {
+    background: #1f7a3d;
+    color: #fff;
+}
+.bet-company-add-btn:hover { background: #176030; }
+
+.bet-company-manage-btn {
+    background: #fff;
+    color: #4a5568;
+    border-color: #d9e2dc;
+}
+.bet-company-manage-btn:hover {
+    border-color: #1f7a3d;
+    color: #1f7a3d;
+}
+
+/* ---- Add form ---- */
+.bet-company-addform {
+    background: #fff;
+    border: 1px solid #e6ecea;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 0 0 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.bet-company-addform-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: .92rem;
+    color: #1a202c;
+}
+.bet-company-addform-head i { color: #1f7a3d; }
+
+.bet-company-addform-close {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0 6px;
+    border-radius: 6px;
+}
+.bet-company-addform-close:hover { color: #dc2626; background: #fef2f2; }
+
+.bet-company-addform-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.bet-company-addform-row--odds { gap: 8px; }
+
+.bet-company-addform-field {
+    flex: 1 1 160px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bet-company-addform-field--wide { flex: 1 1 220px; }
+
+.bet-company-addform-field label {
+    font-size: .72rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.bet-company-addform-field input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d9e2dc;
+    border-radius: 8px;
+    font-size: .82rem;
+    background: #fff;
+    color: #1a202c;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.bet-company-addform-field input:focus {
+    outline: none;
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 3px rgba(31,122,61,.12);
+}
+
+.bet-company-addform-subtitle {
+    font-size: .78rem;
+    font-weight: 700;
+    color: #4a5568;
+    margin: 6px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.bet-company-addform-subtitle i { color: #1f7a3d; }
+
+.bet-company-addform-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.bet-company-addform-save,
+.bet-company-addform-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: .82rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .15s ease;
+}
+
+.bet-company-addform-save {
+    background: #1f7a3d;
+    color: #fff;
+}
+.bet-company-addform-save:hover { background: #176030; }
+
+.bet-company-addform-cancel {
+    background: #fff;
+    color: #4a5568;
+    border-color: #d9e2dc;
+}
+.bet-company-addform-cancel:hover {
+    border-color: #dc2626;
+    color: #dc2626;
+}
+
+.bet-company-addform-status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: .8rem;
+    font-weight: 600;
+}
+.bet-company-addform-status.success {
+    background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;
+}
+.bet-company-addform-status.error {
+    background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+}
+
+/* ---- Empty state ---- */
+.bet-company-empty {
+    text-align: center;
+    padding: 24px 12px;
+    color: #64748b;
+    font-size: .85rem;
+}
+.bet-company-empty i {
+    font-size: 26px;
+    color: #cbd5e1;
+    display: block;
+    margin-bottom: 8px;
+}
+.bet-company-empty strong { color: #1f7a3d; }
+
+/* ---- Mobile ---- */
+@media (max-width: 480px) {
+    .bet-company-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .bet-company-select-wrap { flex-direction: column; align-items: stretch; }
+    .bet-company-add-btn,
+    .bet-company-manage-btn { justify-content: center; }
+    .bet-company-addform-field,
+    .bet-company-addform-field--wide { flex: 1 1 100%; }
+}
+/* =========================================================
+   RESIZABLE BET HUB MODAL
+   ========================================================= */
+
+/* The container needs a fixed, movable, resizable frame */
+.bet-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 12px;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.bet-modal.active,
+.bet-modal:not([hidden]) {
+    pointer-events: auto;
+}
+
+/* Make the inner container a free-floating box */
+.bet-modal .bet-container {
+    position: relative;
+    width: min(1200px, calc(100vw - 24px));
+    height: min(88vh, 900px);
+    max-width: none;
+    max-height: none;
+    min-width: 360px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s ease;
+}
+
+/* When user has dragged/resized, we switch to absolute positioning */
+.bet-modal .bet-container.is-resized {
+    position: fixed;
+    inset: auto;
+}
+
+/* Header acts as drag handle */
+.bet-modal .bet-header {
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+.bet-modal .bet-header.is-dragging {
+    cursor: grabbing;
+}
+.bet-modal .bet-header .window-close-btn,
+.bet-modal .bet-header button {
+    cursor: pointer;
+}
+
+/* The content area scrolls when the box is small */
+.bet-modal .bet-container > .bet-content,
+.bet-modal .bet-container > .bet-tabs,
+.bet-modal .bet-container > .bet-actions,
+.bet-modal .bet-container > .bet-wallet-bar {
+    flex-shrink: 0;
+}
+.bet-modal .bet-container > .bet-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Resize handles */
+.bet-modal .bet-container .bet-resize-handle {
+    position: absolute;
+    z-index: 20;
+    background: transparent;
+    touch-action: none;
+}
+.bet-modal .bet-container .bet-resize-handle::after {
+    content: '';
+    position: absolute;
+    background: rgba(31, 122, 61, 0.35);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.bet-modal .bet-container:hover .bet-resize-handle::after,
+.bet-modal .bet-container.is-resizing .bet-resize-handle::after {
+    opacity: 1;
+}
+
+/* Corner handles */
+.bet-modal .bet-resize-se {
+    right: 0;
+    bottom: 0;
+    width: 22px;
+    height: 22px;
+    cursor: nwse-resize;
+}
+.bet-modal .bet-resize-se::after {
+    right: 4px;
+    bottom: 4px;
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid #1f7a3d;
+    border-bottom: 2px solid #1f7a3d;
+    background: transparent;
+    border-radius: 0;
+}
+
+.bet-modal .bet-resize-sw {
+    left: 0;
+    bottom: 0;
+    width: 22px;
+    height: 22px;
+    cursor: nesw-resize;
+}
+.bet-modal .bet-resize-sw::after {
+    left: 4px;
+    bottom: 4px;
+    width: 12px;
+    height: 12px;
+    border-left: 2px solid #1f7a3d;
+    border-bottom: 2px solid #1f7a3d;
+    background: transparent;
+    border-radius: 0;
+}
+
+.bet-modal .bet-resize-ne {
+    right: 0;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    cursor: nesw-resize;
+}
+.bet-modal .bet-resize-ne::after {
+    right: 4px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid #1f7a3d;
+    border-top: 2px solid #1f7a3d;
+    background: transparent;
+    border-radius: 0;
+}
+
+.bet-modal .bet-resize-nw {
+    left: 0;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    cursor: nwse-resize;
+}
+.bet-modal .bet-resize-nw::after {
+    left: 4px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-left: 2px solid #1f7a3d;
+    border-top: 2px solid #1f7a3d;
+    background: transparent;
+    border-radius: 0;
+}
+
+/* Edge handles */
+.bet-modal .bet-resize-e {
+    right: 0;
+    top: 22px;
+    bottom: 22px;
+    width: 8px;
+    cursor: ew-resize;
+}
+.bet-modal .bet-resize-e::after {
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 40px;
+    background: #1f7a3d;
+}
+
+.bet-modal .bet-resize-w {
+    left: 0;
+    top: 22px;
+    bottom: 22px;
+    width: 8px;
+    cursor: ew-resize;
+}
+.bet-modal .bet-resize-w::after {
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 40px;
+    background: #1f7a3d;
+}
+
+.bet-modal .bet-resize-s {
+    left: 22px;
+    right: 22px;
+    bottom: 0;
+    height: 8px;
+    cursor: ns-resize;
+}
+.bet-modal .bet-resize-s::after {
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: #1f7a3d;
+}
+
+.bet-modal .bet-resize-n {
+    left: 22px;
+    right: 22px;
+    top: 0;
+    height: 8px;
+    cursor: ns-resize;
+}
+.bet-modal .bet-resize-n::after {
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: #1f7a3d;
+}
+
+/* Fullscreen toggle button */
+.bet-modal .bet-fullscreen-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    border: none;
+    color: #1f7a3d;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: background 0.15s;
+}
+.bet-modal .bet-fullscreen-btn:hover {
+    background: #e2e8f0;
+}
+
+.bet-modal .bet-container.is-fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 0;
+}
+
+/* Mobile: always full-width, only vertical resize allowed */
+@media (max-width: 640px) {
+    .bet-modal {
+        padding: 0;
+    }
+    .bet-modal .bet-container {
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    .bet-modal .bet-resize-handle {
+        display: none;
+    }
+    .bet-modal .bet-header {
+        cursor: default;
+    }
+}
+.bet-modal .bet-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.bet-modal .bet-drag-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 0.7rem;
+    margin-left: 10px;
+    opacity: 0.8;
+}

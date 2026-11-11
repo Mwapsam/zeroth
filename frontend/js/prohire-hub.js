@@ -1,10 +1,7 @@
 /* ============================================================================
    ProHire Hub — professional hiring marketplace
-   Handles:  data-action="openProHireHub"       → opens #prohireModal
-             data-action="openProHireVehicles"  → opens modal + jumps to vehicles
-             data-action="closeProHireHub"      → closes it
-             data-action="closeProHireBooking"  → closes booking sub-modal
-             data-prohire-book="<id>"           → opens booking for that pro
+   v1.4.0 — Country-aware currency (registration country → baseline),
+            city filter as override, clean scope, runtime add-pro
    ========================================================================== */
 (function () {
   'use strict';
@@ -27,13 +24,28 @@
     durban:       { lat: -29.8587, lng: 31.0218,   label: 'Durban, South Africa' },
     gaborone:     { lat: -24.6282, lng: 25.9231,   label: 'Gaborone, Botswana' },
     windhoek:     { lat: -22.5609, lng: 17.0658,   label: 'Windhoek, Namibia' },
+
+    /* Zambia */
     lusaka:       { lat: -15.3875, lng: 28.3228,   label: 'Lusaka, Zambia' },
+    mazabuka:     { lat: -15.8565, lng: 27.7531,   label: 'Mazabuka, Zambia' },
     livingstone:  { lat: -17.8575, lng: 25.8544,   label: 'Livingstone, Zambia' },
+    kitwe:        { lat: -12.8024, lng: 28.2132,   label: 'Kitwe, Zambia' },
+    ndola:        { lat: -12.9587, lng: 28.6366,   label: 'Ndola, Zambia' },
+    kabwe:        { lat: -14.4469, lng: 28.4464,   label: 'Kabwe, Zambia' },
+    chingola:     { lat: -12.5290, lng: 27.8530,   label: 'Chingola, Zambia' },
+    solwezi:      { lat: -12.1833, lng: 26.4000,   label: 'Solwezi, Zambia' },
+    chipata:      { lat: -13.6333, lng: 32.6500,   label: 'Chipata, Zambia' },
+    mongu:        { lat: -15.2500, lng: 23.1333,   label: 'Mongu, Zambia' },
+    kasama:       { lat: -10.2000, lng: 31.1833,   label: 'Kasama, Zambia' },
+    choma:        { lat: -16.8000, lng: 26.9833,   label: 'Choma, Zambia' },
+
+    /* Other */
     lilongwe:     { lat: -13.9626, lng: 33.7741,   label: 'Lilongwe, Malawi' },
     maputo:       { lat: -25.9692, lng: 32.5732,   label: 'Maputo, Mozambique' },
     harare:       { lat: -17.8252, lng: 31.0335,   label: 'Harare, Zimbabwe' },
     maseru:       { lat: -29.3151, lng: 27.4869,   label: 'Maseru, Lesotho' },
-    mbabane:      { lat: -26.3054, lng: 31.1367,   label: 'Mbabane, Eswatini' }
+    mbabane:      { lat: -26.3054, lng: 31.1367,   label: 'Mbabane, Eswatini' },
+    arusha:       { lat: -3.3869,  lng: 36.6830,   label: 'Arusha, Tanzania' }
   };
 
   var PH_CURRENCIES = {
@@ -49,7 +61,12 @@
     MZN: { code: 'MZN', symbol: 'MT',   rate: 63.83, step: 50,  locale: 'pt-MZ' },
     ZWG: { code: 'ZWG', symbol: 'ZiG',  rate: 25.34, step: 5,   locale: 'en-ZW' },
     LSL: { code: 'LSL', symbol: 'L',    rate: 16.58, step: 10,  locale: 'en-LS' },
-    SZL: { code: 'SZL', symbol: 'E',    rate: 16.51, step: 10,  locale: 'en-SZ' }
+    SZL: { code: 'SZL', symbol: 'E',    rate: 16.51, step: 10,  locale: 'en-SZ' },
+    TZS: { code: 'TZS', symbol: 'TSh ', rate: 2550,  step: 500, locale: 'en-TZ' },
+    NGN: { code: 'NGN', symbol: '₦',    rate: 1550,  step: 500, locale: 'en-NG' },
+    UGX: { code: 'UGX', symbol: 'USh ', rate: 3750,  step: 500, locale: 'en-UG' },
+    GHS: { code: 'GHS', symbol: '₵',    rate: 15.2,  step: 5,   locale: 'en-GH' },
+    EUR: { code: 'EUR', symbol: '€',    rate: 0.92,  step: 5,   locale: 'de-DE' }
   };
 
   var PH_CITY_CURRENCY = {
@@ -58,9 +75,37 @@
     london: 'GBP', dubai: 'AED',
     johannesburg: 'ZAR', capetown: 'ZAR', durban: 'ZAR',
     gaborone: 'BWP', windhoek: 'NAD',
-    lusaka: 'ZMW', livingstone: 'ZMW',
+
+    lusaka: 'ZMW', mazabuka: 'ZMW', livingstone: 'ZMW',
+    kitwe: 'ZMW', ndola: 'ZMW', kabwe: 'ZMW',
+    chingola: 'ZMW', solwezi: 'ZMW', chipata: 'ZMW',
+    mongu: 'ZMW', kasama: 'ZMW', choma: 'ZMW',
+
     lilongwe: 'MWK', maputo: 'MZN', harare: 'ZWG',
-    maseru: 'LSL', mbabane: 'SZL'
+    maseru: 'LSL', mbabane: 'SZL', arusha: 'TZS'
+  };
+
+  /* Country (ISO-2) → currency code. Used as the default currency
+     when the user is registered but no city filter is active. */
+  var PH_COUNTRY_CURRENCY = {
+    ZM: 'ZMW',
+    ZA: 'ZAR',
+    KE: 'KES',
+    NG: 'NGN',
+    TZ: 'TZS',
+    UG: 'UGX',
+    GH: 'GHS',
+    BW: 'BWP',
+    NA: 'NAD',
+    ZW: 'ZWG',
+    MW: 'MWK',
+    MZ: 'MZN',
+    LS: 'LSL',
+    SZ: 'SZL',
+    US: 'USD',
+    GB: 'GBP',
+    EU: 'EUR',
+    AE: 'AED'
   };
 
   var PH_DEFAULT_CURRENCY = 'USD';
@@ -156,6 +201,113 @@
     { id: 49, name: 'Thabo Mokoena',        cat: 'carpenter',     icon: 'fa-hammer',             spec: 'Custom furniture & roofing',  rating: 4.8, reviews: 64,   price: 280, unit: 'hour',    city: 'maseru',       lat: -29.3200, lng: 27.4900, years: 12, avail: true, night: false, sameDay: true,  homeVisit: true,  insured: true },
     { id: 50, name: 'Sipho Dlamini',        cat: 'security',      icon: 'fa-shield-halved',      spec: 'Residential & estate patrol', rating: 4.8, reviews: 88,   price: 95,  unit: 'hour',    city: 'mbabane',      lat: -26.3100, lng: 31.1400, years: 10, avail: true, night: true,  sameDay: true,  homeVisit: true,  insured: true, quals: ['Licensed security officer (Eswatini)', 'Police clearance', 'First aid certified', 'Self-defence trained'] },
 
+    /* ── NEW — one per category (added batch) ─────────────────────── */
+
+    { id: 101, name: 'Dr. Mwamba Chileshe', cat: 'doctor',        icon: 'fa-user-md',
+      spec: 'General practitioner',          rating: 4.9, reviews: 87,
+      price: 15, unit: 'visit',              city: 'lusaka',
+      lat: -15.3875, lng: 28.3228,           years: 12,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 102, name: 'Caristsr Chikwanda',  cat: 'nurse',         icon: 'fa-user-nurse',
+      spec: 'Registered nurse — home care',  rating: 4.7, reviews: 41,
+      price: 5,  unit: 'hour',               city: 'lusaka',
+      lat: -15.3900, lng: 28.3300,           years: 6,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 103, name: 'Doreen Chilala',      cat: 'nurse',         icon: 'fa-user-nurse',
+      spec: 'Registered nurse — home care',  rating: 4.7, reviews: 41,
+      price: 5,  unit: 'hour',               city: 'mazabuka',
+      lat: -15.8565, lng: 27.7531,           years: 6,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 104, name: 'Sister Thandi Mokoena', cat: 'nurse',       icon: 'fa-user-nurse',
+      spec: 'Midwife',                       rating: 4.9, reviews: 63,
+      price: 21, unit: 'hour',               city: 'johannesburg',
+      lat: -26.2041, lng: 28.0473,           years: 10,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 105, name: 'Joseph Phiri',        cat: 'electrician',   icon: 'fa-bolt',
+      spec: 'Residential & commercial wiring', rating: 4.6, reviews: 112,
+      price: 7,  unit: 'call-out',           city: 'lusaka',
+      lat: -15.3875, lng: 28.3228,           years: 9,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 106, name: 'Peter Okello',        cat: 'mechanic',      icon: 'fa-screwdriver-wrench',
+      spec: 'Auto mechanic — Toyota / Nissan', rating: 4.7, reviews: 78,
+      price: 4,  unit: 'hour',               city: 'mombasa',
+      lat: -4.0435, lng: 39.6682,            years: 11,
+      avail: true, night: false, sameDay: false, homeVisit: true, insured: true },
+
+    { id: 107, name: 'Mercy Ndlovu',        cat: 'cleaner',       icon: 'fa-broom',
+      spec: 'Deep cleaning & post-construction', rating: 4.8, reviews: 45,
+      price: 5,  unit: 'hour',               city: 'windhoek',
+      lat: -22.5609, lng: 17.0658,           years: 5,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 108, name: 'Brian Tembo',         cat: 'plumber',       icon: 'fa-faucet',
+      spec: 'Plumbing & leak repairs',       rating: 4.5, reviews: 39,
+      price: 6,  unit: 'hour',               city: 'lusaka',
+      lat: -15.3900, lng: 28.3300,           years: 7,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 109, name: 'Kelvin Mutale',       cat: 'barber',        icon: 'fa-cut',
+      spec: 'Men\u2019s cuts & beard grooming', rating: 4.9, reviews: 210,
+      price: 2,  unit: 'session',            city: 'lusaka',
+      lat: -15.3875, lng: 28.3228,           years: 4,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: false },
+
+    { id: 110, name: 'Naledi Khumalo',      cat: 'hairdresser',   icon: 'fa-scissors',
+      spec: 'Braids, weaves & natural hair', rating: 4.8, reviews: 156,
+      price: 13, unit: 'session',            city: 'durban',
+      lat: -29.8587, lng: 31.0218,           years: 8,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: false },
+
+    { id: 111, name: 'Fatima Yusuf',        cat: 'cosmetologist', icon: 'fa-spa',
+      spec: 'Skincare & makeup artist',      rating: 4.9, reviews: 98,
+      price: 109, unit: 'session',           city: 'dubai',
+      lat: 25.2048, lng: 55.2708,            years: 6,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 112, name: 'Moses Chanda',        cat: 'bricklayer',    icon: 'fa-trowel-bricks',
+      spec: 'Masonry & bricklaying',         rating: 4.6, reviews: 33,
+      price: 3,  unit: 'hour',               city: 'livingstone',
+      lat: -17.8575, lng: 25.8544,           years: 14,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 113, name: 'Daniel Mwale',        cat: 'carpenter',     icon: 'fa-hammer',
+      spec: 'Fitted kitchens & wardrobes',   rating: 4.7, reviews: 52,
+      price: 5,  unit: 'hour',               city: 'lusaka',
+      lat: -15.3950, lng: 28.3200,           years: 10,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 114, name: 'Emmanuel Kariuki',    cat: 'driver',        icon: 'fa-car-side',
+      spec: 'Personal & corporate driver',   rating: 4.8, reviews: 67,
+      price: 3,  unit: 'hour',               city: 'nairobi',
+      lat: -1.2921, lng: 36.8219,            years: 9,
+      avail: true, night: true, sameDay: true, homeVisit: false, insured: true },
+
+    { id: 115, name: 'Isaac Banda',         cat: 'security',      icon: 'fa-shield-halved',
+      spec: 'Residential security guard',    rating: 4.5, reviews: 28,
+      price: 2,  unit: 'hour',               city: 'lusaka',
+      lat: -15.3900, lng: 28.3300,           years: 5,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true,
+      quals: ['Licensed security officer (Zambia)','Police clearance','First aid certified','Self-defence trained'] },
+
+    { id: 116, name: 'Grace Phiri',         cat: 'nurse',         icon: 'fa-user-nurse',
+      spec: 'Registered nurse — home care',  rating: 4.8, reviews: 27,
+      price: 4,  unit: 'hour',               city: 'kitwe',
+      lat: -12.8024, lng: 28.2132,           years: 5,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true },
+
+    { id: 117, name: 'Moses Sakala',        cat: 'electrician',   icon: 'fa-bolt',
+      spec: 'Residential wiring',            rating: 4.7, reviews: 41,
+      price: 5,  unit: 'call-out',           city: 'ndola',
+      lat: -12.9587, lng: 28.6366,           years: 8,
+      avail: true, night: false, sameDay: true, homeVisit: true, insured: true },
+
+    /* ── VEHICLES ────────────────────────────────────────────────── */
+
     { id: 51, name: 'Mercedes E-Class + Chauffeur', cat: 'vehicles', icon: 'fa-car-side',      spec: 'Executive wedding sedan',     rating: 5.0, reviews: 112,  price: 185, unit: 'day',     city: 'lusaka',       lat: -15.3900, lng: 28.3250, years: 6,  avail: true, night: true,  sameDay: true,  homeVisit: true,  insured: true, occasions: ['wedding','vip','corporate','airport'], capacity: 3 },
     { id: 52, name: 'Land Cruiser Safari 4×4',      cat: 'vehicles', icon: 'fa-truck-monster', spec: 'Open-roof game viewer',       rating: 4.9, reviews: 187,  price: 220, unit: 'day',     city: 'lusaka',       lat: -15.4000, lng: 28.3100, years: 8,  avail: true, night: false, sameDay: true,  homeVisit: true,  insured: true, occasions: ['safari','vip','selfdrive'], capacity: 7 },
     { id: 53, name: 'Toyota Camry Airport Transfer',cat: 'vehicles', icon: 'fa-car-side',      spec: 'Executive airport transfers', rating: 4.8, reviews: 241,  price: 95,  unit: 'day',     city: 'lusaka',       lat: -15.3200, lng: 28.4500, years: 5,  avail: true, night: true,  sameDay: true,  homeVisit: true,  insured: true, occasions: ['airport','corporate','vip'], capacity: 4 },
@@ -166,7 +318,28 @@
     { id: 58, name: 'Nairobi Safari Land Cruiser',  cat: 'vehicles', icon: 'fa-truck-monster', spec: 'Maasai Mara & Amboseli tours',rating: 4.9,reviews: 276,  price: 210, unit: 'day',     city: 'nairobi',      lat: -1.2864, lng: 36.8172, years: 10, avail: true, night: false, sameDay: true,  homeVisit: true,  insured: true, occasions: ['safari','vip','selfdrive'], capacity: 7 },
     { id: 59, name: 'Stretch Limousine',            cat: 'vehicles', icon: 'fa-car-side',      spec: 'Weddings & VIP occasions',   rating: 5.0, reviews: 142,  price: 320, unit: 'day',     city: 'johannesburg', lat: -26.2100, lng: 28.0500, years: 8,  avail: true, night: true,  sameDay: false, homeVisit: true,  insured: true, occasions: ['wedding','vip','events'], capacity: 8 },
     { id: 60, name: 'Vintage Kombi Tour Bus',       cat: 'vehicles', icon: 'fa-bus',           spec: 'Cape Town wine & city tours',rating: 4.8,reviews: 189,  price: 165, unit: 'day',     city: 'capetown',     lat: -33.9250, lng: 18.4250, years: 6,  avail: true, night: false, sameDay: true,  homeVisit: true,  insured: true, occasions: ['safari','events','selfdrive'], capacity: 10 },
-    { id: 61, name: 'Rolls-Royce Phantom',          cat: 'vehicles', icon: 'fa-car-side',      spec: 'Ultra-luxury VIP chauffeur', rating: 5.0, reviews: 78,   price: 550, unit: 'day',     city: 'dubai',        lat: 25.2100, lng: 55.2700, years: 5,  avail: true, night: true,  sameDay: false, homeVisit: true,  insured: true, occasions: ['wedding','vip','corporate'], capacity: 3 }
+    { id: 61, name: 'Rolls-Royce Phantom',          cat: 'vehicles', icon: 'fa-car-side',      spec: 'Ultra-luxury VIP chauffeur', rating: 5.0, reviews: 78,   price: 550, unit: 'day',     city: 'dubai',        lat: 25.2100, lng: 55.2700, years: 5,  avail: true, night: true,  sameDay: false, homeVisit: true,  insured: true, occasions: ['wedding','vip','corporate'], capacity: 3 },
+
+    { id: 201, name: 'Toyota Land Cruiser V8',  cat: 'vehicles', icon: 'fa-truck-monster',
+      spec: 'Chauffeur-driven VIP SUV',         rating: 4.9, reviews: 44,
+      price: 68, unit: 'day',                   city: 'lusaka',
+      lat: -15.3875, lng: 28.3228,              years: 8,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true,
+      occasions: ['wedding','safari','vip','airport','corporate'], capacity: 7 },
+
+    { id: 202, name: 'Mercedes-Benz E-Class',   cat: 'vehicles', icon: 'fa-car-side',
+      spec: 'Executive sedan + suited chauffeur', rating: 4.8, reviews: 31,
+      price: 95, unit: 'day',                   city: 'johannesburg',
+      lat: -26.2041, lng: 28.0473,              years: 6,
+      avail: true, night: true, sameDay: false, homeVisit: true, insured: true,
+      occasions: ['wedding','corporate','vip','events'], capacity: 4 },
+
+    { id: 203, name: 'Toyota Hiace (14-seater)', cat: 'vehicles', icon: 'fa-van-shuttle',
+      spec: 'Group transfers & airport shuttles', rating: 4.6, reviews: 58,
+      price: 93, unit: 'day',                   city: 'nairobi',
+      lat: -1.2921, lng: 36.8219,               years: 9,
+      avail: true, night: true, sameDay: true, homeVisit: true, insured: true,
+      occasions: ['airport','events','corporate','selfdrive'], capacity: 14 }
   ];
 
   /* ----------------------------------------------------------------- STATE */
@@ -178,7 +351,8 @@
     sort: 'rating',
     currency: PH_DEFAULT_CURRENCY,
     occasion: '',
-    userLoc: null
+    userLoc: null,
+    overrideCurrency: false     // true when the city filter set the currency
   };
 
   var pendingPro = null;
@@ -248,6 +422,55 @@
     return PH_CAT_QUALS[p.cat] || [];
   }
 
+  /* --------------------------------------------------- COUNTRY CURRENCY */
+
+  /**
+   * Read the user's registered country from localStorage.
+   * Checks multiple keys because different parts of the site
+   * (auth modal, wallet, etc.) store it under different names.
+   * Returns an ISO-2 code (e.g. 'ZM') or '' if not found.
+   */
+  function getUserCountry() {
+    var candidates = ['zbs_auth_user', 'zbs_user', 'authUser', 'user'];
+    for (var i = 0; i < candidates.length; i++) {
+      try {
+        var raw = localStorage.getItem(candidates[i]);
+        if (!raw) continue;
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.country) {
+          return String(parsed.country).toUpperCase();
+        }
+      } catch (e) { /* not JSON — skip */ }
+    }
+    return '';
+  }
+
+  /**
+   * Baseline currency = registered country → PH_COUNTRY_CURRENCY → USD.
+   */
+  function getBaselineCurrency() {
+    var country = getUserCountry();
+    if (country && PH_COUNTRY_CURRENCY[country]) {
+      var code = PH_COUNTRY_CURRENCY[country];
+      return PH_CURRENCIES[code] ? code : PH_DEFAULT_CURRENCY;
+    }
+    return PH_DEFAULT_CURRENCY;
+  }
+
+  /**
+   * ISO-2 → regional-indicator emoji flag.
+   */
+  function countryToFlag(cc) {
+    if (!cc || cc.length !== 2) return '';
+    try {
+      var base = 0x1F1E6;
+      return String.fromCodePoint(
+        base + (cc.charCodeAt(0) - 65),
+        base + (cc.charCodeAt(1) - 65)
+      );
+    } catch (e) { return ''; }
+  }
+
   /* ---------------------------------------------------------------- FILTER */
 
   function filterPros() {
@@ -307,9 +530,12 @@
 
   function proCard(p) {
     var d = distanceFor(p);
+    var cityInfo = PH_CITIES[p.city];
+    var cityLabel = cityInfo ? cityInfo.label.split(',')[0] : p.city;
+
     var distBadge = d !== null
       ? '<span class="prohire-dist"><i class="fas fa-map-marker-alt"></i> ' + fmtDist(d) + '</span>'
-      : '<span class="prohire-dist" style="background:#eef2f8;color:#5e6f88"><i class="fas fa-map-marker-alt"></i> ' + esc(PH_CITIES[p.city].label.split(',')[0]) + '</span>';
+      : '<span class="prohire-dist" style="background:#eef2f8;color:#5e6f88"><i class="fas fa-map-marker-alt"></i> ' + esc(cityLabel) + '</span>';
 
     return '' +
       '<article class="prohire-card" data-id="' + p.id + '">' +
@@ -345,7 +571,7 @@
       ? '<span class="prohire-vehicle-cap"><i class="fas fa-user-group"></i> ' + p.capacity + '</span>'
       : '';
 
-    var cityName = PH_CITIES[p.city] ? PH_CITIES[p.city].label.split(',')[0] : '';
+    var cityName = PH_CITIES[p.city] ? PH_CITIES[p.city].label.split(',')[0] : p.city;
 
     return '' +
       '<article class="prohire-vehicle-card">' +
@@ -383,22 +609,225 @@
     grid.innerHTML = filterVehicles().map(vehicleCard).join('');
   }
 
+  /**
+   * Apply the currency badge + re-render.
+   * Label shows the reason: user country vs city override.
+   */
   function refreshCurrency() {
     var c = PH_CURRENCIES[state.currency] || PH_CURRENCIES.USD;
     var badge = $('#prohireCurrencyBadge');
     if (badge) {
-      badge.textContent = c.code;
-      badge.title = 'Prices are shown in ' + c.code;
+      var country = getUserCountry();
+      var flag = countryToFlag(country);
+      badge.textContent = (flag ? flag + ' ' : '') + c.code;
+
+      if (state.overrideCurrency && state.city) {
+        badge.title = 'Prices shown in ' + c.code + ' (city override: ' + state.city + ')';
+      } else if (country) {
+        badge.title = 'Prices shown in ' + c.code + ' based on your registered country';
+      } else {
+        badge.title = 'Prices shown in ' + c.code;
+      }
     }
     renderPros();
     renderVehicles();
   }
 
-  function applyCurrency(code) {
+  function applyCurrency(code, isCityOverride) {
     if (!PH_CURRENCIES[code]) code = PH_DEFAULT_CURRENCY;
-    if (state.currency === code) return;
+    state.overrideCurrency = !!isCityOverride;
+    if (state.currency === code) { refreshCurrency(); return; }
     state.currency = code;
     refreshCurrency();
+  }
+
+  /** Reset the currency to the user's registered country (or USD). */
+  function resetCurrencyToUserCountry() {
+    state.city = '';
+    var locSel = $('#prohireLocationFilter');
+    if (locSel) locSel.value = '';
+    applyCurrency(getBaselineCurrency(), false);
+  }
+
+  /* ----------------------------------------------------------- CITY INJECTION */
+
+  function injectCityOptions() {
+    var sel = document.getElementById('prohireLocationFilter');
+    if (!sel) return;
+
+    var old = sel.querySelector('optgroup[data-remote="1"]');
+    if (old) old.remove();
+
+    var entries = Object.keys(PH_CITIES)
+      .filter(function (k) {
+        return !sel.querySelector('option[value="' + k + '"]');
+      })
+      .map(function (k) { return { key: k, label: PH_CITIES[k].label || k }; })
+      .sort(function (a, b) { return a.label.localeCompare(b.label); });
+
+    if (!entries.length) return;
+
+    var group = document.createElement('optgroup');
+    group.label = 'Other cities';
+    group.setAttribute('data-remote', '1');
+
+    entries.forEach(function (e) {
+      var opt = document.createElement('option');
+      opt.value = e.key;
+      opt.textContent = e.label;
+      group.appendChild(opt);
+    });
+
+    sel.appendChild(group);
+  }
+
+  /* ----------------------------------------------------------- ADD-PRO FLOW */
+
+  function openAddProModal() {
+    var m = document.getElementById('prohireAddProModal');
+    if (!m) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('Add-Pro form not found in the page.', 'fa-circle-exclamation');
+      }
+      return;
+    }
+    m.hidden = false;
+
+    var list = document.getElementById('phCityList');
+    if (list) {
+      list.innerHTML = Object.keys(PH_CITIES)
+        .map(function (k) { return '<option value="' + k + '">' + PH_CITIES[k].label + '</option>'; })
+        .join('');
+    }
+
+    var geoBtn = document.getElementById('addProGeoBtn');
+    if (geoBtn && !geoBtn._wired) {
+      geoBtn._wired = true;
+      geoBtn.addEventListener('click', function () {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var latEl = document.getElementById('addProLat');
+          var lngEl = document.getElementById('addProLng');
+          if (latEl) latEl.value = pos.coords.latitude.toFixed(6);
+          if (lngEl) lngEl.value = pos.coords.longitude.toFixed(6);
+        });
+      });
+    }
+
+    var form = document.getElementById('prohireAddProForm');
+    if (form && !form._wired) {
+      form._wired = true;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        addProFromForm(form);
+      });
+    }
+  }
+
+  function closeAddProModal() {
+    var m = document.getElementById('prohireAddProModal');
+    if (m) m.hidden = true;
+  }
+
+  function addProFromForm(form) {
+    var status = document.getElementById('addProStatus');
+    var name   = (form.querySelector('#addProName')   || {}).value || '';
+    var cat    = (form.querySelector('#addProCat')    || {}).value || '';
+    var spec   = (form.querySelector('#addProSpec')   || {}).value || '';
+    var cityRaw= (form.querySelector('#addProCity')   || {}).value || '';
+    var price  = parseInt((form.querySelector('#addProPrice') || {}).value, 10);
+    var unit   = (form.querySelector('#addProUnit')   || {}).value || 'hour';
+    var years  = parseInt((form.querySelector('#addProYears') || {}).value, 10) || 0;
+
+    name = String(name).trim();
+    spec = String(spec).trim();
+    cityRaw = String(cityRaw).trim();
+
+    if (!name || !cat || !spec || !cityRaw || !price) {
+      if (status) {
+        status.hidden = false;
+        status.style.color = '#b91c1c';
+        status.textContent = 'Please fill all required fields.';
+      }
+      return;
+    }
+
+    var cityKey = cityRaw.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    var lat = parseFloat((form.querySelector('#addProLat') || {}).value);
+    var lng = parseFloat((form.querySelector('#addProLng') || {}).value);
+
+    if (!PH_CITIES[cityKey]) {
+      if (isNaN(lat) || isNaN(lng)) {
+        if (status) {
+          status.hidden = false;
+          status.style.color = '#b91c1c';
+          status.textContent = 'New city "' + cityRaw + '" — please enter coordinates or click "Use my current location".';
+        }
+        return;
+      }
+      PH_CITIES[cityKey] = { lat: lat, lng: lng, label: cityRaw + ', (added)' };
+      /* Default currency for the new city = user's own country */
+      PH_CITY_CURRENCY[cityKey] = PH_CITY_CURRENCY[cityKey] || getBaselineCurrency();
+    }
+
+    var nextId = PH_PROS.reduce(function (m, p) { return p.id > m ? p.id : m; }, 0) + 1;
+    var iconMap = {
+      doctor:'fa-user-md', nurse:'fa-user-nurse', electrician:'fa-bolt',
+      plumber:'fa-faucet', mechanic:'fa-screwdriver-wrench', cleaner:'fa-broom',
+      barber:'fa-cut', hairdresser:'fa-scissors', cosmetologist:'fa-spa',
+      bricklayer:'fa-trowel-bricks', carpenter:'fa-hammer',
+      driver:'fa-car-side', security:'fa-shield-halved'
+    };
+
+    var newPro = {
+      id: nextId, name: name, cat: cat,
+      icon: iconMap[cat] || 'fa-user',
+      spec: spec, rating: 5.0, reviews: 0,
+      price: price, unit: unit, city: cityKey,
+      lat: PH_CITIES[cityKey].lat, lng: PH_CITIES[cityKey].lng,
+      years: years, avail: true, night: true, sameDay: true,
+      homeVisit: true, insured: true
+    };
+
+    PH_PROS.push(newPro);
+
+    try {
+      var stored = JSON.parse(localStorage.getItem('prohire_extra_pros') || '[]');
+      stored.push(newPro);
+      localStorage.setItem('prohire_extra_pros', JSON.stringify(stored));
+    } catch (e) {}
+
+    if (status) {
+      status.hidden = false;
+      status.style.color = '#1f7a3d';
+      status.textContent = '✓ ' + name + ' added.';
+    }
+
+    setTimeout(function () {
+      closeAddProModal();
+      form.reset();
+      injectCityOptions();
+      refreshCurrency();
+    }, 900);
+  }
+
+  function restoreLocalPros() {
+    try {
+      var stored = JSON.parse(localStorage.getItem('prohire_extra_pros') || '[]');
+      stored.forEach(function (p) {
+        if (!p || p.id == null) return;
+        if (PH_PROS.some(function (x) { return x.id === p.id; })) return;
+        if (!PH_CITIES[p.city]) {
+          PH_CITIES[p.city] = {
+            lat: Number(p.lat) || 0,
+            lng: Number(p.lng) || 0,
+            label: p.city + ', (added)'
+          };
+          PH_CITY_CURRENCY[p.city] = getBaselineCurrency();
+        }
+        PH_PROS.push(p);
+      });
+    } catch (e) {}
   }
 
   /* ----------------------------------------------------------- VEHICLES SCROLL */
@@ -409,8 +838,6 @@
     var section = modal.querySelector('.prohire-vehicles-section');
     if (!section) return;
 
-    /* The scrollable element is `.prohire-content` (vehicles live inside it now).
-       Fallback: the modal itself. */
     var scroller = modal.querySelector('.prohire-content') || modal;
     var targetTop = section.offsetTop - 8;
 
@@ -566,7 +993,8 @@
         var locSel = $('#prohireLocationFilter');
         if (locSel) locSel.value = nearest;
         if (txt) txt.textContent = PH_CITIES[nearest].label.split(',')[0];
-        applyCurrency(PH_CITY_CURRENCY[nearest] || PH_DEFAULT_CURRENCY);
+        /* Location pinning = city override */
+        applyCurrency(PH_CITY_CURRENCY[nearest] || getBaselineCurrency(), true);
       } else {
         state.city = '';
         var locSel2 = $('#prohireLocationFilter');
@@ -575,7 +1003,8 @@
         state.sort = 'distance';
         var sortSel = $('#prohireSortBy');
         if (sortSel) sortSel.value = 'distance';
-        applyCurrency(PH_DEFAULT_CURRENCY);
+        /* No city match — fall back to user's country */
+        applyCurrency(getBaselineCurrency(), false);
       }
 
       renderPros();
@@ -605,22 +1034,17 @@
 
   /* --------------------------------------------------------------- EVENTS */
 
-  /* Global click delegation — capture phase, runs before other handlers. */
   document.addEventListener('click', function (e) {
     var actionEl = e.target.closest('[data-action]');
 
-    /* Open ProHire (standard) */
     if (actionEl && actionEl.dataset.action === 'openProHireHub') {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       openProHire();
       return;
     }
 
-    /* Open ProHire + jump straight to the vehicles section */
     if (actionEl && actionEl.dataset.action === 'openProHireVehicles') {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       state.category = 'vehicles';
       var sel = $('#prohireCategoryFilter');
       if (sel) sel.value = 'vehicles';
@@ -633,29 +1057,36 @@
     }
 
     if (actionEl && actionEl.dataset.action === 'closeProHireHub') {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       closeProHire();
       return;
     }
 
     if (actionEl && actionEl.dataset.action === 'closeProHireBooking') {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       closeBooking();
       return;
     }
 
-    /* Hire / Book buttons inside the modal */
+    if (actionEl && actionEl.dataset.action === 'openProHireAddPro') {
+      e.preventDefault(); e.stopPropagation();
+      openAddProModal();
+      return;
+    }
+
+    if (actionEl && actionEl.dataset.action === 'closeProHireAddPro') {
+      e.preventDefault(); e.stopPropagation();
+      closeAddProModal();
+      return;
+    }
+
     var bookBtn = e.target.closest('[data-prohire-book]');
     if (bookBtn) {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       openBooking(bookBtn.dataset.prohireBook);
       return;
     }
 
-    /* Backdrop click closes the modal */
     var modal = $('#prohireModal');
     if (modal && !modal.hidden && e.target === modal) {
       closeProHire();
@@ -669,6 +1100,8 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
+    var ap = document.getElementById('prohireAddProModal');
+    if (ap && !ap.hidden) { closeAddProModal(); return; }
     var bm = $('#prohireBookingModal');
     if (bm && !bm.hidden) { closeBooking(); return; }
     var modal = $('#prohireModal');
@@ -683,7 +1116,9 @@
       return;
     }
 
-    /* Search */
+    /* Restore any locally-added pros before first render */
+    restoreLocalPros();
+
     var search = $('#prohireSearchInput');
     if (search) {
       var t;
@@ -697,17 +1132,19 @@
       });
     }
 
-    /* Location select */
     var locSel = $('#prohireLocationFilter');
     if (locSel) {
       locSel.addEventListener('change', function () {
         state.city = locSel.value;
-        applyCurrency(PH_CITY_CURRENCY[state.city] || PH_DEFAULT_CURRENCY);
+        /* City overrides; empty = fall back to registration country */
+        var code = state.city
+          ? (PH_CITY_CURRENCY[state.city] || getBaselineCurrency())
+          : getBaselineCurrency();
+        applyCurrency(code, !!state.city);
         renderPros();
       });
     }
 
-    /* Sort */
     var sortSel = $('#prohireSortBy');
     if (sortSel) {
       sortSel.addEventListener('change', function () {
@@ -716,7 +1153,6 @@
       });
     }
 
-    /* Category dropdown */
     var catSel = $('#prohireCategoryFilter');
     if (catSel) {
       catSel.addEventListener('change', function () {
@@ -729,7 +1165,6 @@
       });
     }
 
-    /* Category chips */
     var catBar = $('#prohireCategoryBar');
     if (catBar) {
       catBar.addEventListener('click', function (e) {
@@ -747,7 +1182,6 @@
       });
     }
 
-    /* Occasion chips */
     var occBar = $('#prohireOccasionBar');
     if (occBar) {
       occBar.addEventListener('click', function (e) {
@@ -762,16 +1196,29 @@
       });
     }
 
-    /* Use my location */
     var locBtn = $('#prohireUseLocation');
     if (locBtn) locBtn.addEventListener('click', useLocation);
 
-    /* Booking confirm */
     var confirmBtn = $('#prohireBookingConfirm');
     if (confirmBtn) confirmBtn.addEventListener('click', confirmBooking);
 
-    /* Initial paint */
+    /* Baseline currency = user's registered country */
+    state.currency = getBaselineCurrency();
+    state.overrideCurrency = false;
+
+    injectCityOptions();
     refreshCurrency();
+
+    /* If the user logs in / out on another tab, react to storage changes */
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'zbs_auth_user' || e.key === 'zbs_user' ||
+          e.key === 'authUser' || e.key === 'user') {
+        /* Only reset when there's no active city override */
+        if (!state.overrideCurrency) {
+          applyCurrency(getBaselineCurrency(), false);
+        }
+      }
+    });
   }
 
   if (document.readyState === 'loading') {
@@ -780,12 +1227,61 @@
     init();
   }
 
-  /* Expose for direct calls */
+  /* --------------------------------------------------------- PUBLIC API */
+
   window.ProHire = {
     open: openProHire,
     close: closeProHire,
     openBooking: openBooking,
-    scrollToVehicles: scrollToVehicles
+    openAddPro: openAddProModal,
+    closeAddPro: closeAddProModal,
+    scrollToVehicles: scrollToVehicles,
+
+    /* Re-render after external data changes */
+    refresh: refreshCurrency,
+    injectCityOptions: injectCityOptions,
+
+    /* Country-based currency helpers — call these after login/logout */
+    resetCurrencyToUserCountry: resetCurrencyToUserCountry,
+    getUserCountry: getUserCountry,
+    getBaselineCurrency: getBaselineCurrency,
+
+    /* Data exposed for external scripts */
+    CITIES:           PH_CITIES,
+    CURRENCIES:       PH_CURRENCIES,
+    CITY_CURRENCY:    PH_CITY_CURRENCY,
+    COUNTRY_CURRENCY: PH_COUNTRY_CURRENCY,
+    DEFAULT_CURRENCY: PH_DEFAULT_CURRENCY,
+    PROS:             PH_PROS,
+
+    /* Register a new city at runtime */
+    addCity: function (key, lat, lng, label, currencyCode) {
+      if (!key || lat == null || lng == null) return false;
+      PH_CITIES[key] = { lat: Number(lat), lng: Number(lng), label: label || key };
+      if (currencyCode && PH_CURRENCIES[currencyCode]) {
+        PH_CITY_CURRENCY[key] = currencyCode;
+      }
+      injectCityOptions();
+      return true;
+    },
+
+    /* Register a new pro at runtime */
+    addPro: function (pro) {
+      if (!pro || pro.id == null || !pro.name || !pro.city) return false;
+      if (!PH_CITIES[pro.city]) {
+        if (pro.lat == null || pro.lng == null) return false;
+        PH_CITIES[pro.city] = {
+          lat: Number(pro.lat),
+          lng: Number(pro.lng),
+          label: pro.city + ', (added)'
+        };
+      }
+      if (PH_PROS.some(function (x) { return x.id === pro.id; })) return false;
+      PH_PROS.push(pro);
+      injectCityOptions();
+      refreshCurrency();
+      return true;
+    }
   };
 
 })();
