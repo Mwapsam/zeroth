@@ -5069,3 +5069,171 @@ if (document.readyState === 'loading') {
         window.addEventListener('resize', setViewportVars);
     }
 })();
+/* ================================================================
+   LUSE MARKET TREND - DATA & LOGIC
+   ================================================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Initialise UI
+    initLuseTabs();
+    populateLuseMarket();
+});
+
+// 2. DATA (Extracted from SBZ PDF 16 Nov 2026)
+const luseMarketData = {
+    board: [
+        { symbol: "AECI", price: 115.00, change: "-11.54%", volume: 2, turnover: 219.8, mktCap: "113 694 055.52" },
+        { symbol: "ATEL", price: 222.00, change: "-", volume: 55, turnover: 12020.0, mktCap: "1 118 550 457.83" },
+        { symbol: "BATA", price: 9.53, change: "-", volume: 105, turnover: 1000.9, mktCap: "35 139 064.39" },
+        { symbol: "BATZ", price: 13.50, change: "-", volume: 199, turnover: 2697.9, mktCap: "138 954 513.06" },
+        { symbol: "CEC", price: 14.85, change: "-0.20%", volume: 323976, turnover: 4766202.4, mktCap: "1 169 093 496.70" },
+        { symbol: "CHILANGA", price: 47.00, change: "-", volume: 784, turnover: 36848.00, mktCap: "455 495 154.69" },
+        { symbol: "MADISON", price: 1.81, change: "-", volume: 0, turnover: 0, mktCap: "4 384 477.50" },
+        { symbol: "NATREW", price: 2.60, change: "-13.04%", volume: 4, turnover: 72.8, mktCap: "7 935 662.03" },
+        { symbol: "PUMA", price: 2.15, change: "+3.86%", volume: 1505, turnover: 3235.75, mktCap: "52 080 810.04" },
+        { symbol: "SCBL", price: 1.18, change: "-53.73%", volume: 4956, turnover: 5768.1, mktCap: "119 121 991.75" },
+        { symbol: "SHOPRITE", price: 350.00, change: "-", volume: 0, turnover: 0, mktCap: "45 782 665.57" },
+        { symbol: "ZAFFICO", price: 2.62, change: "-11.49%", volume: 3775, turnover: 9962.0, mktCap: "50 772 733.88" },
+        { symbol: "ZAMBEEF", price: 1.65, change: "-25.00%", volume: 13346, turnover: 22035.3, mktCap: "48 689 488.12" },
+        { symbol: "ZAMBIE", price: 2.74, change: "-2.14%", volume: 75, turnover: 205.5, mktCap: "5 973 547.79" },
+        { symbol: "ZAMBREW", price: 6.65, change: "-5.14%", volume: 0, turnover: 0, mktCap: "175 907 175.04" },
+        { symbol: "ZAMEFA", price: 33.50, change: "-44.17%", volume: 25, turnover: 837.5, mktCap: "43 966 782.13" },
+        { symbol: "ZANACO", price: 8.60, change: "-2.27%", volume: 3419, turnover: 29569.3, mktCap: "601 533 577.18" },
+        { symbol: "ZCCM-IH", price: 148.00, change: "-10.84%", volume: 9, turnover: 1338.0, mktCap: "1 152 969 445.67" },
+        { symbol: "ZSUG", price: 67.94, change: "-", volume: 46, turnover: 3090.8, mktCap: "1 041 819 249.89" }
+    ],
+    movers: {
+        gainers: [{ symbol: "PUMA", price: 2.15, change: "+3.86%" }, { symbol: "SCBL", price: 1.18, change: "+1.72%" }],
+        losers: [
+            { symbol: "ZAFFICO", price: 2.62, change: "-11.49%" },
+            { symbol: "REIZUSD", price: 0.11, change: "-8.33%" },
+            { symbol: "KLRE", price: 0.35, change: "-2.78%" },
+            { symbol: "ZANACO", price: 8.60, change: "-2.27%" },
+            { symbol: "CEC", price: 14.85, change: "-0.20%" }
+        ]
+    },
+    activity: [
+        { symbol: "CEC", volume: 323976, turnoverZMW: 4766202.4, turnoverUSD: 230909.47 },
+        { symbol: "CHILANGA", volume: 784, turnoverZMW: 36848, turnoverUSD: 1785.18 },
+        { symbol: "ZANACO", volume: 3419, turnoverZMW: 29569.3, turnoverUSD: 1432.55 },
+        { symbol: "ZAMBEEF", volume: 13346, turnoverZMW: 22035.3, turnoverUSD: 1067.55 }
+    ],
+    news: [
+        "ZCCM-IH is progressing with a proposed Listing Optimisation Project involving its listings on the LuSE, Euronext Access Paris and the LSE.",
+        "ZCCM-IH EGM will take place on 18 November 2026 at 10:00 at Mulungushi International Conference Centre, Lusaka.",
+        "Zambia Sugar PLC announced results for the year ended 31 August 2026. EPS decreased by 62% to 194.8 ngwee.",
+        "Zambia Sugar Plc 65th AGM will be held on 26 November 2026 at The Pamodzi Hotel, Lusaka.",
+        "ZFI Holdings Limited increased its shareholding in Madison from 47.56% to 86.40%.",
+        "REIZ concluded its Rights Offer on 4 November 2026, issuing 464.1 million new shares.",
+        "Zambeef released a trading update for the year ended 30 September 2026."
+    ],
+    dividends: [
+        { company: "CEC", period: "30-Jun-26", amount: 0.7618, recordDate: "20-Nov-26", payDate: "23-Nov-26" },
+        { company: "DCZM", period: "30-Jun-26", amount: 0.20, recordDate: "13-Nov-26", payDate: "16-Nov-26" }
+    ],
+    macro: [
+        { label: "Inflation (YoY)", value: "6.3%" },
+        { label: "Monetary Policy Rate", value: "10.75%" },
+        { label: "GDP Growth (2025)", value: "3.80%" },
+        { label: "GDP Growth (2026 Proj.)", value: "6.40%" },
+        { label: "180-Day T-Bill", value: "9.1%" },
+        { label: "10Y Gov Bond Yield", value: "14.50%" }
+    ],
+    fx: [
+        { currency: "USD", prev: 20.6005, curr: 20.6410, change: "+0.20%" },
+        { currency: "GBP", prev: 27.0500, curr: 27.0570, change: "+0.03%" },
+        { currency: "EUR", prev: 22.6170, curr: 22.5675, change: "-0.22%" },
+        { currency: "ZAR", prev: 1.2180, curr: 1.2060, change: "-0.99%" }
+    ]
+};
+
+// 3. HELPER FUNCTIONS
+const fmt = (num, dec = 2) => num.toLocaleString(undefined, { minimumFractionDigits: dec, maximumFractionDigits: dec });
+
+// 4. POPULATE DATA
+function populateLuseMarket() {
+    // A. Full Board
+    const boardBody = document.getElementById("luse-board-body");
+    if (boardBody) {
+        boardBody.innerHTML = luseMarketData.board.map(r => {
+            const cls = r.change.startsWith("-") ? "negative" : (r.change === "-" ? "neutral" : "positive");
+            return `
+            <tr>
+                <td><strong>${r.symbol}</strong></td>
+                <td>${r.price.toFixed(2)}</td>
+                <td><span class="luse-change ${cls}">${r.change}</span></td>
+                <td>${r.volume.toLocaleString()}</td>
+                <td>${fmt(r.turnover)}</td>
+                <td>$${r.mktCap}</td>
+            </tr>`;
+        }).join("");
+    }
+
+    // B. Movers
+    const gainersList = document.getElementById("luse-gainers-list");
+    const losersList = document.getElementById("luse-losers-list");
+    if (gainersList && losersList) {
+        gainersList.innerHTML = luseMarketData.movers.gainers.map(s => `
+            <li><span><strong>${s.symbol}</strong></span><span>ZMW ${s.price.toFixed(2)}</span><span class="luse-change positive">${s.change}</span></li>
+        `).join("");
+        
+        losersList.innerHTML = luseMarketData.movers.losers.map(s => `
+            <li><span><strong>${s.symbol}</strong></span><span>ZMW ${s.price.toFixed(2)}</span><span class="luse-change negative">${s.change}</span></li>
+        `).join("");
+    }
+
+    // C. Activity
+    const activityBody = document.getElementById("luse-activity-body");
+    if (activityBody) {
+        activityBody.innerHTML = luseMarketData.activity.map(r => `
+            <tr><td><strong>${r.symbol}</strong></td><td>${r.volume.toLocaleString()}</td><td>ZMW ${fmt(r.turnoverZMW)}</td><td>$${fmt(r.turnoverUSD)}</td></tr>
+        `).join("");
+    }
+
+    // D. News & Dividends
+    const newsList = document.getElementById("luse-news-list");
+    const divBody = document.getElementById("luse-dividends-body");
+    if (newsList && divBody) {
+        newsList.innerHTML = luseMarketData.news.map(n => `<li>${n}</li>`).join("");
+        divBody.innerHTML = luseMarketData.dividends.map(r => `
+            <tr><td><strong>${r.company}</strong></td><td>${r.period}</td><td>${r.amount.toFixed(4)}</td><td>${r.recordDate}</td><td>${r.payDate}</td></tr>
+        `).join("");
+    }
+
+    // E. Macro
+    const macroList = document.getElementById("luse-macro-list");
+    if (macroList) {
+        macroList.innerHTML = luseMarketData.macro.map(m => `<li><span>${m.label}</span><strong>${m.value}</strong></li>`).join("");
+    }
+
+    // F. FX
+    const fxBody = document.getElementById("luse-fx-body");
+    if (fxBody) {
+        fxBody.innerHTML = luseMarketData.fx.map(r => {
+            const cls = r.change.startsWith("-") ? "negative" : "positive";
+            return `<tr><td><strong>${r.currency}</strong></td><td>${r.prev.toFixed(4)}</td><td>${r.curr.toFixed(4)}</td><td><span class="luse-change ${cls}">${r.change}</span></td></tr>`;
+        }).join("");
+    }
+}
+
+// 5. TAB LOGIC (LuSE Sub-Navigation)
+function initLuseTabs() {
+    const navButtons = document.querySelectorAll(".luse-nav-btn");
+    const tabContents = document.querySelectorAll(".luse-tab-content");
+
+    navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            // Remove active from all buttons and contents
+            navButtons.forEach(b => b.classList.remove("active"));
+            tabContents.forEach(c => c.classList.remove("active"));
+
+            // Add active to clicked
+            btn.classList.add("active");
+            const targetId = "luse-panel-" + btn.dataset.luseTarget;
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add("active");
+            }
+        });
+    });
+}

@@ -1357,3 +1357,474 @@
     font-size: .7rem; font-weight: 600; text-transform: uppercase;
     letter-spacing: .3px;
 }
+/* ═══════════════════════════════════════════════════════════
+   EDUCATION LIBRARY — UPLOAD FORM + COVER IMAGES
+   ═══════════════════════════════════════════════════════════ */
+
+/* ---- Upload form shell ---- */
+.edu-upload-form {
+    margin: 16px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e2e8e4;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(15, 47, 27, .08);
+    animation: eduFadeIn .25s ease;
+}
+@keyframes eduFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.edu-upload-form-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef2f0;
+}
+.edu-upload-form-head h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1a202c;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.edu-upload-form-head h4 i { color: #1f7a3d; }
+
+/* ---- Two-column layout: cover | fields ---- */
+.edu-upload-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+@media (max-width: 640px) {
+    .edu-upload-grid { grid-template-columns: 1fr; }
+}
+
+.edu-upload-label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* ---- Cover picker ---- */
+.edu-cover-picker {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    background: #f8fafc;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.edu-cover-picker:hover {
+    border-color: #1f7a3d;
+    background: #f4fbf6;
+    box-shadow: 0 0 0 4px rgba(31, 122, 61, .08);
+}
+.edu-cover-picker:focus-within {
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 4px rgba(31, 122, 61, .12);
+}
+
+.edu-cover-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: .8rem;
+    text-align: center;
+    padding: 16px;
+    pointer-events: none;
+}
+.edu-cover-placeholder i {
+    font-size: 2rem;
+    color: #cbd5e1;
+}
+.edu-cover-placeholder small {
+    font-size: .7rem;
+    color: #a0aec0;
+}
+
+.edu-cover-preview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.edu-cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.edu-cover-preview button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, .7);
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .2s;
+}
+.edu-cover-preview button:hover {
+    background: #dc2626;
+}
+
+/* ---- Field rows ---- */
+.edu-upload-fields-col { display: flex; flex-direction: column; gap: 12px; }
+
+.edu-upload-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.edu-upload-row label {
+    font-size: .82rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+.edu-upload-row input[type="text"],
+.edu-upload-row input[type="number"],
+.edu-upload-row input[type="file"],
+.edu-upload-row select {
+    padding: 10px 12px;
+    border: 1px solid #d9e2dc;
+    border-radius: 8px;
+    font-size: .9rem;
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+}
+.edu-upload-row input:focus,
+.edu-upload-row select:focus {
+    outline: none;
+    border-color: #1f7a3d;
+    box-shadow: 0 0 0 3px rgba(31, 122, 61, .12);
+}
+
+.edu-upload-row--two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex-direction: row;
+}
+.edu-upload-row--two > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ---- Actions + status ---- */
+.edu-upload-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #eef2f0;
+}
+
+.edu-upload-status {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+}
+.edu-upload-status[data-type="error"] {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+.edu-upload-status[data-type="success"] {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+.edu-upload-status[data-type="info"] {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIBRARY CARD — COVER IMAGE
+   ═══════════════════════════════════════════════════════════ */
+
+.edu-library-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.edu-lib-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e2e8e4;
+    transition: transform .2s, box-shadow .2s;
+}
+.edu-lib-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(15, 47, 27, .12);
+}
+
+.edu-lib-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background-color: #f1f5f9;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 2.4rem;
+    font-weight: 700;
+    position: relative;
+}
+.edu-lib-cover--fallback {
+    background: linear-gradient(135deg, #1f7a3d 0%, #2e9e57 100%);
+    color: #fff;
+    font-size: 2.8rem;
+    letter-spacing: -.02em;
+}
+.edu-lib-cover--fallback::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 60%);
+    pointer-events: none;
+}
+
+.edu-lib-body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.edu-lib-title {
+    font-size: .9rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.edu-lib-author {
+    font-size: .78rem;
+    color: #718096;
+    margin: 0;
+}
+.edu-lib-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+    gap: 8px;
+}
+.edu-lib-price {
+    font-size: .8rem;
+    font-weight: 700;
+    color: #1f7a3d;
+    padding: 3px 8px;
+    background: #f0fdf4;
+    border-radius: 6px;
+}
+.edu-lib-price.is-paid {
+    background: #fef9c3;
+    color: #854d0e;
+}
+.edu-lib-type {
+    font-size: .7rem;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+/* ================================================================
+   EDUCATION LIBRARY — cover picker, upload form, library grid
+   ================================================================ */
+
+/* ---------- Cover picker ---------- */
+.edu-cover-picker{
+    position:relative; cursor:pointer; border-radius:10px;
+    outline:none; transition:background .15s;
+}
+.edu-cover-picker.dragover{ outline:2px dashed #1f7a3d; background:#f0faf3; }
+
+.edu-cover-placeholder{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; padding:24px; min-height:200px;
+    border:2px dashed #c8d6cc; border-radius:10px;
+    color:#5c6b61; text-align:center;
+}
+.edu-cover-placeholder i{ font-size:2rem; color:#1f7a3d; }
+.edu-cover-placeholder span{ font-weight:600; font-size:.9rem; }
+.edu-cover-placeholder small{ color:#8a998f; font-size:.75rem; }
+
+.edu-cover-preview{
+    position:relative; border-radius:10px; overflow:hidden;
+    border:1px solid #e2e8e4; background:#fff;
+}
+.edu-cover-preview img{
+    display:block; width:100%; height:auto; max-height:280px;
+    object-fit:cover;
+}
+#eduCoverRemove{
+    position:absolute; top:6px; right:6px;
+    width:28px; height:28px; border-radius:50%;
+    border:none; background:rgba(0,0,0,.6); color:#fff;
+    font-size:18px; line-height:1; cursor:pointer;
+    transition:background .15s;
+}
+#eduCoverRemove:hover{ background:rgba(180,30,30,.85); }
+
+/* `hidden` must beat display:flex */
+.edu-cover-preview[hidden],
+.edu-cover-placeholder[hidden]{ display:none !important; }
+
+/* ---------- Upload form ---------- */
+.edu-upload-form{
+    border:1px solid #e2e8e4; border-radius:12px;
+    background:#fafcfb; padding:18px; margin:14px 0 20px;
+}
+.edu-upload-form-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+}
+.edu-upload-form-head h4{ margin:0; font-size:1.05rem; }
+
+.edu-upload-grid{
+    display:grid; grid-template-columns:260px 1fr; gap:18px;
+}
+@media (max-width:720px){
+    .edu-upload-grid{ grid-template-columns:1fr; }
+}
+
+.edu-upload-fields-col{ display:flex; flex-direction:column; gap:12px; }
+.edu-upload-row{ display:flex; flex-direction:column; gap:4px; }
+.edu-upload-row--two{ flex-direction:row; gap:12px; }
+.edu-upload-row--two > div{ flex:1; display:flex; flex-direction:column; gap:4px; }
+.edu-upload-row label{ font-size:.85rem; font-weight:600; color:#33443a; }
+.edu-upload-row input,
+.edu-upload-row select{
+    padding:8px 10px; border:1px solid #cdd9d1; border-radius:8px;
+    font-size:.9rem; background:#fff;
+}
+.edu-upload-row input:focus,
+.edu-upload-row select:focus{ outline:2px solid #1f7a3d33; border-color:#1f7a3d; }
+
+.req{ color:#c0392b; }
+
+.edu-upload-form-actions{
+    display:flex; gap:10px; margin-top:16px; justify-content:flex-end;
+}
+.edu-upload-submit,
+.edu-upload-cancel{
+    padding:9px 16px; border-radius:8px; font-weight:600;
+    cursor:pointer; border:none; font-size:.9rem;
+    display:inline-flex; align-items:center; gap:6px;
+}
+.edu-upload-submit{ background:#1f7a3d; color:#fff; }
+.edu-upload-submit:hover{ background:#17602f; }
+.edu-upload-submit:disabled{ opacity:.6; cursor:not-allowed; }
+.edu-upload-cancel{ background:#eef2ef; color:#33443a; }
+.edu-upload-cancel:hover{ background:#e2e8e4; }
+
+.edu-upload-status{
+    margin-top:10px; padding:10px 12px; border-radius:8px;
+    font-size:.88rem;
+}
+.edu-upload-status.is-error{ background:#fdecea; color:#7a1f1f; }
+.edu-upload-status.is-success{ background:#eaf7ee; color:#17602f; }
+.edu-upload-status.is-info{ background:#eef6ff; color:#1d4ed8; }
+
+/* ---------- Library grid + cards ---------- */
+.edu-library-grid{
+    display:grid; gap:16px; margin-top:16px;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+}
+
+.edu-book-card{
+    background:#fff; border:1px solid #e2e8e4; border-radius:12px;
+    overflow:hidden; display:flex; flex-direction:column;
+    transition:transform .15s, box-shadow .15s;
+}
+.edu-book-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(31,122,61,.12);
+}
+
+.edu-book-cover{
+    aspect-ratio:3/4; background:#f0f4f1;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative;
+}
+.edu-book-cover img{ width:100%; height:100%; object-fit:cover; }
+.edu-book-cover .edu-book-cover-fallback{
+    font-size:2.4rem; color:#b7c6bc;
+}
+.edu-book-cat{
+    position:absolute; top:8px; left:8px;
+    background:rgba(31,122,61,.92); color:#fff;
+    font-size:.66rem; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; padding:3px 8px; border-radius:999px;
+}
+
+.edu-book-body{ padding:10px 12px 14px; display:flex; flex-direction:column; gap:4px; flex:1; }
+.edu-book-title{
+    font-weight:700; font-size:.92rem; color:#1e2a24; margin:0;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; min-height:2.6em;
+}
+.edu-book-author{ font-size:.78rem; color:#6c7d72; margin:0; }
+.edu-book-meta{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:auto; padding-top:8px; gap:6px;
+}
+.edu-book-price{
+    font-weight:700; font-size:.85rem; color:#1f7a3d;
+}
+.edu-book-price.free{
+    color:#17602f; background:#eaf7ee;
+    padding:2px 8px; border-radius:999px;
+    font-size:.72rem; letter-spacing:.04em;
+}
+.edu-book-actions{ display:flex; align-items:center; gap:4px; }
+.edu-book-download{
+    background:#1f7a3d; color:#fff; border:none; border-radius:6px;
+    padding:5px 10px; font-size:.78rem; cursor:pointer;
+    display:inline-flex; align-items:center; gap:4px;
+}
+.edu-book-download:hover{ background:#17602f; }
+.edu-book-remove{
+    background:transparent; border:none; color:#b7c6bc;
+    font-size:.9rem; padding:4px; border-radius:6px; cursor:pointer;
+    transition:color .15s, background .15s;
+}
+.edu-book-remove:hover{ color:#b42318; background:#fdecea; }
