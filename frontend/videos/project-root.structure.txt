@@ -1,0 +1,13 @@
+project-root/
+├── images/
+│   └── entertainment/
+│       ├── tomjerry-12.jpg
+│       ├── music/
+│       └── movies/
+├── videos/
+│   └── entertainment/
+│       ├── tomjerry-12.mp4
+│       └── movies/
+└── audio/
+    └── entertainment/
+        └── kalindula.mp3

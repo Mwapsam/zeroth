@@ -1360,7 +1360,7 @@
                 </div>
             </section>
         </section>
-         <div class="footer-bottom">
+        <div class="footer-bottom">
             <div class="footer-bottom-left">
                 <div class="footer-social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -1388,7 +1388,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> 
     </main>
 
     <!-- ================================================================
@@ -2049,8 +2049,8 @@
     </div>
   </div>
 </div>
-   <!-- ================================================================
-     EDUCATION HUB MODAL  (PDF library + Institution manager)
+<!-- ================================================================
+     EDUCATION HUB MODAL  (PDF library + Institution manager + Cover images)
      ================================================================ -->
 <div class="education-modal" id="educationModal" role="dialog" aria-modal="true" aria-labelledby="eduTitle" hidden>
     <div class="edu-container">
@@ -2084,18 +2084,15 @@
 
         <!-- ============ ACTIONS TOOLBAR ============ -->
         <div class="edu-actions">
-          
-<button class="edu-tutor-btn edu-tutor-btn--ai" data-action="openAITutor"
-    title="Ask the AI tutor anything">
-    <i class="fas fa-robot"></i> Ask AI Tutor (any topic)
-</button>
-<button class="edu-tutor-btn" data-action="openTutorModal"
-    title="Request a human tutor">
-    <i class="fas fa-chalkboard-teacher"></i> Request a Human Tutor
-</button>
-         
+            <button class="edu-tutor-btn edu-tutor-btn--ai" data-action="openAITutor"
+                title="Ask the AI tutor anything">
+                <i class="fas fa-robot"></i> Ask AI Tutor (any topic)
+            </button>
+            <button class="edu-tutor-btn" data-action="openTutorModal"
+                title="Request a human tutor">
+                <i class="fas fa-chalkboard-teacher"></i> Request a Human Tutor
+            </button>
 
-            <!-- NEW: Institution manager for non-technical staff -->
             <button class="edu-tool-btn edu-tool-btn--manage" data-action="eduManageInstitutions"
                 title="Add or remove schools, colleges and universities">
                 <i class="fas fa-university"></i> Manage Institutions
@@ -2108,7 +2105,7 @@
             </div>
         </div>
 
-        <!-- Hidden file input for PDF upload -->
+        <!-- Hidden file input for legacy bulk PDF upload -->
         <input type="file" id="eduPdfInput" multiple hidden />
 
         <div class="edu-content">
@@ -2136,23 +2133,104 @@
                     <p>No primary schools listed yet.</p>
                 </div>
             </div>
+
+            <!-- ============ LIBRARY PANEL ============ -->
             <div class="edu-panel" id="panel-library" data-panel="library" role="tabpanel">
                 <div class="edu-library-filter">
                     <button class="edu-lib-filter active" data-filter="all"><i class="fas fa-th"></i> All
                         Books</button>
                     <button class="edu-lib-filter" data-filter="free"><i class="fas fa-unlock"></i> Free</button>
                     <button class="edu-lib-filter" data-filter="paid"><i class="fas fa-tag"></i> For Sale</button>
-                        <!-- NEW: PDF library upload / download -->
-            <button class="edu-tool-btn edu-tool-btn--pdf" data-action="eduUploadPdf"
-                title="Upload PDF documents to the free library">
-                <i class="fas fa-file-pdf"></i> Upload PDF
-            </button>
-            <button class="edu-tool-btn edu-tool-btn--download" data-action="eduDownloadAllPdfs"
-                title="Download all free PDFs in the library">
-                <i class="fas fa-download"></i> Download Free PDFs
-            </button>
+
+                    <button class="edu-tool-btn edu-tool-btn--pdf" data-action="eduOpenUploadForm"
+                        title="Upload PDF documents with an optional cover image">
+                        <i class="fas fa-file-pdf"></i> Upload PDF
+                    </button>
+                    <button class="edu-tool-btn edu-tool-btn--download" data-action="eduDownloadAllPdfs"
+                        title="Download all free PDFs in the library">
+                        <i class="fas fa-download"></i> Download Free PDFs
+                    </button>
                 </div>
-                <div class="edu-grid" id="grid-library"></div>
+
+                <!-- ═══════════ NEW UPLOAD FORM (with cover image) ═══════════ -->
+                <div class="edu-upload-form" id="eduUploadForm" hidden>
+                    <div class="edu-upload-form-head">
+                        <h4><i class="fas fa-file-pdf"></i> Upload Book / PDF</h4>
+                        <button type="button" class="window-close-btn" id="eduUploadFormClose"
+                            aria-label="Close upload form">&times;</button>
+                    </div>
+
+                    <div class="edu-upload-grid">
+                        <!-- LEFT: Cover picker -->
+                        <div class="edu-upload-cover-col">
+                            <label class="edu-upload-label">Cover Image (optional)</label>
+                            <div class="edu-cover-picker" id="eduCoverPicker">
+                                <input type="file" id="eduCoverInput" accept="image/*" hidden />
+                                <div class="edu-cover-placeholder" id="eduCoverPlaceholder">
+                                    <i class="fas fa-image"></i>
+                                    <span>Click to add cover image</span>
+                                    <small>JPG, PNG, WEBP · up to 2 MB</small>
+                                </div>
+                                <div class="edu-cover-preview" id="eduCoverPreview" hidden>
+                                    <img id="eduCoverPreviewImg" alt="Cover preview" />
+                                    <button type="button" id="eduCoverRemove"
+                                        aria-label="Remove cover">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Fields -->
+                        <div class="edu-upload-fields-col">
+                            <div class="edu-upload-row">
+                                <label for="eduUploadTitle">Title *</label>
+                                <input type="text" id="eduUploadTitle" maxlength="120"
+                                    placeholder="e.g. Grade 12 Mathematics Notes" required />
+                            </div>
+                            <div class="edu-upload-row">
+                                <label for="eduUploadAuthor">Author</label>
+                                <input type="text" id="eduUploadAuthor" maxlength="120"
+                                    placeholder="e.g. J. Banda" />
+                            </div>
+                            <div class="edu-upload-row edu-upload-row--two">
+                                <div>
+                                    <label for="eduUploadPrice">Price (0 = free)</label>
+                                    <input type="number" id="eduUploadPrice" min="0" step="1" value="0" />
+                                </div>
+                                <div>
+                                    <label for="eduUploadCategory">Category</label>
+                                    <select id="eduUploadCategory">
+                                        <option value="general">General</option>
+                                        <option value="mathematics">Mathematics</option>
+                                        <option value="science">Science</option>
+                                        <option value="english">English</option>
+                                        <option value="history">History</option>
+                                        <option value="business">Business</option>
+                                        <option value="agriculture">Agriculture</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="edu-upload-row">
+                                <label for="eduPdfSingleInput">PDF File *</label>
+                                <input type="file" id="eduPdfSingleInput" accept="application/pdf" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edu-upload-actions">
+                        <button type="button" class="edu-tool-btn edu-tool-btn--pdf" id="eduUploadSubmit">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Book
+                        </button>
+                        <button type="button" class="edu-tool-btn" id="eduUploadCancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+
+                    <div class="edu-upload-status" id="eduUploadStatus" role="alert" hidden></div>
+                </div>
+                <!-- ═══════════ /NEW UPLOAD FORM ═══════════ -->
+
+                <div class="edu-grid edu-library-grid" id="grid-library"></div>
                 <div class="edu-empty" id="empty-library"><i class="fas fa-book"></i>
                     <p>No books yet.</p>
                 </div>
@@ -2164,69 +2242,6 @@
         </div>
     </div>
 </div>
-
-<!-- ================================================================
-     EDUCATION — INSTITUTION MANAGER MODAL (non-technical staff)
-     ================================================================ -->
-<div class="edu-manage-modal" id="eduManageModal" role="dialog" aria-modal="true"
-    aria-labelledby="eduManageTitle" hidden>
-    <div class="edu-manage-container">
-        <header class="edu-manage-header">
-            <div class="edu-manage-title">
-                <i class="fas fa-university"></i>
-                <span id="eduManageTitle">Manage Institutions</span>
-                <span class="edu-manage-badge">STAFF</span>
-            </div>
-            <button class="window-close-btn" data-action="closeEduManage"
-                aria-label="Close institution manager">&times;</button>
-        </header>
-
-        <div class="edu-manage-tabs" role="tablist">
-            <button class="edu-manage-tab active" data-edu-manage-tab="universities" role="tab"
-                aria-selected="true">
-                <i class="fas fa-university"></i> Universities
-            </button>
-            <button class="edu-manage-tab" data-edu-manage-tab="colleges" role="tab" aria-selected="false">
-                <i class="fas fa-user-graduate"></i> Colleges
-            </button>
-            <button class="edu-manage-tab" data-edu-manage-tab="highschools" role="tab" aria-selected="false">
-                <i class="fas fa-school"></i> High Schools
-            </button>
-            <button class="edu-manage-tab" data-edu-manage-tab="primaryschools" role="tab" aria-selected="false">
-                <i class="fas fa-child"></i> Primary Schools
-            </button>
-        </div>
-
-        <div class="edu-manage-body">
-            <form class="edu-manage-add-form" id="eduManageAddForm" novalidate>
-                <h4 class="edu-manage-add-title"><i class="fas fa-plus-circle"></i> Add New Institution</h4>
-                <div class="edu-manage-add-row">
-                    <div class="edu-manage-field">
-                        <label for="eduManageName">Name *</label>
-                        <input type="text" id="eduManageName" maxlength="120" required
-                            placeholder="e.g. University of Zambia" />
-                    </div>
-                    <div class="edu-manage-field">
-                        <label for="eduManageLocation">Location</label>
-                        <input type="text" id="eduManageLocation" maxlength="120"
-                            placeholder="e.g. Lusaka, Zambia" />
-                    </div>
-                    <button type="submit" class="edu-manage-add-btn">
-                        <i class="fas fa-plus"></i> Add
-                    </button>
-                </div>
-                <div class="edu-manage-status" id="eduManageStatus" role="alert" hidden></div>
-            </form>
-
-            <div class="edu-manage-list" id="eduManageList"></div>
-            <div class="edu-manage-empty" id="eduManageEmpty" hidden>
-                <i class="fas fa-inbox"></i>
-                <p>No institutions in this category yet.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
     <!-- ONLINE TUTOR MODAL -->
     <div class="tutor-modal" id="tutorModal" role="dialog" aria-modal="true" aria-labelledby="tutorTitle" hidden>
         <div class="tutor-container">
@@ -2907,6 +2922,192 @@
                         <div id="etfLuseTrends" class="etf-luse-trends"></div>
                         <div id="etfLuseMarketData" class="etf-luse-market-data"></div>
                         <div class="etf-companies-list" id="etfLuseGrid"></div>
+                        <!-- ================================================================
+     LuSE MARKET TREND & CLOSING SUMMARY
+     Place this inside the <div class="etf-pane" id="pane-luse"> ...
+     ================================================================ -->
+<div class="luse-trend-container">
+    
+    <!-- 1. TOP METRICS BANNER -->
+    <div class="luse-metrics-banner">
+        <div class="luse-metric-card">
+            <span class="lm-label">LuSE All Share (LASI)</span>
+            <span class="lm-value">24,419.60</span>
+            <span class="lm-change negative"><i class="fas fa-arrow-down"></i> 0.57%</span>
+        </div>
+        <div class="luse-metric-card">
+            <span class="lm-label">Market Cap (USD)</span>
+            <span class="lm-value">$6,505,565,327</span>
+            <span class="lm-sub">As of 16 Nov 2026</span>
+        </div>
+        <div class="luse-metric-card">
+            <span class="lm-label">Total Turnover (ZMW)</span>
+            <span class="lm-value">4,934,158.31</span>
+            <span class="lm-sub">USD 240,006.14</span>
+        </div>
+        <div class="luse-metric-card">
+            <span class="lm-label">Total Volume</span>
+            <span class="lm-value">412,789</span>
+            <span class="lm-sub">CECZ is 96.6% of turnover</span>
+        </div>
+    </div>
+
+    <!-- 2. SUB-NAVIGATION TABS -->
+    <div class="luse-sub-nav">
+        <button class="luse-nav-btn active" data-luse-target="board">
+            <i class="fas fa-table"></i> Full Board
+        </button>
+        <button class="luse-nav-btn" data-luse-target="movers">
+            <i class="fas fa-arrow-trend-up"></i> Movers
+        </button>
+        <button class="luse-nav-btn" data-luse-target="activity">
+            <i class="fas fa-chart-bar"></i> Activity
+        </button>
+        <button class="luse-nav-btn" data-luse-target="news">
+            <i class="fas fa-newspaper"></i> News & Dividends
+        </button>
+        <button class="luse-nav-btn" data-luse-target="macro">
+            <i class="fas fa-globe"></i> Macro & FX
+        </button>
+        <button class="luse-nav-btn" data-luse-target="News">
+            <i class="fas fa-gavel"></i>News
+        </button>
+    </div>
+
+    <!-- 3. CONTENT PANELS -->
+    <div class="luse-panels-wrapper">
+
+        <!-- Panel: Full Board -->
+        <div class="luse-tab-content active" id="luse-panel-board">
+            <div class="luse-table-scroll">
+                <table class="luse-data-table compact">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Price (ZMW)</th>
+                            <th>Change</th>
+                            <th>Volume</th>
+                            <th>Turnover (ZMW)</th>
+                            <th>Mkt Cap (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="luse-board-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panel: Movers -->
+        <div class="luse-tab-content" id="luse-panel-movers">
+            <div class="luse-grid-2">
+                <div class="luse-card-box">
+                    <h4 class="card-title text-green"><i class="fas fa-caret-up"></i> Top Gainers</h4>
+                    <ul class="luse-list" id="luse-gainers-list"></ul>
+                </div>
+                <div class="luse-card-box">
+                    <h4 class="card-title text-red"><i class="fas fa-caret-down"></i> Top Losers</h4>
+                    <ul class="luse-list" id="luse-losers-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel: Activity -->
+        <div class="luse-tab-content" id="luse-panel-activity">
+            <div class="luse-card-box">
+                <table class="luse-data-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Volume</th>
+                            <th>Turnover (ZMW)</th>
+                            <th>Turnover (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="luse-activity-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panel: News & Dividends -->
+        <div class="luse-tab-content" id="luse-panel-news">
+            <div class="luse-card-box">
+                <h4 class="card-title"><i class="fas fa-bullhorn"></i> Market Announcements</h4>
+                <ul class="luse-news-list" id="luse-news-list"></ul>
+                
+                <h4 class="card-title" style="margin-top: 24px;"><i class="fas fa-coins"></i> Dividend Payment Notice</h4>
+                <table class="luse-data-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Period</th>
+                            <th>Amount (ZMW)</th>
+                            <th>Record Date</th>
+                            <th>Pay Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="luse-dividends-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panel: Macro & FX -->
+        <div class="luse-tab-content" id="luse-panel-macro">
+            <div class="luse-grid-2">
+                <div class="luse-card-box">
+                    <h4 class="card-title"><i class="fas fa-percentage"></i> Macroeconomic Stats</h4>
+                    <ul class="luse-list" id="luse-macro-list"></ul>
+                </div>
+                <div class="luse-card-box">
+                    <h4 class="card-title"><i class="fas fa-dollar-sign"></i> Foreign Exchange</h4>
+                    <table class="luse-data-table">
+                        <thead>
+                            <tr>
+                                <th>Currency</th>
+                                <th>13 Nov</th>
+                                <th>16 Nov</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody id="luse-fx-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel: ZCCM-IH -->
+        <div class="luse-tab-content" id="luse-panel-zccm">
+            <div class="luse-card-box">
+                <h4 class="card-title"><i class="fas fa-info-circle"></i> ZCCM-IH Odd-Lot Offer</h4>
+                <p class="luse-note">
+                    <strong>Odd-Lot Offer</strong> — ZCCM-IH is proposing to buy back shares from
+                    shareholders who own fewer than <strong>100 shares</strong>. The Offer Price will be
+                    the 90-day volume-weighted average price (VWAP) up to <strong>08 December 2026</strong>
+                    plus a <strong>5% premium</strong>.
+                </p>
+                <ul class="luse-list" style="margin-bottom: 16px;">
+                    <li><span>Shareholders holding &lt; 100 shares</span><strong>≈ 3,637 (~73%)</strong></li>
+                    <li><span>Combined holding</span><strong>≈ 0.05% of Company</strong></li>
+                    <li><span>EGM Date</span><strong>18 Nov 2026 · 10:00 hrs</strong></li>
+                    <li><span>EGM Venue</span><strong>Mulungushi Int'l Conference Centre, Lusaka</strong></li>
+                    <li><span>Record Date (Voting)</span><strong>13 Nov 2026</strong></li>
+                    <li><span>Record Date (Offer)</span><strong>18 Dec 2026</strong></li>
+                </ul>
+                <h5 style="margin: 0 0 8px 0; font-size: 0.95rem;">Resolutions</h5>
+                <ol style="font-size: 0.9rem; padding-left: 20px; margin-bottom: 16px; line-height: 1.5;">
+                    <li><strong>Special Resolution 1</strong> — Amend Articles of Association (SOE Act, Odd-Lot, CREST/LSE).</li>
+                    <li><strong>Special Resolution 2</strong> — Authorise buyback of &lt;100 share holdings.</li>
+                    <li><strong>Ordinary Resolution 1</strong> — Directors authority to execute the Offer.</li>
+                </ol>
+                <p class="luse-note warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    If you hold &lt;100 shares and want to keep them, you must elect to retain them. Doing nothing means ZCCM-IH will buy them.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
                     </div>
                 </div>
 
@@ -4161,9 +4362,8 @@
      ═══════════════════════════════════════════════════════ -->
 <div id="agriCurrencyFilters" class="agri-currency-filters">
     <div class="form-group agri-currency-form-group">
-        
         <select id="agriFilterCountry" class="agri-currency-select" aria-label="Filter listings by country currency">
-            <option value="" data-currency="" data-symbol="">🌍Currencies</option>
+            <option value="" data-currency="" data-symbol="">🌍 Currencies</option>
             <option value="ZM" data-currency="ZMW" data-symbol="K">🇿🇲 Zambia — ZMW (K)</option>
             <option value="ZA" data-currency="ZAR" data-symbol="R">🇿🇦 South Africa — ZAR (R)</option>
             <option value="KE" data-currency="KES" data-symbol="KSh">🇰🇪 Kenya — KES (KSh)</option>
@@ -4237,7 +4437,7 @@
         <footer class="agriculture-footer">
             <span class="agriculture-footer-note">
                 <i class="fas fa-shield-alt"></i>
-                Verified farm suppliers · Commission & VAT inclusive · Nationwide delivery
+                Verified farm suppliers ·Commission & VAT inclusive · Nationwide delivery
             </span>
         </footer>
     </div>
@@ -7486,23 +7686,12 @@
                         <div class="footer-menu-category">
                             <div class="footer-menu-category-header financial-color" role="button" tabindex="0"
                                 aria-expanded="false" data-target="footer-financial-items">
-                                <span class="footer-menu-icon">💰</span><span class="financial-text">Financial
-                                    Services</span><span class="category-badge">8</span><i
+                                <span class="footer-menu-icon">💰</span><span class="financial-text">Palm@Financial
+                                    Services</span><span class="category-badge">ALL</span><i
                                     class="fas fa-chevron-down"></i>
                             </div>
                             <div class="footer-menu-category-items" id="footer-financial-items" role="menu" hidden>
-                                <a href="#" role="menuitem" data-action="openFinancialHub">🏦 Financial Hub</a>
-                                <a href="#" role="menuitem" data-action="openLoanApplication">📝 Loan Application</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Salary Advance">💳 Salary
-                                    Advance</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Savings">🏦 Savings</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Investments">📊
-                                    Investments</a>
-                                <a href="#" role="menuitem" data-action="openBetting">🎲 Betting Hub</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Business Loans">🏢
-                                    Business Loans</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Emergency Loans">🚨
-                                    Emergency Loans</a>
+                                <a href="#" role="menuitem" data-action="openFinancialHub">🏦Palm@Financial Services</a>
                             </div>
                         </div>
 
@@ -7511,45 +7700,31 @@
                                 aria-expanded="false" data-target="footer-brokerage-items">
                                 <span class="footer-menu-icon"><i class="fas fa-gear"
                                         aria-hidden="true"></i></span><span class="brokerage-text">Brokerage
-                                    Services</span><span class="category-badge">13</span><i
+                                    Services</span><span class="category-badge">09</span><i
                                     class="fas fa-chevron-down"></i>
                             </div>
                             <div class="footer-menu-category-items" id="footer-brokerage-items" role="menu" hidden>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Insurance">🛡️
-                                    Insurance</a>
-                                <a href="#" role="menuitem" data-action="openEducation">🎓 Education</a>
-                                <a href="#" role="menuitem" data-action="openETF">📈 ETF Trading</a>
-                                <a href="#" role="menuitem" data-action="openBetting">🎲 Betting</a>
-                                <a href="#" role="menuitem" data-action="openLoanApplication">📝 Loan Application</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Transport">🚚
-                                    Transport</a>
-                                <a href="#" role="menuitem" data-action="openEntertainment">🎬 Entertainment</a>
-                                <a href="#" role="menuitem" data-action="openConsultationHub">🧠 Consultation</a>
-                                <a href="#" role="menuitem" data-action="openPortfolio">💼 My Portfolio</a>
-                                <a href="#" role="menuitem" data-action="openRentalHub">🏘️ Rental Property</a>
-                                <a href="#" role="menuitem" data-action="openConstructionHub">🏗️ Construction &amp;
-                                    Survey</a>
-                                <a href="#" role="menuitem" data-action="openProHireHub">🛡️Palm@ProHire — Hire a Pro
-                                    (24/7)</a>
-                                <a href="#" role="menuitem" data-action="openProHireVehicles">🚗 Vehicles for Hire</a>
+                                <a href="#" role="menuitem" data-action="openEducation">🎓Palm@ Education</a>
+                                <a href="#" role="menuitem" data-action="openETF">📈Palm@ ETF Trading</a>
+                                <a href="#" role="menuitem" data-action="openBetting">🎲Palm@ Betting</a>
+                                <a href="#" role="menuitem" data-action="openEntertainment">🎬 Palm@Entertainment</a>
+                                <a href="#" role="menuitem" data-action="openConsultationHub">🧠Palm@ Consultation</a>
+                                <a href="#" role="menuitem" data-action="openRentalHub">🏘️Palm@ Rental Property</a>
+                                <a href="#" role="menuitem" data-action="openConstructionHub">🏗️ Palm@Construction &amp;Survey</a>
+                                <a href="#" role="menuitem" data-action="openProHireHub">🛡️Palm@ProHire — Hire a Pro(24/7)</a>
+                                <a href="#" role="menuitem" data-action="openProHireVehicles">🚗Palm@ Vehicles for Hire</a>
                             </div>
                         </div>
 
                         <div class="footer-menu-category">
                             <div class="footer-menu-category-header agricultural-color" role="button" tabindex="0"
                                 aria-expanded="false" data-target="footer-agricultural-items">
-                                <span class="footer-menu-icon">🌾</span><span class="agricultural-text">Agricultural
-                                    Services</span><span class="category-badge">4</span><i
+                                <span class="footer-menu-icon">🌾</span><span class="agricultural-text">Palm@Agricultural
+                                    Services</span><span class="category-badge">ALL</span><i
                                     class="fas fa-chevron-down"></i>
                             </div>
                             <div class="footer-menu-category-items" id="footer-agricultural-items" role="menu" hidden>
-                                <a href="#" role="menuitem" data-action="openAgricultureHub">🌾 Agriculture </a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Farm Produce">🌾 Farm
-                                    Produce</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Livestock">🐄
-                                    Livestock</a>
-                                <a href="#" role="menuitem" data-action="showToast" data-msg="Agro-Chemicals">🧪
-                                    Agro-Chemicals</a>
+                                <a href="#" role="menuitem" data-action="openAgricultureHub">🌾 Palm@Agriculture </a>
                             </div>
                         </div>
 

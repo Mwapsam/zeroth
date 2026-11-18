@@ -1,0 +1,352 @@
+/* ================================================================
+   WALLET — DEPOSIT BUTTON + WITHDRAW + PAYMENT METHODS
+   Loaded AFTER css/wallet.css so these rules win.
+   ================================================================ */
+
+/* ---------- Force-visible action row ---------- */
+#walletModal #walletDepositBtnRow {
+    display: flex !important;
+    flex-direction: column;
+    gap: 12px;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 5;
+    margin: 6px 0 14px;
+}
+
+#walletModal .wallet-deposit-btn,
+#walletModal .wallet-withdraw-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ---------- Primary Deposit CTA ---------- */
+.wallet-deposit-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 18px;
+    margin: 0;                       /* margin handled by parent row */
+    background: linear-gradient(135deg, #1f7a3d 0%, #2ea050 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(31, 122, 61, 0.28);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    text-align: left;
+}
+.wallet-deposit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(31, 122, 61, 0.35);
+    background: linear-gradient(135deg, #196632 0%, #279144 100%);
+}
+.wallet-deposit-btn:active { transform: translateY(0); }
+
+.wallet-deposit-btn-icon {
+    display: grid;
+    place-items: center;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+.wallet-deposit-btn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.wallet-deposit-btn-text strong {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+.wallet-deposit-btn-text small {
+    font-size: .76rem;
+    opacity: .85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wallet-deposit-btn-arrow {
+    font-size: .9rem;
+    opacity: .8;
+    flex-shrink: 0;
+}
+
+/* ---------- Secondary Withdraw button ---------- */
+.wallet-withdraw-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 18px;
+    background: #fff;
+    color: #1e2b24;
+    border: 1.5px solid #d1dbe0;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.wallet-withdraw-btn:hover {
+    border-color: #1f7a3d;
+    background: #f8fafb;
+    box-shadow: 0 4px 14px rgba(31, 122, 61, 0.08);
+}
+.wallet-withdraw-btn:active { transform: translateY(0); }
+
+.wallet-withdraw-btn-icon {
+    display: grid;
+    place-items: center;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: #eef2f4;
+    color: #1f7a3d;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.wallet-withdraw-btn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.wallet-withdraw-btn-text strong { font-size: .96rem; font-weight: 700; }
+.wallet-withdraw-btn-text small  { font-size: .74rem; color: #64748b; }
+
+/* ---------- Payment Methods section ---------- */
+.wallet-methods-section {
+    background: #f8fafb;
+    border: 1px solid #e6edf0;
+    border-radius: 14px;
+    padding: 12px 14px 10px;
+    margin-bottom: 0;
+}
+
+.wallet-methods-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.wallet-methods-title {
+    font-size: .82rem;
+    font-weight: 700;
+    color: #1e2b24;
+    letter-spacing: .2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.wallet-methods-title i { color: #1f7a3d; }
+.wallet-methods-manage {
+    background: none;
+    border: none;
+    color: #1f7a3d;
+    font-size: .74rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+}
+.wallet-methods-manage:hover { text-decoration: underline; }
+
+.wallet-methods-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wallet-method-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    font-size: .76rem;
+    font-weight: 600;
+    color: #1e2b24;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+    white-space: nowrap;
+}
+.wallet-method-chip:hover {
+    border-color: #1f7a3d;
+    box-shadow: 0 2px 8px rgba(31, 122, 61, 0.12);
+}
+.wallet-method-chip .chip-logo {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: .85rem;
+    background: #f1f5f9;
+    flex-shrink: 0;
+}
+.wallet-method-chip.airtel .chip-logo { background: #fee2e2; }
+.wallet-method-chip.mtn    .chip-logo { background: #fef3c7; }
+.wallet-method-chip.zamtel .chip-logo { background: #dbeafe; }
+.wallet-method-chip.visa   .chip-logo { background: #e0e7ff; }
+.wallet-method-chip.mastercard .chip-logo { background: #ffedd5; }
+.wallet-method-chip.bank   .chip-logo { background: #dcfce7; }
+.wallet-method-chip.crypto .chip-logo { background: #f3e8ff; }
+
+.wallet-method-chip .chip-tag {
+    font-size: .6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #e8f6ec;
+    color: #1f7a3d;
+    letter-spacing: .3px;
+}
+.wallet-method-chip .chip-tag.new { background: #fef3c7; color: #92400e; }
+
+.wallet-methods-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: .7rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+.wallet-methods-note i { color: #1f7a3d; margin-top: 1px; }
+
+/* ---------- Deposit modal — payment method grid ---------- */
+.wallet-method-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.wallet-method-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    text-align: left;
+    font-family: inherit;
+}
+.wallet-method-option:hover { border-color: #cbd5e1; background: #f8fafc; }
+.wallet-method-option.active {
+    border-color: #1f7a3d;
+    background: #f3fbf5;
+    box-shadow: 0 0 0 3px rgba(31, 122, 61, 0.12);
+}
+.wallet-method-option .method-logo {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    background: #f1f5f9;
+    flex-shrink: 0;
+}
+.wallet-method-option .method-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+.wallet-method-option .method-info strong {
+    font-size: .82rem;
+    font-weight: 700;
+    color: #1e2b24;
+    line-height: 1.2;
+}
+.wallet-method-option .method-info small {
+    font-size: .68rem;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wallet-method-option.active::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: .62rem;
+    color: #1f7a3d;
+}
+
+/* ---------- Dynamic deposit form ---------- */
+.wallet-dynamic-form { display: grid; gap: 12px; margin-top: 14px; }
+.wallet-dynamic-form .wallet-sub-field { margin: 0; }
+
+.wallet-deposit-tip {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fffbe6;
+    border: 1px solid #fde68a;
+    color: #78350f;
+    font-size: .74rem;
+    line-height: 1.4;
+}
+.wallet-deposit-tip i { color: #d97706; margin-top: 1px; }
+
+.wallet-deposit-ussd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    font-size: .78rem;
+    color: #1e3a8a;
+}
+.wallet-deposit-ussd code {
+    font-weight: 700;
+    background: #dbeafe;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: .5px;
+}
+
+/* ---------- Overflow / scroll safety ---------- */
+#walletModal .wallet-container {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+#walletModal .wallet-content,
+#walletModal .wallet-sub-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .wallet-deposit-btn { padding: 14px; }
+    .wallet-deposit-btn-text small { display: none; }
+    .wallet-withdraw-btn { padding: 12px 14px; }
+    .wallet-withdraw-btn-text small { display: none; }
+    .wallet-methods-chips { gap: 6px; }
+    .wallet-method-chip { font-size: .72rem; padding: 6px 10px; }
+    .wallet-method-grid { grid-template-columns: 1fr 1fr; }
+}
