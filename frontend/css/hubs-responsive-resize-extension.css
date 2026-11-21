@@ -1,0 +1,578 @@
+/* ==========================================================================
+   ZEROTH BUSINESS SOLUTIONS — HUBS RESPONSIVE EXTENSION
+   File: css/hubs-responsive-extension.css
+   Load: <link rel="stylesheet" href="css/hubs-responsive-extension.css" />
+         (must be the LAST stylesheet in <head>)
+   --------------------------------------------------------------------------
+   Purpose
+     Every hub / modal (Education, Entertainment, Advert, Market, Rental,
+     Financial, ETF, Bet, Agriculture, Construction, Social, ProHire,
+     Payment, Wallet, AI chat, Search, Login, Partner modals, TV Add,
+     Advert Detail) stretches to fit the available screen on tablet and
+     phone — no more fixed pixel widths, clipped content, or content that
+     only fits a 1400px desktop monitor.
+
+   Strategy
+     • Use clamp() for fluid font-sizes and padding.
+     • Use min(), max() and 100vw/100dvh for viewport-bounded sizing.
+     • Use dvh (dynamic viewport height) so the mobile browser toolbar
+       doesn't crop the bottom of a modal.
+     • Fall back gracefully on browsers without dvh via @supports.
+     • Keep safe-area insets for notched phones.
+     • Never fight the desktop layout — only kick in at ≤1024px.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Global helpers + tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --hub-vw: 100vw;
+  --hub-vh: 100dvh;                    /* dynamic vh — safe on mobile */
+  --hub-safe-top: env(safe-area-inset-top, 0px);
+  --hub-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --hub-safe-left: env(safe-area-inset-left, 0px);
+  --hub-safe-right: env(safe-area-inset-right, 0px);
+  --hub-radius: clamp(12px, 2vw, 20px);
+  --hub-gap: clamp(8px, 1.5vw, 16px);
+  --hub-pad: clamp(12px, 2.4vw, 22px);
+  --hub-font-sm: clamp(11px, 1.2vw, 13px);
+  --hub-font-md: clamp(13px, 1.5vw, 15px);
+  --hub-font-lg: clamp(16px, 2vw, 20px);
+  --hub-font-xl: clamp(18px, 2.6vw, 26px);
+  --hub-modal-max-w: min(96vw, 1100px);
+  --hub-modal-max-h: calc(var(--hub-vh) - 2 * var(--hub-gap));
+}
+
+/* Fallback for browsers without dvh support */
+@supports not (height: 100dvh) {
+  :root {
+    --hub-vh: 100vh;
+  }
+}
+
+/* Prevent horizontal scroll from any overflowing hub child */
+body:has(.hub-open) {
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   1. Shared modal / overlay shell — applies to every hub
+   --------------------------------------------------------------------------
+   Targets the outer fixed overlays AND the inner dialog containers so all
+   hubs behave identically without touching their specific class names.
+   -------------------------------------------------------------------------- */
+
+/* Outer overlay — full viewport, centered, scrollable, safe-area aware */
+[class*="modal"],
+.search-overlay,
+.partner-modal-overlay,
+.advert-detail-modal,
+.ai-chatbot-modal,
+.entertainment-modal,
+.education-modal,
+.advert-hub-modal,
+.ent-addtv-modal,
+.login-modal {
+  box-sizing: border-box;
+}
+
+/* When hidden attribute is present, never override the browser default */
+[hidden] {
+  display: none !important;
+}
+
+/* Inner dialog container — fluid width, viewport-bounded height */
+.login-modal .modal-content,
+.search-overlay .search-container,
+.ai-chatbot-modal,
+.entertainment-modal .ent-container,
+.education-modal .edu-container,
+.advert-hub-modal .advert-hub-container,
+.ent-addtv-modal .ent-addtv-container,
+.partner-modal,
+.advert-detail-modal .advert-detail-container,
+.partner-modal-overlay .partner-modal {
+  width: var(--hub-modal-max-w);
+  max-width: var(--hub-modal-max-w);
+  max-height: var(--hub-modal-max-h);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--hub-radius);
+}
+
+/* The outer fixed positioning layer — full-bleed, centered */
+.login-modal,
+.search-overlay,
+.ai-chatbot-modal,
+.entertainment-modal,
+.education-modal,
+.advert-hub-modal,
+.ent-addtv-modal,
+.partner-modal-overlay,
+.advert-detail-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(var(--hub-gap) + var(--hub-safe-top))
+    calc(var(--hub-gap) + var(--hub-safe-right))
+    calc(var(--hub-gap) + var(--hub-safe-bottom))
+    calc(var(--hub-gap) + var(--hub-safe-left));
+  z-index: 9999;
+}
+
+/* The chat bubble stays free-floating — exclude it */
+.ai-chatbot-container {
+  position: fixed;
+  z-index: 10000;
+}
+
+/* --------------------------------------------------------------------------
+   2. Fluid typography + spacing inside hubs
+   -------------------------------------------------------------------------- */
+.ent-container,
+.edu-container,
+.advert-hub-container,
+.ent-addtv-container,
+.partner-modal,
+.advert-detail-container,
+.search-container,
+.ai-chatbot-modal,
+.login-modal .modal-content {
+  font-size: var(--hub-font-md);
+  line-height: 1.45;
+}
+
+.ent-header-title,
+.edu-header-title,
+.advert-hub-header-title,
+.ent-addtv-title,
+.partner-modal-title,
+.advert-detail-title,
+.search-header h3 {
+  font-size: var(--hub-font-lg);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.partner-modal-title,
+.advert-detail-title {
+  font-size: var(--hub-font-xl);
+}
+
+/* Inputs and buttons — never smaller than 16px to stop iOS zoom-on-focus */
+.ent-container input,
+.ent-container select,
+.ent-container textarea,
+.edu-container input,
+.edu-container select,
+.edu-container textarea,
+.advert-hub-container input,
+.advert-hub-container select,
+.advert-hub-container textarea,
+.ent-addtv-container input,
+.ent-addtv-container select,
+.partner-modal input,
+.partner-modal select,
+.partner-modal textarea,
+.search-container input,
+.ai-chatbot-modal input,
+.login-modal input,
+.login-modal select {
+  font-size: max(16px, var(--hub-font-md));
+  min-height: 44px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Tabs — wrap, don't clip */
+.ent-tabs,
+.edu-tabs,
+.advert-hub-tabs,
+.partner-modal-actions,
+.ent-actions,
+.edu-actions,
+.advert-hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hub-gap);
+  align-items: center;
+}
+
+.ent-tab,
+.edu-tab,
+.advert-hub-tab {
+  flex: 1 1 auto;
+  min-width: max-content;
+  white-space: nowrap;
+  font-size: var(--hub-font-sm);
+  padding: clamp(8px, 1.6vw, 12px) clamp(10px, 2vw, 16px);
+  min-height: 44px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Grids inside hubs — fluid auto-fit columns
+   -------------------------------------------------------------------------- */
+.ent-grid,
+.edu-grid,
+.advert-hub-grid,
+.ent-sports-grid,
+.ent-tv-grid,
+.advert-hub-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: var(--hub-gap);
+  width: 100%;
+}
+
+.advert-hub-pricing-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+
+/* --------------------------------------------------------------------------
+   4. Search / toolbar rows — stack on phones
+   -------------------------------------------------------------------------- */
+.ent-search-box,
+.edu-search-box,
+.advert-hub-search-box,
+.ent-sports-search,
+.ent-tv-search,
+.search-input-wrapper,
+.ent-actions,
+.edu-actions,
+.advert-hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hub-gap);
+  width: 100%;
+}
+
+.ent-search-box input,
+.edu-search-box input,
+.advert-hub-search-box input,
+.ent-sports-search input,
+.ent-tv-search input,
+.search-input-wrapper input {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. Two-column form rows — collapse to one column on narrow screens
+   -------------------------------------------------------------------------- */
+.partner-form-row,
+.form-row,
+.edu-upload-row--two,
+.bp-form .partner-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hub-gap);
+}
+
+.partner-form-row > .pfield,
+.form-row > .form-group,
+.edu-upload-row--two > * {
+  flex: 1 1 min(240px, 100%);
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. AI chat modal — fill available space on mobile
+   -------------------------------------------------------------------------- */
+.ai-chatbot-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 460px);
+  height: min(80dvh, 700px);
+  max-height: calc(var(--hub-vh) - 2 * var(--hub-gap));
+}
+
+.ai-chatbot-modal .chat-messages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 30%;
+  overflow-y: auto;
+}
+
+.ai-suggestions .suggestion {
+  font-size: var(--hub-font-sm);
+  padding: 6px 10px;
+  min-height: 36px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Partner star / modal on tablet and phone
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  /* Hide the radial star; mobile grid takes over (mobile-partners.js) */
+  .partners-star-container,
+  #partnerSlotsContainer {
+    display: none !important;
+  }
+
+  .partners-grid-mobile {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(96px, 22vw), 1fr));
+    gap: var(--hub-gap);
+    width: 100%;
+    padding: var(--hub-pad);
+    box-sizing: border-box;
+  }
+
+  .partners-grid-mobile .partner-slot-mobile {
+    aspect-ratio: 1 / 1;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .partners-grid-mobile .partner-logo-img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+/* Above 1024px the desktop radial takes over again */
+@media (min-width: 1025px) {
+  .partners-grid-mobile {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Tablet tuning (≤1024px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  :root {
+    --hub-modal-max-w: min(94vw, 900px);
+  }
+
+  .ent-container,
+  .edu-container,
+  .advert-hub-container,
+  .ent-addtv-container,
+  .partner-modal,
+  .advert-detail-container {
+    padding: var(--hub-pad);
+  }
+
+  .ent-grid,
+  .edu-grid,
+  .advert-hub-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  }
+
+  .advert-detail-container {
+    flex-direction: column;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. Phone tuning (≤640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  :root {
+    --hub-modal-max-w: 100vw;
+    --hub-modal-max-h: 100dvh;
+    --hub-radius: 0;                  /* full-screen sheet feel */
+    --hub-pad: 14px;
+    --hub-gap: 10px;
+  }
+
+  /* Outer overlay stretches edge-to-edge, no gap padding */
+  .login-modal,
+  .search-overlay,
+  .ai-chatbot-modal,
+  .entertainment-modal,
+  .education-modal,
+  .advert-hub-modal,
+  .ent-addtv-modal,
+  .partner-modal-overlay,
+  .advert-detail-modal {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  /* Inner container becomes a full-screen sheet */
+  .login-modal .modal-content,
+  .search-overlay .search-container,
+  .ai-chatbot-modal,
+  .entertainment-modal .ent-container,
+  .education-modal .edu-container,
+  .advert-hub-modal .advert-hub-container,
+  .ent-addtv-modal .ent-addtv-container,
+  .partner-modal,
+  .advert-detail-modal .advert-detail-container {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    padding-top: calc(var(--hub-pad) + var(--hub-safe-top));
+    padding-bottom: calc(var(--hub-pad) + var(--hub-safe-bottom));
+    padding-left: calc(var(--hub-pad) + var(--hub-safe-left));
+    padding-right: calc(var(--hub-pad) + var(--hub-safe-right));
+  }
+
+  /* AI chat bubble stays as a bubble even on phone */
+  .ai-chatbot-modal {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  /* Headers become sticky so the close button is always reachable */
+  .ent-header,
+  .edu-header,
+  .advert-hub-header,
+  .ent-addtv-header,
+  .partner-modal-header,
+  .search-header,
+  .chat-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: inherit;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  /* Footer / action rows stack vertically and stay reachable */
+  .ent-footer,
+  .advert-hub-footer,
+  .partner-modal-actions,
+  .partner-form-actions,
+  .advert-hub-form-actions,
+  .ent-addtv-actions {
+    position: sticky;
+    bottom: 0;
+    background: inherit;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ent-footer > *,
+  .advert-hub-footer > *,
+  .partner-modal-actions > *,
+  .partner-form-actions > *,
+  .advert-hub-form-actions > *,
+  .ent-addtv-actions > * {
+    width: 100%;
+  }
+
+  /* Tabs scroll horizontally instead of wrapping tall */
+  .ent-tabs,
+  .edu-tabs,
+  .advert-hub-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .ent-tab,
+  .edu-tab,
+  .advert-hub-tab {
+    flex: 0 0 auto;
+    min-width: max-content;
+  }
+
+  /* Grids become single-column on very narrow phones */
+  .ent-grid,
+  .edu-grid,
+  .advert-hub-grid,
+  .ent-sports-grid,
+  .ent-tv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advert-hub-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stats / meta rows stack */
+  .advert-hub-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Very small phones (≤380px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+  :root {
+    --hub-pad: 10px;
+    --hub-gap: 8px;
+    --hub-font-sm: 11px;
+    --hub-font-md: 13px;
+  }
+
+  .advert-hub-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Landscape phones — cap height, allow inner scroll
+   -------------------------------------------------------------------------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  :root {
+    --hub-modal-max-h: calc(100vh - 2 * var(--hub-gap));
+  }
+
+  .login-modal,
+  .search-overlay,
+  .entertainment-modal,
+  .education-modal,
+  .advert-hub-modal,
+  .ent-addtv-modal,
+  .partner-modal-overlay,
+  .advert-detail-modal {
+    align-items: flex-start;
+    padding-top: var(--hub-gap);
+    padding-bottom: var(--hub-gap);
+  }
+
+  .ent-header,
+  .edu-header,
+  .advert-hub-header,
+  .ent-addtv-header,
+  .partner-modal-header,
+  .search-header,
+  .chat-header {
+    position: static;              /* no sticky in landscape — saves space */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Reduced-motion safety
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ent-container,
+  .edu-container,
+  .advert-hub-container,
+  .ent-addtv-container,
+  .partner-modal,
+  .advert-detail-container,
+  .search-container,
+  .ai-chatbot-modal,
+  .login-modal .modal-content {
+    transition: none !important;
+    animation: none !important;
+  }
+}

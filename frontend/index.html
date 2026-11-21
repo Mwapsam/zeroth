@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/buttons-responsive.css" />
     <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="css/mobile-tablet.css" />
     <!-- 2. FEATURE / HUB STYLESHEETS -->
     <link rel="stylesheet" href="css/consultation-hub.css" />
     <link rel="stylesheet" href="css/financial-hub.css" />
@@ -57,7 +58,7 @@
     <link rel="stylesheet" href="css/enhancements.css" />
     <link rel="stylesheet" href="css/my-shares.css" />
     <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
-
+    <link rel="stylesheet" href="css/hubs-responsive-extension.css" />
 </head>
 
 <body>
@@ -754,11 +755,9 @@
                                 </div>
                                 <div class="share-stock-info">
                                     <p><strong>📊 Current Share Offerings:</strong></p>
-                                    <p>• <strong>ZBS Limited</strong> – ZMW 5.00 per share (Minimum: 100 shares)</p>
-                                    <p>• <strong>ZBS Agro Holdings</strong> – ZMW 3.50 per share (Minimum: 200 shares)
-                                    </p>
-                                    <p>• <strong>ZBS Financial Partners</strong> – ZMW 8.00 per share (Minimum: 50
-                                        shares)</p>
+                                    <p>• <strong>ZBS Agriculture</strong> – ZMW 1.00 per share (Minimum: 100 shares)</p>
+                                    <p>• <strong>ZBS Brokerage</strong> – ZMW 2.00 per share (Minimum: 200 shares)</p>
+                                    <p>• <strong>ZBS Finance</strong> – ZMW 3.00 per share (Minimum: 50 shares)</p>
                                     <p><strong>💡 Note:</strong> Share prices are subject to market fluctuations.</p>
                                 </div>
                                 <form id="ZBS-StocksForm" novalidate>
@@ -1776,6 +1775,7 @@
             </form>
         </div>
     </div>
+    
     <!-- ================================================================
          ADVERT HUB MODAL
          ================================================================ -->
@@ -3961,340 +3961,373 @@
         </div>
     </div>
 
-    <!-- ================================================================
+  <!-- ================================================================
      MARKET HUB MODAL
      ================================================================ -->
-    <div class="market-modal" id="marketModal" role="dialog" aria-modal="true" aria-labelledby="marketTitle" hidden>
-        <div class="market-container">
+<div class="market-modal" id="marketModal" role="dialog" aria-modal="true"
+     aria-labelledby="marketTitle" hidden>
+    <div class="market-container">
 
-            <div class="market-header">
-                <div class="market-header-title">
-                    <i class="fas fa-store"></i>
-                    <span id="marketTitle">Palm@Market </span>
-                    <span class="market-badge">NEW</span>
-                </div>
-                <button class="window-close-btn" data-action="closeMarketHub"
+        <div class="market-header">
+            <div class="market-header-title">
+                <i class="fas fa-store"></i>
+                <span id="marketTitle">Palm@Market</span>
+                <span class="market-badge">NEW</span>
+            </div>
+            <button class="window-close-btn" data-action="closeMarketHub"
                     aria-label="Close market hub">&times;</button>
-            </div>
+        </div>
 
-            <div class="market-location-bar">
-                <i class="fas fa-map-marker-alt"></i>
-                <span id="marketLocationText">Location not set — Enable to find nearby shops</span>
-                <button class="market-location-btn" id="marketLocationBtn">
-                    <i class="fas fa-crosshairs"></i> Use My Location
-                </button>
-            </div>
+        <div class="market-location-bar">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="marketLocationText">Location not set — Enable to find nearby shops</span>
+            <button class="market-location-btn" id="marketLocationBtn" type="button">
+                <i class="fas fa-crosshairs"></i> Use My Location
+            </button>
+        </div>
 
-            <div class="market-tabs" role="tablist" aria-label="Market sections">
-                <button class="market-tab active" data-market-tab="browse" role="tab" aria-selected="true">
-                    <i class="fas fa-store"></i> <span>Browse</span>
-                </button>
-                <button class="market-tab" data-market-tab="cart" role="tab" aria-selected="false">
-                    <i class="fas fa-shopping-cart"></i> <span>Cart</span>
-                    <span class="market-tab-count" id="marketCartCount">0</span>
-                </button>
-                <button class="market-tab" data-market-tab="vendor" role="tab" aria-selected="false">
-                    <i class="fas fa-user-tie"></i> <span>Vendor</span>
-                </button>
-                <button class="market-tab" data-market-tab="orders" role="tab" aria-selected="false">
-                    <i class="fas fa-receipt"></i> <span>Orders</span>
-                </button>
-            </div>
+        <div class="market-tabs" role="tablist" aria-label="Market sections">
+            <button class="market-tab active" data-market-tab="browse" role="tab" aria-selected="true">
+                <i class="fas fa-store"></i> <span>Browse</span>
+            </button>
+            <button class="market-tab" data-market-tab="cart" role="tab" aria-selected="false">
+                <i class="fas fa-shopping-cart"></i> <span>Cart</span>
+                <span class="market-tab-count" id="marketCartCount">0</span>
+            </button>
+            <button class="market-tab" data-market-tab="vendor" role="tab" aria-selected="false">
+                <i class="fas fa-user-tie"></i> <span>Vendor</span>
+            </button>
+            <button class="market-tab" data-market-tab="orders" role="tab" aria-selected="false">
+                <i class="fas fa-receipt"></i> <span>Orders</span>
+            </button>
+        </div>
 
-            <div class="market-filters" id="marketFilters">
-                <div class="market-filter-search">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="marketSearchInput" placeholder="Search shops, products..."
-                        aria-label="Search shops" autocomplete="off" />
+        <div class="market-filters" id="marketFilters">
+            <div class="market-filter-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="marketSearchInput"
+                       placeholder="Search shops, products, barcodes..."
+                       aria-label="Search shops" autocomplete="off" />
+            </div>
+            <div class="market-filter-row">
+                <select class="market-select" id="marketCategoryFilter" aria-label="Category filter">
+                    <option value="">All Categories</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="produce">Produce</option>
+                    <option value="livestock">Livestock</option>
+                    <option value="inputs">Farm Inputs</option>
+                    <option value="equipment">Equipment</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="hardware">Hardware</option>
+                    <option value="pharmacy">Pharmacy</option>
+                    <option value="services">Services</option>
+                    <option value="other">Other</option>
+                </select>
+                <select class="market-select" id="marketRadiusFilter" aria-label="Radius filter">
+                    <option value="5">Within 5 km</option>
+                    <option value="10" selected>Within 10 km</option>
+                    <option value="25">Within 25 km</option>
+                    <option value="100">Within 100 km</option>
+                    <option value="500">Anywhere</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="market-content">
+
+            <!-- ==================== BROWSE ==================== -->
+            <div class="market-panel active" data-panel="browse" role="tabpanel" aria-label="Browse shops">
+                <div class="market-results-head">
+                    <h3><i class="fas fa-store"></i> Nearby Shops</h3>
+                    <span class="market-results-count" id="marketShopsCount">0</span>
                 </div>
-                <div class="market-filter-row">
-                    <select class="market-select" id="marketCategoryFilter" aria-label="Category filter">
-                        <option value="">All Categories</option>
-                        <option value="grocery">Grocery</option>
-                        <option value="agriculture">Agriculture</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="fashion">Fashion</option>
-                        <option value="hardware">Hardware</option>
-                        <option value="pharmacy">Pharmacy</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <select class="market-select" id="marketRadiusFilter" aria-label="Radius filter">
-                        <option value="5">Within 5 km</option>
-                        <option value="10" selected>Within 10 km</option>
-                        <option value="25">Within 25 km</option>
-                        <option value="100">Within 100 km</option>
-                        <option value="500">Anywhere</option>
-                    </select>
+                <div class="market-grid" id="marketShopsGrid"></div>
+                <div class="market-empty" id="marketShopsEmpty">
+                    <i class="fas fa-store"></i>
+                    <p>No shops yet.</p>
+                    <small>Vendors: create your first shop in the Vendor tab.</small>
                 </div>
             </div>
 
-            <div class="market-content">
-
-                <div class="market-panel active" data-panel="browse" role="tabpanel" aria-label="Browse shops">
-                    <div class="market-results-head">
-                        <h3><i class="fas fa-store"></i> Nearby Shops</h3>
-                        <span class="market-results-count" id="marketShopsCount">0</span>
-                    </div>
-                    <div class="market-grid" id="marketShopsGrid"></div>
-                    <div class="market-empty" id="marketShopsEmpty">
-                        <i class="fas fa-store"></i>
-                        <p>No shops yet.</p>
-                        <small>Vendors: create your first shop in the Vendor tab.</small>
-                    </div>
+            <!-- ==================== CART ==================== -->
+            <div class="market-panel" data-panel="cart" role="tabpanel" aria-label="Your cart">
+                <div class="market-cart-header">
+                    <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+                    <button class="market-clear-cart-btn" id="marketClearCartBtn"
+                            data-action="marketClearCart" type="button" hidden>
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
                 </div>
 
-                <div class="market-panel" data-panel="cart" role="tabpanel" aria-label="Your cart">
-                    <div class="market-cart-header">
-                        <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
-                        <button class="market-clear-cart-btn" id="marketClearCartBtn" data-action="marketClearCart"
-                            hidden>
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                    </div>
+                <div class="market-cart-items" id="marketCartItems"></div>
+                <div class="market-empty show" id="marketCartEmpty">
+                    <i class="fas fa-shopping-cart"></i>
+                    <p>Your cart is empty.</p>
+                    <small>Browse shops and add products to get started.</small>
+                </div>
 
-                    <div class="market-cart-items" id="marketCartItems"></div>
-                    <div class="market-empty" id="marketCartEmpty">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Your cart is empty.</p>
-                        <small>Browse shops and add products to get started.</small>
-                    </div>
+                <div class="market-checkout-section" id="marketCheckoutSection" hidden>
+                    <div class="market-checkout-grid">
+                        <div class="market-checkout-left">
+                            <h4 class="market-delivery-heading"><i class="fas fa-truck"></i> Delivery Options</h4>
+                            <div id="marketDeliveryOptions" class="market-delivery-options"></div>
 
-                    <div class="market-checkout-section" id="marketCheckoutSection" hidden>
-                        <div class="market-checkout-grid">
-
-                            <div class="market-checkout-left">
-                                <h4 class="market-delivery-heading"><i class="fas fa-truck"></i> Delivery Options</h4>
-                                <div id="marketDeliveryOptions" class="market-delivery-options"></div>
-
-                                <div class="market-form-group market-delivery-group">
-                                    <label for="marketDeliveryAddress">Delivery Address</label>
-                                    <input type="text" id="marketDeliveryAddress"
-                                        placeholder="Enter your delivery address" />
-                                </div>
-
-                                <div class="market-form-group">
-                                    <label for="marketPaymentMethod">Payment Method</label>
-                                    <select id="marketPaymentMethod">
-                                        <option value="cash">💵 Cash on Delivery</option>
-                                        <option value="mobile">📱 Mobile Money</option>
-                                        <option value="card">💳 Card</option>
-                                        <option value="bank">🏦 Bank Transfer</option>
-                                    </select>
-                                </div>
+                            <div class="market-form-group market-delivery-group">
+                                <label for="marketDeliveryAddress">Delivery Address</label>
+                                <input type="text" id="marketDeliveryAddress"
+                                       placeholder="Enter your delivery address" />
                             </div>
 
-                            <div class="market-checkout-right">
-                                <div class="market-checkout-summary" id="marketCheckoutSummary"></div>
-                                <button class="market-btn market-btn-primary full market-place-order-btn"
-                                    data-action="marketPlaceOrder">
-                                    <i class="fas fa-check"></i> Place Order
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="market-panel" data-panel="vendor" role="tabpanel" aria-label="Vendor dashboard">
-
-                    <div class="market-vendor-auth" id="marketVendorAuth">
-                        <div class="market-vendor-login-card">
-                            <i class="fas fa-user-tie"></i>
-                            <h3>Vendor Access</h3>
-                            <p>Register or login to start selling on the market.</p>
-                            <div class="market-vendor-auth-actions">
-                                <button class="market-btn market-btn-primary" data-action="openMarketAuth"
-                                    data-mode="login">
-                                    <i class="fas fa-sign-in-alt"></i> Login
-                                </button>
-                                <button class="market-btn market-btn-outline" data-action="openMarketAuth"
-                                    data-mode="register">
-                                    <i class="fas fa-user-plus"></i> Register
-                                </button>
+                            <div class="market-form-group">
+                                <label for="marketPaymentMethod">Payment Method</label>
+                                <select id="marketPaymentMethod">
+                                    <option value="cash">💵 Cash on Delivery</option>
+                                    <option value="mobile">📱 Mobile Money</option>
+                                    <option value="card">💳 Card</option>
+                                    <option value="bank">🏦 Bank Transfer</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="market-vendor-dashboard" id="marketVendorDashboard" hidden>
-                        <div class="market-vendor-hello">
-                            <i class="fas fa-user-circle"></i>
-                            <span>Welcome, <strong id="marketVendorName">Vendor</strong></span>
-                            <button class="market-logout-btn" data-action="marketVendorLogout">
-                                <i class="fas fa-sign-out-alt"></i> Logout
+                        <div class="market-checkout-right">
+                            <div class="market-checkout-summary" id="marketCheckoutSummary"></div>
+                            <button class="market-btn market-btn-primary full market-place-order-btn"
+                                    type="button" data-action="marketPlaceOrder">
+                                <i class="fas fa-check"></i> Place Order
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="market-card">
-                            <h3><i class="fas fa-store"></i> Create a Shop</h3>
-                            <form class="market-form" id="marketShopForm" novalidate>
+            <!-- ==================== VENDOR ==================== -->
+            <div class="market-panel" data-panel="vendor" role="tabpanel" aria-label="Vendor dashboard">
+
+                <!-- STEP 1 — gate -->
+                <div class="market-vendor-auth" id="marketVendorAuth">
+                    <div class="market-vendor-login-card">
+                        <button type="button" class="market-gate-close" data-action="closeMarketHub"
+                                aria-label="Close vendor panel">&times;</button>
+                        <i class="fas fa-user-tie"></i>
+                        <h3>Vendor Access</h3>
+                        <p>Register (with identity verification) or log in to start selling on the market.</p>
+                        <div class="market-vendor-auth-actions">
+                            <button class="market-btn market-btn-primary" type="button"
+                                    data-action="openMarketAuth" data-mode="login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                            <button class="market-btn market-btn-outline" type="button"
+                                    data-action="openMarketAuth" data-mode="register">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 — dashboard -->
+                <div class="market-vendor-dashboard" id="marketVendorDashboard" hidden>
+
+                    <div class="market-vendor-hello">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Welcome, <strong id="marketVendorName">Vendor</strong></span>
+                        <div class="market-vendor-hello-actions">
+                            <button class="market-logout-btn" type="button" data-action="marketVendorLogout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                            <button type="button" class="market-panel-close" data-action="closeMarketHub"
+                                    aria-label="Close market">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="market-card" id="marketShopFormCard">
+                        <h3><i class="fas fa-store"></i> Create a Shop</h3>
+                        <form class="market-form" id="marketShopForm" novalidate>
+                            <div class="market-form-group">
+                                <label for="marketShopName">Shop Name *</label>
+                                <input type="text" id="marketShopName" required maxlength="120"
+                                       placeholder="e.g. Shalom Shop" />
+                            </div>
+                            <div class="market-form-row">
                                 <div class="market-form-group">
-                                    <label for="marketShopName">Shop Name *</label>
-                                    <input type="text" id="marketShopName" required maxlength="120"
-                                        placeholder="e.g. Zamtel Airtime" />
+                                    <label for="marketShopFormCategory">Category *</label>
+                                    <select id="marketShopFormCategory" required>
+                                        <option value="">Select</option>
+                                        <option value="grocery">Grocery</option>
+                                        <option value="agriculture">Agriculture</option>
+                                        <option value="produce">Produce</option>
+                                        <option value="livestock">Livestock</option>
+                                        <option value="inputs">Farm Inputs</option>
+                                        <option value="equipment">Equipment</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="fashion">Fashion</option>
+                                        <option value="hardware">Hardware</option>
+                                        <option value="pharmacy">Pharmacy</option>
+                                        <option value="services">Services</option>
+                                        <option value="other">Other</option>
+                                    </select>
                                 </div>
-                                <div class="market-form-row">
-                                    <div class="market-form-group">
-                                        <label for="marketShopFormCategory">Category *</label>
-                                        <select id="marketShopFormCategory" required>
-                                            <option value="">Select</option>
-                                            <option value="grocery">Grocery</option>
-                                            <option value="agriculture">Agriculture</option>
-                                            <option value="electronics">Electronics</option>
-                                            <option value="fashion">Fashion</option>
-                                            <option value="hardware">Hardware</option>
-                                            <option value="pharmacy">Pharmacy</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                    </div>
-                                    <div class="market-form-group">
-                                        <label for="marketShopAddress">Address *</label>
-                                        <input type="text" id="marketShopAddress" required maxlength="200"
-                                            placeholder="Street, area" />
-                                    </div>
+                                <div class="market-form-group">
+                                    <label for="marketShopAddress">Address *</label>
+                                    <input type="text" id="marketShopAddress" required maxlength="200"
+                                           placeholder="Street, area" />
                                 </div>
-                                <div class="market-form-row three">
-                                    <div class="market-form-group">
-                                        <label for="marketShopLat">Latitude *</label>
-                                        <input type="number" id="marketShopLat" step="0.000001" required
-                                            placeholder="-15.4167" />
-                                    </div>
-                                    <div class="market-form-group">
-                                        <label for="marketShopLng">Longitude *</label>
-                                        <input type="number" id="marketShopLng" step="0.000001" required
-                                            placeholder="28.2833" />
-                                    </div>
-                                    <button type="button" class="market-btn market-btn-outline market-geo-btn"
+                            </div>
+                            <div class="market-form-row three">
+                                <div class="market-form-group">
+                                    <label for="marketShopLat">Latitude *</label>
+                                    <input type="number" id="marketShopLat" step="0.000001" required
+                                           placeholder="-15.4167" />
+                                </div>
+                                <div class="market-form-group">
+                                    <label for="marketShopLng">Longitude *</label>
+                                    <input type="number" id="marketShopLng" step="0.000001" required
+                                           placeholder="28.2833" />
+                                </div>
+                                <button type="button" class="market-btn market-btn-outline market-geo-btn"
                                         data-action="fillVendorGeo">
-                                        <i class="fas fa-crosshairs"></i> Use My Location
-                                    </button>
+                                    <i class="fas fa-crosshairs"></i> Use My Location
+                                </button>
+                            </div>
+                            <div class="market-form-group">
+                                <label for="marketShopDesc">Description</label>
+                                <textarea id="marketShopDesc" rows="2" maxlength="500"
+                                          placeholder="What do you sell?"></textarea>
+                            </div>
+                            <button type="submit" class="market-btn market-btn-primary">
+                                <i class="fas fa-plus"></i> Create Shop
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="market-card" id="marketProductFormCard" hidden>
+                        <h3><i class="fas fa-box"></i> Add a Product</h3>
+                        <form class="market-form" id="marketProductForm" novalidate>
+                            <div class="market-form-group">
+                                <label for="marketProductShop">Shop *</label>
+                                <select id="marketProductShop" required></select>
+                            </div>
+                            <div class="market-form-row">
+                                <div class="market-form-group">
+                                    <label for="marketProductName">Product Name *</label>
+                                    <input type="text" id="marketProductName" required maxlength="120"
+                                           placeholder="e.g. Fresh Tomatoes" />
                                 </div>
                                 <div class="market-form-group">
-                                    <label for="marketShopDesc">Description</label>
-                                    <textarea id="marketShopDesc" rows="2" maxlength="500"
-                                        placeholder="What do you sell?"></textarea>
+                                    <label for="marketProductCategory">Category</label>
+                                    <input type="text" id="marketProductCategory" maxlength="80"
+                                           placeholder="Vegetables" />
                                 </div>
-                                <button type="submit" class="market-btn market-btn-primary">
-                                    <i class="fas fa-plus"></i> Create Shop
-                                </button>
-                            </form>
-                        </div>
-
-                        <div class="market-card" id="marketProductFormCard" hidden>
-                            <h3><i class="fas fa-box"></i> Add a Product</h3>
-                            <form class="market-form" id="marketProductForm" novalidate>
+                            </div>
+                            <div class="market-form-row three">
                                 <div class="market-form-group">
-                                    <label for="marketProductShop">Shop *</label>
-                                    <select id="marketProductShop" required></select>
+                                    <label for="marketProductPrice">Price (ZMW) *</label>
+                                    <input type="number" id="marketProductPrice" step="0.01" min="0" required />
                                 </div>
-                                <div class="market-form-row">
-                                    <div class="market-form-group">
-                                        <label for="marketProductName">Product Name *</label>
-                                        <input type="text" id="marketProductName" required maxlength="120"
-                                            placeholder="e.g. Fresh Tomatoes" />
-                                    </div>
-                                    <div class="market-form-group">
-                                        <label for="marketProductCategory">Category</label>
-                                        <input type="text" id="marketProductCategory" maxlength="80"
-                                            placeholder="Vegetables" />
-                                    </div>
+                                <div class="market-form-group">
+                                    <label for="marketProductStock">Stock *</label>
+                                    <input type="number" id="marketProductStock" min="0" step="1" required />
                                 </div>
-                                <div class="market-form-row three">
-                                    <div class="market-form-group">
-                                        <label for="marketProductPrice">Price (ZMW) *</label>
-                                        <input type="number" id="marketProductPrice" step="0.01" min="0" required />
-                                    </div>
-                                    <div class="market-form-group">
-                                        <label for="marketProductStock">Stock *</label>
-                                        <input type="number" id="marketProductStock" min="0" step="1" required />
-                                    </div>
-                                    <div class="market-form-group">
-                                        <label for="marketProductUnit">Unit</label>
-                                        <input type="text" id="marketProductUnit" placeholder="kg / pc / box"
-                                            maxlength="20" />
-                                    </div>
+                                <div class="market-form-group">
+                                    <label for="marketProductUnit">Unit</label>
+                                    <input type="text" id="marketProductUnit"
+                                           placeholder="kg / pc / box" maxlength="20" />
                                 </div>
-                                <button type="submit" class="market-btn market-btn-primary">
-                                    <i class="fas fa-plus"></i> Add Product
-                                </button>
-                            </form>
-                        </div>
-
-                        <div class="market-card">
-                            <h3><i class="fas fa-list"></i> My Shops</h3>
-                            <div id="marketMyShops"></div>
-                        </div>
+                            </div>
+                            <button type="submit" class="market-btn market-btn-primary">
+                                <i class="fas fa-plus"></i> Add Product
+                            </button>
+                        </form>
                     </div>
-                </div>
 
-                <div class="market-panel" data-panel="orders" role="tabpanel" aria-label="My orders">
-                    <div class="market-results-head">
-                        <h3><i class="fas fa-receipt"></i> My Orders</h3>
-                        <span class="market-results-count" id="marketOrdersCount">0</span>
-                    </div>
-                    <div class="market-orders-list" id="marketOrdersList"></div>
-                    <div class="market-empty" id="marketOrdersEmpty">
-                        <i class="fas fa-receipt"></i>
-                        <p>No orders yet.</p>
-                        <small>Your placed orders will appear here.</small>
+                    <div class="market-card">
+                        <h3><i class="fas fa-list"></i> My Shops</h3>
+                        <div id="marketMyShops"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="market-footer">
-                <span class="market-footer-note">
-                    <i class="fas fa-shield-alt"></i>
-                    Buyer protection · Vendors verified · Geolocation-based search
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- MARKET SHOP DETAIL MODAL -->
-    <div class="market-shop-modal" id="marketShopModal" role="dialog" aria-modal="true"
-        aria-labelledby="marketShopTitle" hidden>
-        <div class="market-shop-container">
-
-            <div class="market-shop-header">
-                <button class="market-back-btn" data-action="closeMarketShop" aria-label="Back">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="market-shop-header-text">
-                    <span class="market-shop-category" id="marketShopCategory">Category</span>
-                    <h2 id="marketShopTitle">Shop Name</h2>
+            <!-- ==================== ORDERS ==================== -->
+            <div class="market-panel" data-panel="orders" role="tabpanel" aria-label="My orders">
+                <div class="market-results-head">
+                    <h3><i class="fas fa-receipt"></i> My Orders</h3>
+                    <span class="market-results-count" id="marketOrdersCount">0</span>
                 </div>
-                <button class="window-close-btn" data-action="closeMarketShop" aria-label="Close">&times;</button>
-            </div>
-
-            <div class="market-shop-body">
-                <div class="market-shop-info" id="marketShopInfo"></div>
-
-                <div class="market-section-subtitle-wrap">
-                    <h3 class="market-section-subtitle"><i class="fas fa-box"></i> Products</h3>
-                    <span class="market-results-count" id="marketShopProductsCount">0</span>
-                </div>
-
-                <div class="market-products-grid" id="marketShopProducts"></div>
-                <div class="market-empty" id="marketShopProductsEmpty" hidden>
-                    <i class="fas fa-box-open"></i>
-                    <p>No products listed yet.</p>
+                <div class="market-orders-list" id="marketOrdersList"></div>
+                <div class="market-empty" id="marketOrdersEmpty">
+                    <i class="fas fa-receipt"></i>
+                    <p>No orders yet.</p>
+                    <small>Your placed orders will appear here.</small>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- MARKET VENDOR AUTH MODAL -->
-    <div class="market-auth-modal" id="marketAuthModal" role="dialog" aria-modal="true"
-        aria-labelledby="marketAuthTitle" hidden>
-        <div class="market-auth-container">
-            <div class="market-auth-header">
-                <h2 id="marketAuthTitle">Vendor Login</h2>
-                <button class="window-close-btn" data-action="closeMarketAuth" aria-label="Close">&times;</button>
+        <div class="market-footer">
+            <span class="market-footer-note">
+                <i class="fas fa-shield-alt"></i>
+                Buyer protection · Vendors verified · Geolocation-based search
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     MARKET SHOP DETAIL MODAL
+     ================================================================ -->
+<div class="market-shop-modal" id="marketShopModal" role="dialog" aria-modal="true"
+     aria-labelledby="marketShopTitle" hidden>
+    <div class="market-shop-container">
+        <div class="market-shop-header">
+            <button class="market-back-btn" type="button" data-action="closeMarketShop" aria-label="Back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="market-shop-header-text">
+                <span class="market-shop-category" id="marketShopCategory">Category</span>
+                <h2 id="marketShopTitle">Shop Name</h2>
             </div>
-            <form class="market-form" id="marketAuthForm" novalidate>
-                <div class="market-form-group" id="marketAuthNameField" hidden>
-                    <label for="marketAuthName">Your Name *</label>
-                    <input type="text" id="marketAuthName" maxlength="120" />
-                </div>
+            <button class="window-close-btn" type="button" data-action="closeMarketShop"
+                    aria-label="Close">&times;</button>
+        </div>
+        <div class="market-shop-body">
+            <div class="market-shop-info" id="marketShopInfo"></div>
+            <div class="market-section-subtitle-wrap">
+                <h3 class="market-section-subtitle"><i class="fas fa-box"></i> Products</h3>
+                <span class="market-results-count" id="marketShopProductsCount">0</span>
+            </div>
+            <div class="market-products-grid" id="marketShopProducts"></div>
+            <div class="market-empty" id="marketShopProductsEmpty" hidden>
+                <i class="fas fa-box-open"></i>
+                <p>No products listed yet.</p>
+            </div>
+            <!-- Insert after #marketShopProducts in #marketShopModal -->
+<button class="market-btn market-btn-primary full"
+        type="button"
+        data-action="marketAddProductFromDetail"
+        data-shop-id="sh_xyz789"
+        hidden>
+    <i class="fas fa-plus"></i> Add a product to this shop
+</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+     MARKET VENDOR AUTH MODAL — login / register + secure verification
+     ================================================================ -->
+<div class="market-auth-modal" id="marketAuthModal" role="dialog" aria-modal="true"
+     aria-labelledby="marketAuthTitle" hidden>
+    <div class="market-auth-container">
+        <div class="market-auth-header">
+            <h2 id="marketAuthTitle">Vendor Login</h2>
+            <button class="window-close-btn" type="button" data-action="closeMarketAuth"
+                    aria-label="Close">&times;</button>
+        </div>
+
+        <form class="market-form" id="marketAuthForm" novalidate>
+
+            <!-- ============ LOGIN FIELDS ============ -->
+            <div id="marketAuthLoginFields">
                 <div class="market-form-group">
                     <label for="marketAuthEmail">Email *</label>
                     <input type="email" id="marketAuthEmail" required maxlength="120" />
@@ -4303,15 +4336,260 @@
                     <label for="marketAuthPassword">Password *</label>
                     <input type="password" id="marketAuthPassword" required minlength="4" />
                 </div>
-                <button type="submit" class="market-btn market-btn-primary full">
-                    <span id="marketAuthSubmitText">Login</span>
-                </button>
-                <p class="market-auth-toggle-text">
-                    <a href="#" id="marketAuthToggle">Need an account? Register</a>
-                </p>
-            </form>
-        </div>
+            </div>
+
+            <!-- ============ REGISTER FIELDS ============ -->
+            <div id="marketAuthRegisterFields" hidden>
+
+                <!-- Account -->
+                <fieldset class="market-fieldset">
+                    <legend><i class="fas fa-key"></i> Account Credentials</legend>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="marketAuthName">Full Name *</label>
+                            <input type="text" id="marketAuthName" maxlength="120" autocomplete="name" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="marketAuthRegEmail">Email *</label>
+                            <input type="email" id="marketAuthRegEmail" maxlength="150" autocomplete="email" />
+                        </div>
+                    </div>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="marketAuthRegPassword">Password *</label>
+                            <input type="password" id="marketAuthRegPassword" minlength="6"
+                                   autocomplete="new-password" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="marketAuthConfirmPassword">Confirm Password *</label>
+                            <input type="password" id="marketAuthConfirmPassword" minlength="6"
+                                   autocomplete="new-password" />
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Business -->
+                <fieldset class="market-fieldset">
+                    <legend><i class="fas fa-store"></i> Business Information</legend>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="mvBusinessName">Business / Trading Name *</label>
+                            <input type="text" id="mvBusinessName" maxlength="120"
+                                   placeholder="e.g. Chikondi Fresh Produce" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="mvCategory">Primary Category *</label>
+                            <select id="mvCategory">
+                                <option value="">Select</option>
+                                <option value="grocery">Grocery</option>
+                                <option value="agriculture">Agriculture</option>
+                                <option value="produce">Produce</option>
+                                <option value="livestock">Livestock</option>
+                                <option value="inputs">Farm Inputs</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="fashion">Fashion</option>
+                                <option value="hardware">Hardware</option>
+                                <option value="pharmacy">Pharmacy</option>
+                                <option value="services">Services</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="market-form-group">
+                        <label for="mvBusinessAddress">Business Physical Address *</label>
+                        <textarea id="mvBusinessAddress" rows="2" maxlength="300"
+                                  placeholder="Street, area, city, landmark"></textarea>
+                    </div>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="mvBusinessPhone">Business Phone *</label>
+                            <input type="tel" id="mvBusinessPhone" maxlength="30"
+                                   placeholder="+260 97 000 0000" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="mvBusinessEmail">Business Email</label>
+                            <input type="email" id="mvBusinessEmail" maxlength="150"
+                                   placeholder="you@business.com" />
+                        </div>
+                    </div>
+                    <div class="market-form-row three">
+                        <div class="market-form-group">
+                            <label for="mvShopLat">Latitude *</label>
+                            <input type="number" id="mvShopLat" step="0.000001" placeholder="-15.4167" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="mvShopLng">Longitude *</label>
+                            <input type="number" id="mvShopLng" step="0.000001" placeholder="28.2833" />
+                        </div>
+                        <button type="button" class="market-btn market-btn-outline market-geo-btn"
+                                data-action="fillVendorGeo">
+                            <i class="fas fa-crosshairs"></i> Use My Location
+                        </button>
+                    </div>
+                    <div class="market-form-group">
+                        <label for="mvShopDesc">Shop Description</label>
+                        <textarea id="mvShopDesc" rows="2" maxlength="500"
+                                  placeholder="What do you sell?"></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Identity -->
+                <fieldset class="market-fieldset">
+                    <legend><i class="fas fa-id-card"></i> Identity Verification (required)</legend>
+                    <div class="market-upload-grid">
+
+                        <div class="market-upload-card">
+                            <label class="market-upload-label">Passport Photo <span class="req">*</span></label>
+                            <div class="market-upload-zone" id="mvPassportZone" tabindex="0" role="button"
+                                 aria-label="Upload passport photo">
+                                <input type="file" id="mvPassportInput" accept="image/*" hidden />
+                                <div class="market-upload-placeholder" id="mvPassportPlaceholder">
+                                    <i class="fas fa-user-circle"></i><span>Upload photo</span>
+                                    <small>Clear face, plain background</small>
+                                </div>
+                                <div class="market-upload-preview" id="mvPassportPreview" hidden>
+                                    <img id="mvPassportImg" alt="Passport preview" />
+                                    <button type="button" class="market-upload-remove"
+                                            data-remove="passport" aria-label="Remove">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="market-upload-card">
+                            <label class="market-upload-label">NRC / National ID <span class="req">*</span></label>
+                            <div class="market-upload-zone" id="mvNrcZone" tabindex="0" role="button"
+                                 aria-label="Upload NRC">
+                                <input type="file" id="mvNrcInput" accept="image/*" hidden />
+                                <div class="market-upload-placeholder" id="mvNrcPlaceholder">
+                                    <i class="fas fa-id-card"></i><span>Upload NRC</span>
+                                    <small>Front side, clearly visible</small>
+                                </div>
+                                <div class="market-upload-preview" id="mvNrcPreview" hidden>
+                                    <img id="mvNrcImg" alt="NRC preview" />
+                                    <button type="button" class="market-upload-remove"
+                                            data-remove="nrc" aria-label="Remove">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="market-upload-card">
+                            <label class="market-upload-label">Driver's Licence <span class="opt">(optional)</span></label>
+                            <div class="market-upload-zone" id="mvLicenseZone" tabindex="0" role="button"
+                                 aria-label="Upload driver's licence">
+                                <input type="file" id="mvLicenseInput" accept="image/*" hidden />
+                                <div class="market-upload-placeholder" id="mvLicensePlaceholder">
+                                    <i class="fas fa-car"></i><span>Upload licence</span>
+                                    <small>Alternative Voters card</small>
+                                </div>
+                                <div class="market-upload-preview" id="mvLicensePreview" hidden>
+                                    <img id="mvLicenseImg" alt="Licence preview" />
+                                    <button type="button" class="market-upload-remove"
+                                            data-remove="license" aria-label="Remove">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="market-upload-card">
+                            <label class="market-upload-label">Selfie holding ID /Option<span class="req">*</span></label>
+                            <div class="market-upload-zone" id="mvSelfieZone" tabindex="0" role="button"
+                                 aria-label="Upload selfie with ID">
+                                <input type="file" id="mvSelfieInput" accept="image/*" capture="user" hidden />
+                                <div class="market-upload-placeholder" id="mvSelfiePlaceholder">
+                                    <i class="fas fa-camera"></i><span>Take selfie</span>
+                                    <small>Hold NRC next to your face</small>
+                                </div>
+                                <div class="market-upload-preview" id="mvSelfiePreview" hidden>
+                                    <img id="mvSelfieImg" alt="Selfie preview" />
+                                    <button type="button" class="market-upload-remove"
+                                            data-remove="selfie" aria-label="Remove">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Next of kin -->
+                <fieldset class="market-fieldset">
+                    <legend><i class="fas fa-user-friends"></i> Next of Kin (security contact)</legend>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="mvKinName">Full Name *</label>
+                            <input type="text" id="mvKinName" maxlength="120"
+                                   placeholder="Next of kin full name" />
+                        </div>
+                        <div class="market-form-group">
+                            <label for="mvKinPhone">Phone *</label>
+                            <input type="tel" id="mvKinPhone" maxlength="30"
+                                   placeholder="+260 97 000 0000" />
+                        </div>
+                    </div>
+                    <div class="market-form-group">
+                        <label for="mvKinAddress">Next of Kin Address *</label>
+                        <textarea id="mvKinAddress" rows="2" maxlength="300"
+                                  placeholder="Physical address of next of kin"></textarea>
+                    </div>
+                    <div class="market-form-group">
+                        <label for="mvKinRelationship">Relationship</label>
+                        <select id="mvKinRelationship">
+                            <option value="">Select</option>
+                            <option value="spouse">Spouse</option>
+                            <option value="parent">Parent</option>
+                            <option value="sibling">Sibling</option>
+                            <option value="child">Child</option>
+                            <option value="relative">Other relative</option>
+                            <option value="friend">Friend</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- Payout -->
+                <fieldset class="market-fieldset">
+                    <legend><i class="fas fa-percentage"></i> Payment &amp; Commission</legend>
+                    <div class="market-form-row">
+                        <div class="market-form-group">
+                            <label for="mvPayoutMethod">Payout Method *</label>
+                            <select id="mvPayoutMethod">
+                                <option value="">Select</option>
+                                <option value="airtel">Airtel Money</option>
+                                <option value="mtn">MTN Mobile Money</option>
+                                <option value="zamtel">Zamtel Money</option>
+                                <option value="bank">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="market-form-group">
+                            <label for="mvPayoutNumber">Payout Account / Number *</label>
+                            <input type="text" id="mvPayoutNumber" maxlength="40"
+                                   placeholder="Mobile number or account" />
+                        </div>
+                    </div>
+                    <div class="market-form-group">
+                        <label for="mvCommission">Agreed Commission Rate (%) *</label>
+                        <input type="number" id="mvCommission" min="0" max="30" step="0.5" value="10" />
+                        <small class="market-hint">Platform commission deducted per sale (0–30%).</small>
+                    </div>
+                </fieldset>
+
+                <label class="market-terms-check">
+                    <input type="checkbox" id="mvAgreeTerms" />
+                    <span>I confirm all documents are genuine and agree to the
+                        <a href="#" target="_blank" rel="noopener noreferrer">Vendor Terms</a> and
+                        <a href="#" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                        <span class="req">*</span></span>
+                </label>
+            </div>
+
+            <div class="market-status" id="marketAuthStatus" role="alert" hidden></div>
+
+            <button type="submit" class="market-btn market-btn-primary full">
+                <span id="marketAuthSubmitText">Login</span>
+            </button>
+            <p class="market-auth-toggle-text">
+                <a href="#" id="marketAuthToggle">Need an account? Register</a>
+            </p>
+        </form>
     </div>
+</div>
 <!-- ================================================================
      AGRICULTURE HUB MODAL
      ================================================================ -->
@@ -7748,7 +8026,7 @@
                         <i class="fas fa-microphone"></i>
                         <i class="fas fa-camera"></i>
                     </span>
-                    <span class="footer-search-badge" id="footerSearchBadge">search</span>
+                    <span class="footer-search-badge" id="footerSearchBadge">ZBS</span>
                 </button>
             </div>
         </div>
@@ -8207,6 +8485,7 @@
             integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="js/app.js" defer></script>
+    <script src="js/mobile-partners.js" defer></script>
     <script src="js/bet-hub-extras.js" defer></script>
     <script src="js/advert-hub.js" defer></script>
     <script src="js/advert-banner-detail.js" defer></script>
@@ -8241,50 +8520,6 @@
     <script src="js/wallet.js" defer></script>
     <script src="js/wallet-methods.js" defer></script>
     <script src="js/wallet-buttons-autofix.js" defer></script>
-
-    <!-- SHIPPING HARDENING: delegated image fallback (replaces inline onerror handlers) -->
-    <script defer>
-      (function () {
-        var EMOJI = {
-          'airtel': '📱', 'mtn': '📶', 'zamtel': '📞', 'zesco': '⚡',
-          'zanaco': '🏦', 'zambeef': '🥩', 'shoprite': '🛒',
-          'boom': '🧴', 'picknpay': '🎯', 'bee-hive': '🥩', 'tomatoes': '🥩'
-        };
-        document.addEventListener('error', function (e) {
-          var img = e.target;
-          if (!img || img.tagName !== 'IMG') return;
-          if (img.dataset.fallbackApplied) return;
-          img.dataset.fallbackApplied = '1';
-          var src = (img.getAttribute('src') || '').toLowerCase();
-          for (var key in EMOJI) {
-            if (src.indexOf(key) !== -1) {
-              var span = document.createElement('span');
-              span.className = 'advert-emoji';
-              span.textContent = EMOJI[key];
-              span.setAttribute('aria-hidden', 'true');
-              img.replaceWith(span);
-              return;
-            }
-          }
-          img.style.display = 'none';
-        }, true);
-      })();
-    </script>
-
-    <!-- SHIPPING GUARD: fail loud in dev, fail silent in prod -->
-    <script defer>
-      (function () {
-        var REQUIRED = ['sidebar','main-content','walletModal','loginModal','searchOverlay',
-                        'betModal','financialModal','agricultureModal','educationModal',
-                        'etfModal','marketModal','rentalModal','prohireModal'];
-        var missing = REQUIRED.filter(function (id) { return !document.getElementById(id); });
-        if (missing.length && location.hostname === 'localhost') {
-          console.warn('[ZBS] Missing required DOM nodes:', missing);
-        }
-        if (missing.length > 3) {
-          document.documentElement.setAttribute('data-fatal', missing.join(','));
-        }
-      })();
-    </script>
+ 
 </body>
 </html>

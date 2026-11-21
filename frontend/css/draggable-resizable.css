@@ -1,0 +1,146 @@
+/* ==========================================================================
+   DRAGGABLE + RESIZABLE MODALS
+   Load after all other CSS so these rules win.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------
+   1. The modal becomes a floating, movable panel
+   ------------------------------------------------------------------ */
+.modal--draggable {
+  position: fixed !important;
+  margin: 0 !important;
+  transform: none !important;        /* kill any centering transform */
+  top: var(--drm-top, 80px);
+  left: var(--drm-left, 50vw);
+  width: var(--drm-w, 640px);
+  height: var(--drm-h, auto);
+  min-width: 320px;
+  min-height: 220px;
+  max-width: 96vw;
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* rest of the visual styling inherits from your theme */
+}
+
+/* ------------------------------------------------------------------
+   2. Header becomes the drag handle
+   ------------------------------------------------------------------ */
+.modal--draggable .modal-header,
+.modal--draggable .bet-modal-header,
+.modal--draggable .ent-header,
+.modal--draggable .advert-hub-header,
+.modal--draggable .window-header {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;                 /* let touch drag work on mobile */
+  flex: 0 0 auto;
+}
+
+.modal--draggable.is-dragging .modal-header,
+.modal--draggable.is-dragging .bet-modal-header,
+.modal--draggable.is-dragging .ent-header,
+.modal--draggable.is-dragging .advert-hub-header,
+.modal--draggable.is-dragging .window-header {
+  cursor: grabbing;
+}
+
+/* Prevent text selection of the body while dragging */
+body.drm-dragging,
+body.drm-resizing {
+  user-select: none;
+  cursor: grabbing;
+}
+
+body.drm-resizing {
+  cursor: nwse-resize;
+}
+
+/* ------------------------------------------------------------------
+   3. Scrollable body inside the resized panel
+   ------------------------------------------------------------------ */
+.modal--draggable > .modal-body,
+.modal--draggable > .bet-modal-body,
+.modal--draggable > .ent-content,
+.modal--draggable > .advert-hub-content,
+.modal--draggable > form {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ------------------------------------------------------------------
+   4. Resize handles (8 directions)
+   ------------------------------------------------------------------ */
+.drm-handle {
+  position: absolute;
+  z-index: 20;
+  background: transparent;
+}
+
+.drm-handle--n  { top: 0;    left: 8px; right: 8px; height: 8px; cursor: ns-resize; }
+.drm-handle--s  { bottom: 0; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }
+.drm-handle--e  { top: 8px;  bottom: 8px; right: 0; width: 8px;  cursor: ew-resize; }
+.drm-handle--w  { top: 8px;  bottom: 8px; left: 0;  width: 8px;  cursor: ew-resize; }
+.drm-handle--ne { top: 0; right: 0;     width: 14px; height: 14px; cursor: nesw-resize; }
+.drm-handle--nw { top: 0; left: 0;      width: 14px; height: 14px; cursor: nwse-resize; }
+.drm-handle--se { bottom: 0; right: 0;  width: 14px; height: 14px; cursor: nwse-resize; }
+.drm-handle--sw { bottom: 0; left: 0;   width: 14px; height: 14px; cursor: nesw-resize; }
+
+/* Visible grip in the bottom-right corner */
+.drm-handle--se::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid rgba(0, 0, 0, 0.35);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.35);
+  border-bottom-right-radius: 2px;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .drm-handle--se::after {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Bigger hit-area on touch devices */
+@media (pointer: coarse) {
+  .drm-handle--n, .drm-handle--s { height: 14px; }
+  .drm-handle--e, .drm-handle--w { width: 14px; }
+  .drm-handle--ne, .drm-handle--nw,
+  .drm-handle--se, .drm-handle--sw { width: 22px; height: 22px; }
+}
+
+/* ------------------------------------------------------------------
+   5. Mobile fallback: on phones the modal is a bottom sheet.
+      Dragging is disabled but resizing height still works.
+   ------------------------------------------------------------------ */
+@media (max-width: 767px) {
+  .modal--draggable {
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0;
+    width: 100vw !important;
+    max-width: 100vw;
+    height: var(--drm-h, 82dvh) !important;
+    max-height: 92dvh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  /* Only keep the north handle to resize the sheet height */
+  .drm-handle--e,
+  .drm-handle--w,
+  .drm-handle--ne,
+  .drm-handle--nw,
+  .drm-handle--se,
+  .drm-handle--sw,
+  .drm-handle--s { display: none; }
+  .drm-handle--n { display: block; height: 16px; cursor: ns-resize; }
+}

@@ -1,0 +1,1015 @@
+/* ==========================================================================
+   ZEROTH BUSINESS SOLUTIONS — MOBILE & TABLET EXTENSION
+   Load LAST. Desktop-first overrides for:
+     • Tablets  : 768px – 1024px
+     • Phones   : 320px – 767px
+     • Small   : ≤ 380px
+   ========================================================================== */
+
+/* ---------------------------------------------------------------
+   0. GLOBAL SAFETY / TOUCH BEHAVIOUR
+   --------------------------------------------------------------- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Comfortable tap targets everywhere */
+button,
+a,
+input[type="checkbox"],
+input[type="radio"],
+select,
+.sidebar-nav-link,
+.service-item,
+.ent-tab,
+.edu-tab,
+.advert-hub-tab,
+.auth-mode-tab {
+  touch-action: manipulation;
+}
+
+/* Scrollable modals on small screens — never trap content */
+.modal-content,
+.partner-modal,
+.ent-container,
+.edu-container,
+.advert-hub-container,
+.search-container,
+.ai-chatbot-modal,
+.advert-detail-container {
+  max-height: 92dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------------------------------------------------------------
+   1. HEADER
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .floating-header {
+    padding: 0 12px;
+  }
+
+  .floating-header-inner {
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  /* Brand shrinks */
+  .brand-name .company-name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand-name .company-tagline {
+    font-size: 10px;
+  }
+
+  .logo-img img {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Inline advert banner: hide the redundant one — sidebar/marquee covers it */
+  .adverts-banner--inline {
+    display: none !important;
+  }
+
+  /* Header buttons become icon-first */
+  .rental-header-btn span,
+  .advertise-header-btn span {
+    display: none;
+  }
+
+  .rental-header-btn,
+  .advertise-header-btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+  }
+
+  .login-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .floating-user-info {
+    gap: 8px;
+  }
+
+  /* Wallet chip stays compact */
+  .balance {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .me-text {
+    display: none; /* only avatar shows */
+  }
+
+  .user-name {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+@media (max-width: 767px) {
+  .floating-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    border-radius: 0 0 14px 14px;
+    margin: 0 0 8px;
+  }
+
+  .floating-header-inner {
+    flex-wrap: nowrap;
+    padding: 6px 10px;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .brand-name .company-name {
+    font-size: 12.5px;
+  }
+
+  .brand-name .company-tagline {
+    display: none; /* declutter on phones */
+  }
+
+  .sidebar-toggle-btn {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+  }
+
+  /* Hide text buttons entirely on phones — keep Login only */
+  .rental-header-btn,
+  .advertise-header-btn {
+    display: none;
+  }
+
+  .login-btn {
+    padding: 7px 14px;
+    font-size: 12.5px;
+  }
+
+  #walletCurrency {
+    display: none; /* show ZMW 0.00 only */
+  }
+
+  .floating-nav {
+    flex: 0 0 auto;
+  }
+}
+
+/* ---------------------------------------------------------------
+   2. SIDEBAR
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: min(86vw, 340px);
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    width: min(90vw, 320px);
+    border-radius: 0 20px 20px 0;
+  }
+
+  .sidebar-inner {
+    padding: 14px 12px 24px;
+  }
+
+  .sidebar-company {
+    font-size: 14px;
+  }
+
+  .sidebar-tagline {
+    font-size: 10.5px;
+  }
+
+  .sidebar-user-profile {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sidebar-logout-btn,
+  .sidebar-login-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .sidebar-nav-link {
+    padding: 12px 12px;
+    font-size: 14.5px;
+    min-height: 46px;
+  }
+
+  .sidebar-action-btn {
+    min-height: 46px;
+  }
+
+  .sidebar-footer .sidebar-social a {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   3. MAIN / HERO / SERVICE CATEGORIES
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .main-content-wrapper {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+  }
+
+  .hero-section {
+    padding: 28px 18px 10px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(22px, 4.2vw, 34px);
+    line-height: 1.25;
+  }
+
+  .hero-content p {
+    font-size: 14px;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .hero-tags {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .hero-tags span {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr; /* single column tablets+phones */
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .category-card-header {
+    padding: 18px 16px;
+  }
+
+  .cat-title {
+    font-size: 18px;
+  }
+
+  .cat-sub {
+    font-size: 12px;
+  }
+
+  .cat-icon-wrapper img {
+    width: 60px;
+    height: 60px;
+  }
+
+  /* Service list buttons: full-width, large tap area */
+  .service-item {
+    width: 100%;
+    min-height: 48px;
+    font-size: 14px;
+    padding: 12px 14px;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .service-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 14px 18px;
+  }
+
+  /* ZBS Stocks form: stack everything */
+  .ZBS-Stocks-container {
+    padding: 16px 14px;
+  }
+
+  .share-form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group.half,
+  .form-group.full {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .share-form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .share-submit-btn,
+  .share-cancel-btn {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------------------
+   4. PARTNERS SECTION
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  /* The radial 30-slot star cannot work on narrow screens → mobile grid */
+  .partners-star-container {
+    display: none !important;
+  }
+
+  .partners-grid-mobile {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .partners-header {
+    padding: 24px 16px 8px;
+  }
+
+  .partners-title {
+    font-size: 24px;
+  }
+
+  .partners-subtitle {
+    font-size: 13px;
+  }
+
+  .partner-btn {
+    width: 100%;
+    max-width: 320px;
+    min-height: 48px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .partners-grid-mobile {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 9px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   5. ABOUT / MANAGEMENT / TRUSTEES / STATISTICS
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .about-combined-section {
+    padding: 24px 16px;
+  }
+
+  .about-vision-mission {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .values-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+
+  .keys-list-horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .key-divider {
+    display: none;
+  }
+
+  .management-grid,
+  .trustees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+    padding: 0 4px;
+  }
+
+  .management-card,
+  .trustee-card {
+    width: 100%;
+  }
+
+  .management-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+
+  .statistics-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 4px;
+  }
+
+  .stat-item {
+    width: 100%;
+    min-height: 72px;
+    padding: 12px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .management-grid,
+  .trustees-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .statistics-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------
+   6. FOOTER
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .footer-bottom {
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .footer-social-icons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-social-icons a {
+    width: 40px;
+    height: 40px;
+  }
+
+  .footer-nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 14px;
+  }
+
+  .footer-nav-links a {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   7. MODALS — full-screen sheets on phones
+   --------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* Generic overlay pattern: sheet from bottom */
+  .partner-modal-overlay,
+  .advert-detail-overlay,
+  .login-modal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  .login-modal .modal-content,
+  .partner-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px 18px 0 0 !important;
+    max-height: 94dvh;
+    overflow-y: auto;
+    padding: 18px 16px 26px;
+  }
+
+  /* Close buttons: big target, top-right */
+  .close-modal,
+  .partner-modal-close,
+  .window-close-btn,
+  .advert-detail-close {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Partner modal rows stack */
+  .partner-form-row,
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pfield,
+  .form-group {
+    width: 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* prevents iOS zoom-on-focus */
+    min-height: 46px;
+  }
+
+  textarea {
+    min-height: 90px;
+  }
+
+  .partner-form-actions,
+  .partner-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .partner-apply-btn,
+  .partner-details-btn {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+}
+
+/* Auth modal specifics */
+@media (max-width: 767px) {
+  .auth-mode-tabs {
+    width: 100%;
+  }
+
+  .auth-mode-tab {
+    flex: 1;
+    min-height: 46px;
+  }
+
+  .auth-row-between {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .auth-btn {
+    width: 100%;
+    min-height: 50px;
+    font-size: 15px;
+  }
+
+  .auth-eye-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .auth-demo-hint {
+    font-size: 11.5px;
+    word-break: break-all;
+  }
+}
+
+/* ---------------------------------------------------------------
+   8. AI CHATBOT — full-screen on phones
+   --------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .ai-chatbot-modal {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 82dvh !important;
+    border-radius: 18px 18px 0 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+
+  .ai-chatbot-btn {
+    bottom: 14px;
+    right: 14px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .ai-suggestions {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 8px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ai-suggestions .suggestion {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+    min-height: 38px;
+    font-size: 12.5px;
+  }
+
+  .chat-input {
+    position: sticky;
+    bottom: 0;
+    background: inherit;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .chat-input input {
+    min-height: 44px;
+  }
+
+  .send-btn {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   9. SEARCH OVERLAY
+   --------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .search-overlay {
+    padding: 0;
+  }
+
+  .search-container {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    padding: 14px 12px;
+  }
+
+  .search-input-wrapper {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .search-input-wrapper input {
+    font-size: 16px;
+    min-height: 46px;
+  }
+
+  .search-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .search-voice-btn,
+  .search-camera-btn,
+  .search-upload-btn,
+  .search-submit-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .search-submit-btn .submit-label {
+    display: none; /* icon-only submit on phones */
+  }
+
+  .search-shortcut {
+    font-size: 11px;
+  }
+
+  .search-methods {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   10. FEATURE HUB MODALS (Entertainment / Education / Advert)
+   --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .ent-container,
+  .edu-container,
+  .advert-hub-container {
+    width: min(96vw, 860px);
+    max-height: 92dvh;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ent-container,
+  .edu-container,
+  .advert-hub-container {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Tabs become horizontally scrollable pills */
+  .ent-tabs,
+  .edu-tabs,
+  .advert-hub-tabs {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 10px 12px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid rgba(0, 0, 0, .08);
+  }
+
+  .ent-tab,
+  .edu-tab,
+  .advert-hub-tab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+    min-height: 42px;
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  .ent-actions,
+  .edu-actions,
+  .advert-hub-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .ent-search-box,
+  .edu-search-box,
+  .advert-hub-search-box {
+    width: 100%;
+    order: -1;
+  }
+
+  .ent-search-box input,
+  .edu-search-box input,
+  .advert-hub-search-box input {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .ent-content,
+  .edu-content,
+  .advert-hub-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Grids → 2 columns on phones, 1 for very small */
+  .ent-grid,
+  .edu-grid,
+  .advert-hub-grid,
+  .ent-tv-grid,
+  .ent-sports-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .advert-hub-pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .advert-hub-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .ent-upload-btn,
+  .edu-tutor-btn,
+  .edu-tool-btn {
+    flex: 1 1 calc(50% - 8px);
+    min-height: 44px;
+    font-size: 12.5px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .edu-library-filter {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .edu-lib-filter {
+    min-height: 40px;
+    font-size: 12.5px;
+  }
+
+  /* Upload form: cover + fields stack */
+  .edu-upload-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  .edu-upload-row--two {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  .edu-cover-picker {
+    max-width: 100%;
+  }
+
+  /* Advert post form */
+  .advert-hub-panel .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .advert-hub-form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .advert-hub-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ent-grid,
+  .edu-grid,
+  .advert-hub-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .advert-hub-stats-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Add-TV / add-station modals */
+@media (max-width: 767px) {
+  .ent-addtv-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .ent-addtv-container {
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    max-height: 88dvh;
+    overflow-y: auto;
+  }
+
+  .ent-addtv-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ent-tv-submit,
+  .ent-tv-cancel {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .ent-emoji-picker {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* Advert detail modal */
+@media (max-width: 767px) {
+  .advert-detail-container {
+    flex-direction: column;
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+
+  .advert-detail-media {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+  }
+
+  .advert-detail-body {
+    padding: 16px;
+  }
+
+  .advert-detail-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .advert-detail-cta,
+  .advert-detail-secondary {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------------------
+   11. TABLES / ANY DATA BLOCKS
+   --------------------------------------------------------------- */
+@media (max-width: 767px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ---------------------------------------------------------------
+   12. SAFE-AREA INSETS (notched phones)
+   --------------------------------------------------------------- */
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (max-width: 767px) {
+    .floating-header {
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .sidebar-inner {
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .ai-chatbot-btn {
+      bottom: calc(14px + env(safe-area-inset-bottom));
+    }
+
+    .footer-bottom {
+      padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ---------------------------------------------------------------
+   13. REDUCED MOTION
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .adverts-track,
+  .star-rings,
+  .star-8point,
+  .sidebar,
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   14. LANDSCAPE PHONES — keep header compact
+   --------------------------------------------------------------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .floating-header-inner {
+    padding: 4px 10px;
+  }
+
+  .ai-chatbot-modal {
+    height: 100dvh !important;
+  }
+
+  .sidebar {
+    overflow-y: auto;
+  }
+}
