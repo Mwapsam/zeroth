@@ -1,0 +1,55 @@
+backend/
+├── package.json
+├── server.js
+├── .env.example
+├── config/
+│   ├── db.js
+│   └── constants.js
+├── middleware/
+│   ├── auth.js
+│   ├── errorHandler.js
+│   ├── rateLimiter.js
+│   ├── upload.js
+│   └── validate.js
+├── models/
+│   ├── User.js
+│   ├── Wallet.js
+│   ├── Transaction.js
+│   ├── ShareApplication.js
+│   ├── ShareHolding.js
+│   ├── Partner.js
+│   ├── PartnerApplication.js
+│   ├── Advert.js
+│   ├── Rental.js
+│   ├── AgricultureListing.js
+│   ├── EducationResource.js
+│   ├── Institution.js
+│   ├── EntertainmentItem.js
+│   ├── TVStation.js
+│   ├── LoanApplication.js
+│   ├── ProHire.js
+│   └── AuditLog.js
+├── routes/
+│   ├── auth.js
+│   ├── users.js
+│   ├── wallet.js
+│   ├── shares.js
+│   ├── partners.js
+│   ├── adverts.js
+│   ├── rentals.js
+│   ├── agriculture.js
+│   ├── education.js
+│   ├── entertainment.js
+│   ├── finance.js
+│   ├── prohire.js
+│   ├── ai.js
+│   ├── search.js
+│   └── health.js
+├── controllers/
+│   └── (logic is kept in routes for brevity; split as needed)
+├── utils/
+│   ├── currency.js
+│   ├── token.js
+│   ├── mailer.js
+│   └── logger.js
+└── uploads/

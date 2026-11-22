@@ -1,12 +1,26 @@
+/* ============================================================
+   ADVERT ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/advertController');
-const { protect, optionalAuth, restrictTo } = require('../middleware/auth');
+const { requireAuth, optionalAuth, requireRole } = require('../middleware/auth');
 
+/* Public browsing */
 router.get('/', ctrl.list);
+
+/* Post — guests allowed (ads are submitted under a guest session) */
 router.post('/', optionalAuth, ctrl.create);
-router.get('/mine', protect, ctrl.mine);
+
+/* Mine — auth */
+router.get('/mine', requireAuth, ctrl.mine);
+
+/* Impression / click tracking (public) */
 router.post('/:id/impression', ctrl.trackImpression);
-router.post('/:id/click', ctrl.trackClick);
-router.patch('/:id/status', protect, restrictTo('admin'), ctrl.updateStatus);
+router.post('/:id/click',      ctrl.trackClick);
+
+/* Admin moderation */
+router.patch('/:id/status',
+    requireAuth, requireRole('admin'),
+    ctrl.updateStatus);
 
 module.exports = router;

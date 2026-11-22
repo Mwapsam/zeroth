@@ -1,11 +1,18 @@
+/* ============================================================
+   NOTIFICATION ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/notificationController');
-const { protect } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 
-router.use(protect);
-router.get('/', ctrl.list);
-router.post('/:id/read', ctrl.markRead);
+router.use(requireAuth);
+
+/* Specific BEFORE :id */
+router.get('/mark-all-read', ctrl.markAllRead);
 router.post('/mark-all-read', ctrl.markAllRead);
-router.delete('/:id', ctrl.remove);
+
+router.get('/',           ctrl.list);
+router.post('/:id/read',  ctrl.markRead);
+router.delete('/:id',     ctrl.remove);
 
 module.exports = router;

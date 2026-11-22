@@ -1,12 +1,20 @@
+/* ============================================================
+   PAYMENT ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/paymentController');
-const { protect, restrictTo } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
-router.use(protect);
-router.post('/', ctrl.create);
-router.get('/mine', ctrl.listMine);
-router.get('/wallet', ctrl.wallet);
-router.get('/:id', ctrl.getOne);
-router.post('/:id/refund', restrictTo('admin'), ctrl.refund);
+router.use(requireAuth);
+
+/* Specific BEFORE :id */
+router.get('/mine',    ctrl.listMine);
+router.get('/wallet',  ctrl.wallet);
+
+router.post('/',       ctrl.create);
+router.get('/:id',     ctrl.getOne);
+router.post('/:id/refund',
+    requireRole('admin'),
+    ctrl.refund);
 
 module.exports = router;

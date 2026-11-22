@@ -1,0 +1,1821 @@
+/* ================================================================
+   MARKET HUB — fully responsive stylesheet
+   ================================================================
+   Loaded after style.css. Self-contained — no other hub file
+   needs to be touched.
+
+   CONTENTS
+     §36.0   Global hardening
+     §36.1   Layout primitives (containers, modals)
+     §36.2   Header / location bar
+     §36.3   Tabs
+     §36.4   Filters + search
+     §36.5   Content area + panels
+     §36.6   Results header
+     §36.7   Shop grid + shop cards
+     §36.8   Empty states
+     §36.9   Buttons
+     §36.10  Cards + forms
+     §36.11  Vendor auth + dashboard
+     §36.12  My shops list
+     §36.13  Shop detail modal
+     §36.14  Product cards
+     §36.15  Cart
+     §36.16  Checkout
+     §36.17  Delivery options
+     §36.18  Orders
+     §36.19  Vendor auth modal
+     §36.20  Footer
+     §36.21  Utilities
+     §36.22  Responsive breakpoints
+     §36.23  Touch + pointer hardening
+     §36.24  Reduced motion
+     §36.25  Print
+   ================================================================ */
+
+/* ================================================================
+   §36.0  GLOBAL HARDENING
+   ----------------------------------------------------------------
+   Applies to every element inside the hub. Prevents the classic
+   mobile killers: horizontal overflow, iOS text inflation, iOS
+   input zoom, and unexpected scroll chaining.
+   ================================================================ */
+.market-modal,
+.market-shop-modal,
+.market-auth-modal {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Long unbreakable strings (shop names, addresses, SKUs) must never
+   push a card wider than its column. */
+.market-modal :where(h1, h2, h3, h4, p, span, small, strong, label, a, div),
+.market-shop-modal :where(h1, h2, h3, h4, p, span, small, strong, label, a, div),
+.market-auth-modal :where(h1, h2, h3, h4, p, span, small, strong, label, a, div) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Images / media never overflow their container. */
+.market-modal img,
+.market-shop-modal img,
+.market-auth-modal img,
+.market-modal svg,
+.market-shop-modal svg,
+.market-auth-modal svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ================================================================
+   §36.1  LAYOUT PRIMITIVES
+   ================================================================ */
+.market-modal,
+.market-shop-modal,
+.market-auth-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2500;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(8px, 2vw, 24px);
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+}
+
+.market-modal.active,
+.market-shop-modal.active,
+.market-auth-modal.active { display: flex; }
+
+.market-shop-modal { z-index: 2700; }
+.market-auth-modal { z-index: 2800; }
+
+.market-modal *,
+.market-modal *::before,
+.market-modal *::after,
+.market-shop-modal *,
+.market-shop-modal *::before,
+.market-shop-modal *::after,
+.market-auth-modal *,
+.market-auth-modal *::before,
+.market-auth-modal *::after { box-sizing: border-box; }
+
+/* ---- Containers ---- */
+.market-container {
+    background: #fff;
+    border-radius: var(--radius, 12px);
+    border: 2px solid var(--color-border);
+    width: 100%;
+    max-width: 1200px;
+    max-height: 94vh;
+    max-height: 94dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    animation: entSlideIn 0.3s ease;
+    min-height: 0;
+    min-width: 0;
+    overscroll-behavior: contain;
+}
+
+.market-shop-container {
+    background: #fff;
+    border-radius: var(--radius, 12px);
+    border: 2px solid var(--color-border);
+    width: 100%;
+    max-width: 780px;
+    max-height: 92vh;
+    max-height: 92dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    animation: entSlideIn 0.3s ease;
+    min-height: 0;
+    min-width: 0;
+    overscroll-behavior: contain;
+}
+
+.market-auth-container {
+    background: #fff;
+    border-radius: var(--radius, 12px);
+    border: 2px solid var(--color-border);
+    width: 100%;
+    max-width: 420px;
+    max-height: 92vh;
+    max-height: 92dvh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    animation: entSlideIn 0.3s ease;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    min-width: 0;
+}
+
+/* ================================================================
+   §36.2  HEADER / LOCATION BAR
+   ================================================================ */
+.market-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: clamp(12px, 1.8vw, 20px) clamp(14px, 2vw, 24px);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: #fff;
+    flex-shrink: 0;
+    border-radius: var(--radius, 12px) var(--radius, 12px) 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.market-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 12% 20%, rgba(255,255,255,0.10) 0%, transparent 45%),
+        radial-gradient(circle at 88% 80%, rgba(255,255,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.market-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(0.95rem, 1.5vw, 1.35rem);
+    font-weight: 800;
+    color: #fff;
+    min-width: 0;
+    flex: 1 1 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.market-header-title > span:first-of-type {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.market-header-title .market-badge {
+    font-size: clamp(0.45rem, 0.6vw, 0.65rem);
+    background: #fbbf24;
+    color: #1a1a1a;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.market-header .window-close-btn { color: #fff; position: relative; z-index: 2; flex-shrink: 0; }
+.market-header .window-close-btn:hover { background: rgba(255, 255, 255, 0.18); color: #fff; }
+
+/* ---- Location bar ---- */
+.market-location-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: clamp(8px, 1vh, 12px) clamp(14px, 2vw, 24px);
+    background: rgba(5, 150, 105, 0.08);
+    border-bottom: 1px solid var(--color-border);
+    font-size: clamp(0.65rem, 0.8vw, 0.8rem);
+    color: var(--color-text);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.market-location-bar > i { color: #059669; flex-shrink: 0; }
+.market-location-bar > span {
+    flex: 1 1 200px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.market-location-btn {
+    padding: 6px 14px;
+    background: #059669;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.market-location-btn:hover { background: #047857; transform: translateY(-1px); }
+.market-location-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ================================================================
+   §36.3  TABS
+   ================================================================ */
+.market-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--color-border);
+    background: #fff;
+    flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+.market-tabs::-webkit-scrollbar { display: none; }
+
+.market-tab {
+    flex: 1 1 auto;
+    min-width: 110px;
+    padding: clamp(10px, 1.3vw, 14px) clamp(12px, 1.5vw, 18px);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: clamp(0.65rem, 0.85vw, 0.85rem);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.market-tab > i { font-size: 1em; flex-shrink: 0; }
+
+.market-tab:hover { background: rgba(5, 150, 105, 0.06); color: #059669; }
+.market-tab.active { color: #059669; border-bottom-color: #059669; background: #fff; }
+.market-tab:active { transform: scale(0.97); }
+
+.market-tab-count {
+    font-size: clamp(0.5rem, 0.65vw, 0.65rem);
+    background: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.market-tab.active .market-tab-count { background: #059669; color: #fff; }
+
+/* ================================================================
+   §36.4  FILTERS + SEARCH
+   ================================================================ */
+.market-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: clamp(10px, 1.2vw, 14px) clamp(14px, 2vw, 24px);
+    border-bottom: 1px solid var(--color-border);
+    background: #fff;
+    flex-shrink: 0;
+}
+
+.market-filter-search {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-alt);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.market-filter-search:focus-within {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+.market-filter-search i {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.market-filter-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: clamp(0.7rem, 0.85vw, 0.85rem);
+    color: var(--color-text);
+    min-height: 38px;
+}
+
+/* Row containing the two selects — wraps on narrow screens */
+.market-filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.market-filter-row .market-select {
+    flex: 1 1 140px;
+    min-width: 0;
+}
+
+.market-select {
+    padding: 9px 12px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: clamp(0.65rem, 0.8vw, 0.8rem);
+    background: #fff;
+    cursor: pointer;
+    min-height: 38px;
+    min-width: 0;
+    max-width: 100%;
+    outline: none;
+    color: var(--color-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    text-overflow: ellipsis;
+}
+
+.market-select:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+.market-select.full { width: 100%; }
+
+/* ================================================================
+   §36.5  CONTENT AREA + PANELS
+   ================================================================ */
+.market-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: clamp(14px, 2vw, 24px);
+    background: var(--color-bg-alt);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.market-content::-webkit-scrollbar { width: 10px; }
+.market-content::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+    border: 2px solid var(--color-bg-alt);
+}
+
+.market-panel { display: none; }
+.market-panel.active { display: block; }
+
+/* ================================================================
+   §36.6  RESULTS HEADER
+   ================================================================ */
+.market-results-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+}
+
+.market-results-head h3 {
+    margin: 0;
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    font-weight: 800;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.market-results-count {
+    background: rgba(5, 150, 105, 0.12);
+    color: #047857;
+    font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    min-width: 26px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ================================================================
+   §36.7  SHOP GRID + CARDS
+   ----------------------------------------------------------------
+   NOTE: the card body class is `.market-shop-card-body`.
+   `.market-shop-body` inside a card is still supported for
+   backwards compatibility, but it is scoped to the card so it can
+   no longer collide with the shop-detail modal scroll area
+   (see §36.13).
+   ================================================================ */
+.market-grid {
+    display: grid;
+    /* min() prevents overflow on viewports narrower than 240px */
+    grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+    gap: clamp(12px, 1.4vw, 18px);
+    min-width: 0;
+}
+
+.market-shop-card {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius, 12px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.market-shop-card:hover {
+    transform: translateY(-4px);
+    border-color: #059669;
+    box-shadow: 0 12px 30px rgba(5, 150, 105, 0.18);
+}
+
+.market-shop-card:focus-visible {
+    outline: 3px solid #fbbf24;
+    outline-offset: 2px;
+}
+
+.market-shop-thumb {
+    height: clamp(100px, 12vh, 130px);
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: #059669;
+    border-bottom: 2px solid var(--color-border);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.market-shop-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.market-shop-card-body,
+.market-shop-card .market-shop-body {
+    padding: clamp(10px, 1.2vw, 14px);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.market-shop-name {
+    font-size: clamp(0.8rem, 1vw, 0.95rem);
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.market-shop-meta {
+    font-size: clamp(0.55rem, 0.7vw, 0.7rem);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.market-shop-distance {
+    color: #059669;
+    font-weight: 700;
+    font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.market-shop-cat-badge {
+    background: var(--color-bg-alt);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9em;
+    text-transform: capitalize;
+}
+
+.market-shop-products-count {
+    font-size: clamp(0.5rem, 0.65vw, 0.65rem);
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+.market-shop-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.market-shop-actions > * { flex: 1 1 auto; min-width: 0; }
+
+/* ================================================================
+   §36.8  EMPTY STATES
+   ================================================================ */
+.market-empty {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: clamp(40px, 7vw, 80px) 20px;
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.market-empty i {
+    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    opacity: 0.25;
+    color: #059669;
+}
+
+.market-empty p {
+    font-size: clamp(0.75rem, 0.95vw, 0.95rem);
+    font-weight: 600;
+    margin: 0;
+}
+
+.market-empty small {
+    font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+    opacity: 0.75;
+    line-height: 1.5;
+}
+
+.market-empty.show { display: flex; }
+
+/* ================================================================
+   §36.9  BUTTONS
+   ================================================================ */
+.market-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: clamp(0.65rem, 0.85vw, 0.85rem);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 2px solid transparent;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-width: 0;
+}
+
+.market-btn:focus-visible {
+    outline: 3px solid #fbbf24;
+    outline-offset: 2px;
+}
+
+.market-btn-primary {
+    background: #059669;
+    color: #fff;
+    border-color: #047857;
+}
+
+.market-btn-primary:hover { background: #047857; transform: translateY(-1px); }
+.market-btn-primary:active { transform: translateY(0) scale(0.97); }
+
+.market-btn-outline {
+    background: #fff;
+    color: #059669;
+    border-color: #059669;
+}
+
+.market-btn-outline:hover { background: rgba(5, 150, 105, 0.08); }
+.market-btn-outline:active { transform: scale(0.97); }
+
+.market-btn.full { width: 100%; }
+.market-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ================================================================
+   §36.10  CARDS + FORMS
+   ================================================================ */
+.market-card {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius, 12px);
+    padding: clamp(14px, 1.8vw, 22px);
+    margin-bottom: 14px;
+    min-width: 0;
+}
+
+.market-card h3 {
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    font-weight: 800;
+    color: #059669;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.market-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Base: 2-column form row */
+.market-form-row {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* 3-column variant used by lat/lng/button and price/stock/unit rows */
+.market-form-row.three {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Fallback for old markup with .market-geo-btn */
+.market-form-row:has(.market-geo-btn) {
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+}
+
+.market-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.market-form-group label {
+    font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.market-form-group input,
+.market-form-group select,
+.market-form-group textarea,
+.market-input {
+    padding: 9px 12px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: clamp(0.7rem, 0.85vw, 0.85rem);
+    outline: none;
+    min-height: 40px;
+    background: #fff;
+    color: var(--color-text);
+    width: 100%;
+    max-width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.market-form-group input:focus,
+.market-form-group select:focus,
+.market-form-group textarea:focus,
+.market-input:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+.market-form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.market-geo-btn {
+    padding: 10px 14px;
+    min-height: 40px;
+    white-space: nowrap;
+    align-self: end;
+}
+
+/* ================================================================
+   §36.11  VENDOR AUTH + DASHBOARD
+   ================================================================ */
+.market-vendor-auth {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.market-vendor-login-card {
+    background: #fff;
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius, 12px);
+    padding: clamp(20px, 3vw, 40px);
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+}
+
+.market-vendor-login-card i { font-size: 3rem; color: #059669; opacity: 0.8; }
+.market-vendor-login-card h3 { font-size: 1.15rem; color: var(--color-text); margin: 0; }
+.market-vendor-login-card p { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; line-height: 1.5; }
+
+.market-vendor-auth-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.market-vendor-auth-actions .market-btn {
+    flex: 1 1 140px;
+    min-width: 0;
+}
+
+.market-vendor-hello {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(5, 150, 105, 0.08);
+    border-radius: var(--radius, 12px);
+    margin-bottom: 14px;
+    font-size: clamp(0.75rem, 0.9vw, 0.9rem);
+    flex-wrap: wrap;
+}
+
+.market-vendor-hello i { color: #059669; font-size: 1.3rem; flex-shrink: 0; }
+.market-vendor-hello > span { flex: 1 1 auto; min-width: 0; }
+
+.market-logout-btn {
+    padding: 6px 12px;
+    background: transparent;
+    border: 2px solid #059669;
+    border-radius: 8px;
+    color: #059669;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 32px;
+    flex-shrink: 0;
+    touch-action: manipulation;
+}
+
+.market-logout-btn:hover { background: #059669; color: #fff; }
+.market-logout-btn:active { transform: scale(0.97); }
+
+/* ================================================================
+   §36.12  MY SHOPS LIST
+   ================================================================ */
+.market-my-shop {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.market-my-shop-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1 1 160px;
+    min-width: 0;
+}
+
+.market-my-shop-name {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.market-my-shop-meta {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+}
+
+.market-my-shop-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.market-my-shop-actions button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    border: 2px solid #059669;
+    background: transparent;
+    color: #059669;
+    min-height: 32px;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.market-my-shop-actions button:hover { background: #059669; color: #fff; }
+.market-my-shop-actions button.danger { border-color: #dc2626; color: #dc2626; }
+.market-my-shop-actions button.danger:hover { background: #dc2626; color: #fff; }
+
+/* ================================================================
+   §36.13  SHOP DETAIL MODAL
+   ----------------------------------------------------------------
+   Scoped to `.market-shop-modal` so it can never leak into the shop
+   cards on the browse tab (which previously used the same class).
+   ================================================================ */
+.market-shop-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: clamp(12px, 1.6vw, 18px) clamp(14px, 2vw, 22px);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: #fff;
+    flex-shrink: 0;
+    border-radius: var(--radius, 12px) var(--radius, 12px) 0 0;
+}
+
+.market-back-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    touch-action: manipulation;
+}
+
+.market-back-btn:hover { background: rgba(255, 255, 255, 0.28); }
+.market-back-btn:active { transform: scale(0.92); }
+
+.market-shop-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.market-shop-category {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #a7f3d0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+}
+
+.market-shop-header-text h2 {
+    font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+    font-weight: 800;
+    margin: 0;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.market-shop-header .window-close-btn { color: #fff; flex-shrink: 0; }
+.market-shop-header .window-close-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+
+/* Scroll area of the shop-detail modal ONLY */
+.market-shop-modal .market-shop-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: clamp(14px, 2vw, 22px);
+    background: var(--color-bg-alt);
+}
+
+.market-shop-info {
+    background: #fff;
+    border-radius: var(--radius, 12px);
+    border: 2px solid var(--color-border);
+    padding: clamp(12px, 1.5vw, 18px);
+    margin-bottom: 14px;
+    font-size: clamp(0.7rem, 0.85vw, 0.85rem);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-width: 0;
+}
+
+.market-shop-info i { color: #059669; margin-right: 6px; }
+
+.market-section-subtitle {
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.market-section-subtitle i { color: #059669; }
+
+/* Wrapper for subtitle + count */
+.market-section-subtitle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.market-section-subtitle-wrap .market-section-subtitle { margin-bottom: 0; }
+
+/* ================================================================
+   §36.14  PRODUCT CARDS
+   ================================================================ */
+.market-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+    gap: 10px;
+    min-width: 0;
+}
+
+.market-product-card {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+}
+
+.market-product-card:hover {
+    border-color: #059669;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.15);
+}
+
+.market-product-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.3;
+}
+
+.market-product-cat {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    text-transform: capitalize;
+}
+
+.market-product-price {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #059669;
+    margin-top: 4px;
+}
+
+.market-product-stock {
+    font-size: 0.6rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.market-add-to-cart-btn {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #059669;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    touch-action: manipulation;
+}
+
+.market-add-to-cart-btn:hover { background: #047857; transform: translateY(-1px); }
+.market-add-to-cart-btn:active { transform: translateY(0) scale(0.97); }
+.market-add-to-cart-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+/* ================================================================
+   §36.15  CART
+   ================================================================ */
+.market-cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.market-cart-header h3 {
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    font-weight: 800;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.market-cart-header h3 i { color: #059669; }
+
+.market-clear-cart-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 2px solid #dc2626;
+    background: transparent;
+    color: #dc2626;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    touch-action: manipulation;
+}
+
+.market-clear-cart-btn:hover { background: #dc2626; color: #fff; }
+
+.market-cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.market-cart-item {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.market-cart-item-info {
+    flex: 1 1 160px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.market-cart-item-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.market-cart-item-price { font-size: 0.7rem; color: var(--color-text-muted); }
+
+.market-cart-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.market-cart-item-qty button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #059669;
+    background: #fff;
+    color: #059669;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    touch-action: manipulation;
+}
+
+.market-cart-item-qty button:hover { background: #059669; color: #fff; }
+.market-cart-item-qty button:active { transform: scale(0.92); }
+
+.market-cart-item-qty span {
+    font-weight: 800;
+    min-width: 26px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.market-cart-item-total {
+    font-weight: 800;
+    color: #059669;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.market-cart-item-remove {
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    touch-action: manipulation;
+}
+
+.market-cart-item-remove:hover { background: rgba(220, 38, 38, 0.1); }
+
+/* ================================================================
+   §36.16  CHECKOUT
+   ================================================================ */
+.market-checkout-section { margin-top: 20px; }
+
+.market-checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.market-checkout-left,
+.market-checkout-right {
+    min-width: 0;
+}
+
+.market-checkout-summary {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius, 12px);
+    padding: clamp(12px, 1.5vw, 18px);
+    min-width: 0;
+}
+
+.market-checkout-summary h3 {
+    font-size: 0.95rem;
+    margin: 0 0 10px;
+    color: #059669;
+    font-weight: 800;
+}
+
+.market-checkout-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    gap: 10px;
+}
+
+.market-checkout-line.total {
+    border-top: 2px solid var(--color-border);
+    padding-top: 10px;
+    margin-top: 6px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #059669;
+}
+
+/* ================================================================
+   §36.17  DELIVERY OPTIONS
+   ================================================================ */
+.market-delivery-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.market-delivery-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    flex-wrap: wrap;
+}
+
+.market-delivery-option:hover { background: #ecfdf5; border-color: #059669; }
+.market-delivery-option input {
+    margin-left: auto;
+    cursor: pointer;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: #059669;
+}
+
+.market-delivery-group { margin-top: 10px; }
+.market-delivery-heading {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-text);
+}
+
+/* ================================================================
+   §36.18  ORDERS
+   ================================================================ */
+.market-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.market-order-card {
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.market-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--color-text);
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.market-order-status {
+    font-size: 0.6rem;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.market-order-status.pending   { background: #fef3c7; color: #92400e; }
+.market-order-status.paid      { background: #d1fae5; color: #065f46; }
+.market-order-status.delivered { background: #dbeafe; color: #1e40af; }
+
+.market-order-items {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.market-order-total {
+    font-weight: 800;
+    color: #059669;
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+/* ================================================================
+   §36.19  VENDOR AUTH MODAL
+   ================================================================ */
+.market-auth-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(12px, 1.6vw, 18px) clamp(14px, 2vw, 22px);
+    border-bottom: 2px solid var(--color-border);
+    background: var(--color-bg-card);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-radius: var(--radius, 12px) var(--radius, 12px) 0 0;
+}
+
+.market-auth-header h2 {
+    font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+    font-weight: 800;
+    color: #059669;
+    margin: 0;
+}
+
+.market-auth-container .market-form { padding: clamp(14px, 1.8vw, 22px); }
+
+.market-auth-toggle-text {
+    text-align: center;
+    font-size: 0.75rem;
+    margin-top: 8px;
+}
+
+.market-auth-toggle-text a {
+    color: #059669;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.market-auth-toggle-text a:hover { text-decoration: underline; }
+
+/* ================================================================
+   §36.20  FOOTER
+   ================================================================ */
+.market-footer {
+    padding: clamp(8px, 1vh, 12px) clamp(14px, 2vw, 24px);
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.market-footer-note {
+    font-size: clamp(0.55rem, 0.7vw, 0.7rem);
+    color: var(--color-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    line-height: 1.5;
+}
+
+.market-footer-note i { color: #059669; }
+
+/* ================================================================
+   §36.21  UTILITIES
+   ================================================================ */
+.market-place-order-btn { margin-top: 10px; }
+
+/* Optional: add to <body> from JS while a modal is open to stop the
+   page behind it from scrolling on iOS. */
+body.market-modal-open {
+    overflow: hidden;
+    touch-action: none;
+}
+
+/* ================================================================
+   §36.22  RESPONSIVE BREAKPOINTS
+   ================================================================ */
+
+/* ---------- ≤ 1024px : small laptops / large tablets ---------- */
+@media (max-width: 1024px) {
+    .market-grid { grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); }
+    .market-products-grid { grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); }
+}
+
+/* ---------- ≤ 820px : tablets ---------- */
+@media (max-width: 820px) {
+    .market-container { max-width: 100%; }
+    .market-shop-container { max-width: 100%; }
+
+    .market-grid { grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); }
+    .market-checkout-grid { grid-template-columns: 1fr; }
+
+    .market-form-row.three { grid-template-columns: 1fr 1fr; }
+    .market-form-row.three > .market-geo-btn { grid-column: 1 / -1; }
+}
+
+/* ---------- ≤ 640px : phones ---------- */
+@media (max-width: 640px) {
+    /* Full-bleed modals */
+    .market-modal,
+    .market-shop-modal,
+    .market-auth-modal { padding: 0; }
+
+    .market-container,
+    .market-shop-container,
+    .market-auth-container {
+        max-width: 100%;
+        width: 100%;
+        max-height: 100vh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        margin: 0;
+        /* landscape notch / rounded-corner safety */
+        padding-left: env(safe-area-inset-left, 0px);
+        padding-right: env(safe-area-inset-right, 0px);
+    }
+
+    .market-header,
+    .market-shop-header,
+    .market-auth-header {
+        border-radius: 0;
+        /* keep content clear of the notch / dynamic island */
+        padding-top: calc(clamp(12px, 1.8vw, 20px) + env(safe-area-inset-top, 0px));
+    }
+
+    /* Location bar — stack the button */
+    .market-location-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .market-location-bar > span { flex: 1 1 100%; }
+    .market-location-btn {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        min-height: 40px;
+    }
+
+    /* Filters */
+    .market-filters { padding: 10px 12px; gap: 8px; }
+    .market-filter-row { gap: 6px; }
+    .market-filter-row .market-select { flex: 1 1 100%; }
+
+    /* Content */
+    .market-content { padding: 12px; }
+
+    /* Grids collapse to 1 column */
+    .market-grid,
+    .market-products-grid { grid-template-columns: 1fr; }
+
+    /* Form rows collapse */
+    .market-form-row,
+    .market-form-row.three,
+    .market-form-row:has(.market-geo-btn) {
+        grid-template-columns: 1fr;
+    }
+
+    /* Touch targets ≥ 44px on phones */
+    .market-btn,
+    .market-geo-btn { min-height: 44px; }
+    .market-cart-item-qty button { width: 34px; height: 34px; }
+    .market-my-shop-actions button,
+    .market-clear-cart-btn,
+    .market-logout-btn { min-height: 38px; }
+    .market-back-btn { width: 40px; height: 40px; }
+
+    /* Cart items stack */
+    .market-cart-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .market-cart-item-info { flex: 1 1 auto; }
+    .market-cart-item-qty { justify-content: center; }
+    .market-cart-item-total { text-align: center; }
+    .market-cart-item-remove { align-self: flex-end; }
+
+    /* Checkout */
+    .market-checkout-grid { grid-template-columns: 1fr; }
+
+    /* My shop rows */
+    .market-my-shop { flex-direction: column; align-items: stretch; }
+    .market-my-shop-actions { justify-content: flex-end; }
+    .market-my-shop-actions button { flex: 1 1 auto; }
+
+    /* Vendor hello */
+    .market-vendor-hello { gap: 8px; }
+    .market-logout-btn { margin-left: 0; }
+
+    /* Delivery options */
+    .market-delivery-option { font-size: 0.75rem; padding: 9px 11px; }
+
+    /* Footer */
+    .market-footer { padding: 10px 12px; }
+
+    /* Header padding */
+    .market-header { padding: 12px 14px; }
+    .market-shop-header { padding: 12px 14px; gap: 8px; }
+    .market-shop-header-text h2 { font-size: 0.95rem; }
+    .market-auth-header { padding: 12px 14px; }
+
+    /* Vendor auth card */
+    .market-vendor-login-card { padding: 20px; }
+    .market-vendor-auth-actions .market-btn { flex: 1 1 100%; }
+}
+
+/* ---------- ≤ 480px : small phones ---------- */
+@media (max-width: 480px) {
+    /* Tabs: hide labels, keep icon + count */
+    .market-tab > span:not(.market-tab-count) {
+        display: none;
+    }
+    .market-tab {
+        min-width: 60px;
+        padding: 11px 6px;
+        flex: 1 1 0;
+        gap: 4px;
+    }
+    .market-tab > i { font-size: 1.05rem; }
+
+    /* Buttons tighten */
+    .market-btn {
+        padding: 9px 14px;
+        font-size: 0.72rem;
+        min-height: 42px;
+    }
+
+    /* Selects tighten */
+    .market-select {
+        padding: 8px 10px;
+        font-size: 0.72rem;
+    }
+
+    /* Results header tightens */
+    .market-results-head h3 { font-size: 0.85rem; }
+    .market-results-count {
+        font-size: 0.6rem;
+        padding: 2px 8px;
+    }
+
+    /* Header title tightens */
+    .market-header-title {
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+    .market-header-title .market-badge {
+        font-size: 0.45rem;
+        padding: 1px 8px;
+    }
+
+    /* Cart qty buttons tight */
+    .market-cart-item-qty button {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+
+    /* Checkout summary */
+    .market-checkout-summary { padding: 12px; }
+    .market-checkout-line { font-size: 0.75rem; }
+    .market-checkout-line.total { font-size: 0.9rem; }
+
+    /* Footer */
+    .market-footer-note { font-size: 0.6rem; }
+}
+
+/* ---------- ≤ 380px : very small phones ---------- */
+@media (max-width: 380px) {
+    .market-tab {
+        min-width: 52px;
+        padding: 10px 4px;
+    }
+    .market-tab > i { font-size: 0.95rem; }
+
+    .market-select,
+    .market-form-group input,
+    .market-form-group select,
+    .market-form-group textarea,
+    .market-input {
+        padding: 8px 10px;
+        min-height: 38px;
+    }
+
+    .market-btn {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        min-height: 40px;
+    }
+
+    .market-shop-header-text h2 { font-size: 0.85rem; }
+    .market-shop-category { font-size: 0.55rem; }
+
+    .market-header { padding: 10px 12px; }
+    .market-content { padding: 10px; }
+}
+
+/* ---------- Short landscape phones ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .market-modal,
+    .market-shop-modal,
+    .market-auth-modal { align-items: flex-start; padding: 8px; }
+
+    .market-container,
+    .market-shop-container,
+    .market-auth-container {
+        max-height: calc(100vh - 16px);
+        max-height: calc(100dvh - 16px);
+    }
+
+    .market-header { padding: 8px 14px; }
+    .market-location-bar { padding: 6px 14px; }
+    .market-tabs { padding: 0; }
+    .market-tab { padding: 8px 12px; }
+    .market-content { padding: 10px 14px; }
+    .market-footer { padding: 6px 14px; }
+
+    /* Reclaim vertical space in the shop detail modal */
+    .market-shop-header { padding: 8px 14px; }
+    .market-shop-modal .market-shop-body { padding: 10px 14px; }
+}
+
+/* ---------- Large desktops (≥ 1441px) ---------- */
+@media (min-width: 1441px) {
+    .market-container { max-width: 1300px; }
+    .market-shop-container { max-width: 860px; }
+    .market-grid { grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+    .market-products-grid { grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); }
+}
+
+/* ---------- Ultra-wide (≥ 1921px) ---------- */
+@media (min-width: 1921px) {
+    .market-container { max-width: 1500px; }
+    .market-shop-container { max-width: 980px; }
+    .market-auth-container { max-width: 480px; }
+
+    .market-grid { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 22px; }
+    .market-products-grid { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 16px; }
+
+    .market-shop-thumb { height: 180px; font-size: 4rem; }
+    .market-shop-name { font-size: 1.05rem; }
+    .market-btn { padding: 12px 22px; font-size: 0.95rem; min-height: 46px; }
+}
+
+/* ================================================================
+   §36.23  TOUCH + POINTER HARDENING
+   ================================================================ */
+
+/* No hover lift on touch devices — it "sticks" after a tap. */
+@media (hover: none), (pointer: coarse) {
+    .market-shop-card:hover,
+    .market-btn-primary:hover,
+    .market-add-to-cart-btn:hover,
+    .market-location-btn:hover,
+    .market-product-card:hover {
+        transform: none;
+    }
+    .market-shop-card:active,
+    .market-btn:active,
+    .market-add-to-cart-btn:active,
+    .market-location-btn:active,
+    .market-back-btn:active {
+        transform: scale(0.97);
+    }
+
+    /* iOS Safari auto-zooms any focused field under 16px.
+       Setting 16px here stops the page from jumping on tap. */
+    .market-form-group input,
+    .market-form-group select,
+    .market-form-group textarea,
+    .market-input,
+    .market-select,
+    .market-filter-search input {
+        font-size: 16px;
+    }
+}
+
+/* ================================================================
+   §36.24  REDUCED MOTION
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .market-modal,
+    .market-shop-modal,
+    .market-auth-modal,
+    .market-container,
+    .market-shop-container,
+    .market-auth-container,
+    .market-shop-card,
+    .market-btn,
+    .market-tab,
+    .market-add-to-cart-btn,
+    .market-cart-item-qty button {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}
+
+/* ================================================================
+   §36.25  PRINT
+   ================================================================ */
+@media print {
+    .market-modal,
+    .market-shop-modal,
+    .market-auth-modal { display: none !important; }
+}

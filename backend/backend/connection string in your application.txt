@@ -1,0 +1,1 @@
+mongodb+srv://<db_username>:R16aAcr0IEinkdmz@cluster0.ipwcb6c.mongodb.net/

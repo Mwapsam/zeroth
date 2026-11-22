@@ -1,12 +1,19 @@
+/* ============================================================
+   CONSULTATION ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/consultationController');
-const { protect, optionalAuth } = require('../middleware/auth');
+const { requireAuth, optionalAuth } = require('../middleware/auth');
 
-router.get('/consultants', ctrl.listConsultants);
+/* Public catalog */
+router.get('/consultants',     ctrl.listConsultants);
 router.get('/consultants/:id', ctrl.getConsultant);
 
+/* Book — guests allowed, booked under session or user */
 router.post('/book', optionalAuth, ctrl.book);
-router.get('/bookings/mine', protect, ctrl.myBookings);
-router.post('/bookings/:id/cancel', protect, ctrl.cancelBooking);
+
+/* Booking management — auth */
+router.get('/bookings/mine',      requireAuth, ctrl.myBookings);
+router.post('/bookings/:id/cancel', requireAuth, ctrl.cancelBooking);
 
 module.exports = router;

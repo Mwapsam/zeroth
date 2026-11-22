@@ -1,19 +1,42 @@
+/* ============================================================
+   RENTAL ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/rentalController');
-const { protect, optionalAuth, restrictTo } = require('../middleware/auth');
+const { requireAuth, optionalAuth, requireRole } = require('../middleware/auth');
+const { rentalApplicationRules, validate } = require('../utils/validators');
 
-router.get('/cities', ctrl.cities);
-router.get('/', ctrl.list);
-router.get('/favorites/mine', protect, ctrl.myFavorites);
-router.get('/applications/mine', protect, ctrl.myApplications);
-router.get('/mine', protect, ctrl.myListings);
-router.get('/:id', ctrl.getOne);
+/* ---- Public / specific-before-id ---- */
+router.get('/cities',              ctrl.cities);
+router.get('/favorites/mine',      requireAuth, ctrl.myFavorites);
+router.get('/applications/mine',   requireAuth, ctrl.myApplications);
+router.get('/mine',                requireAuth, ctrl.myListings);
 
-router.post('/', protect, restrictTo('landlord', 'admin'), ctrl.createListing);
-router.patch('/:id', protect, restrictTo('landlord', 'admin'), ctrl.updateListing);
-router.delete('/:id', protect, restrictTo('landlord', 'admin'), ctrl.deleteListing);
+router.get('/',      ctrl.list);
+router.get('/:id',   ctrl.getOne);
 
-router.post('/:id/apply', optionalAuth, ctrl.apply);
-router.post('/:id/favorite', protect, ctrl.toggleFavorite);
+/* ---- Listing CRUD ---- */
+router.post('/',
+    requireAuth, requireRole('landlord', 'admin'),
+    ctrl.createListing);
+
+router.patch('/:id',
+    requireAuth, requireRole('landlord', 'admin'),
+    ctrl.updateListing);
+
+router.delete('/:id',
+    requireAuth, requireRole('landlord', 'admin'),
+    ctrl.deleteListing);
+
+/* ---- Apply ---- */
+router.post('/:id/apply',
+    optionalAuth,
+    rentalApplicationRules, validate,
+    ctrl.apply);
+
+/* ---- Favorite ---- */
+router.post('/:id/favorite',
+    requireAuth,
+    ctrl.toggleFavorite);
 
 module.exports = router;

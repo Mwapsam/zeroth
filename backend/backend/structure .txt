@@ -1,0 +1,79 @@
+backend/
+├── package.json
+├── .env
+├── .gitignore
+├── server.js
+├── seed.js
+├── config/
+│   ├── database.js
+│   └── passport.js
+├── models/
+│   ├── User.js
+│   ├── Service.js
+│   ├── Application.js
+│   ├── Payment.js
+│   ├── HardwareItem.js
+│   ├── Order.js
+│   ├── Contact.js
+│   ├── Shop.js
+│   ├── Rental.js
+│   ├── AnimalPermit.js
+│   ├── ETF.js
+│   ├── Bet.js
+│   ├── Consultation.js
+│   ├── Entertainment.js
+│   ├── Education.js
+│   ├── Construction.js
+│   ├── Partner.js
+│   ├── Advert.js
+│   ├── Social.js
+│   └── Notification.js
+├── controllers/
+│   ├── authController.js
+│   ├── serviceController.js
+│   ├── applicationController.js
+│   ├── paymentController.js
+│   ├── hardwareController.js
+│   ├── contactController.js
+│   ├── marketController.js
+│   ├── agricultureController.js
+│   ├── rentalController.js
+│   ├── etfController.js
+│   ├── betController.js
+│   ├── consultationController.js
+│   ├── entertainmentController.js
+│   ├── educationController.js
+│   ├── constructionController.js
+│   ├── partnerController.js
+│   ├── advertController.js
+│   ├── socialController.js
+│   └── notificationController.js
+├── routes/
+│   ├── authRoutes.js
+│   ├── serviceRoutes.js
+│   ├── applicationRoutes.js
+│   ├── paymentRoutes.js
+│   ├── hardwareRoutes.js
+│   ├── contactRoutes.js
+│   ├── marketRoutes.js
+│   ├── agricultureRoutes.js
+│   ├── rentalRoutes.js
+│   ├── etfRoutes.js
+│   ├── betRoutes.js
+│   ├── consultationRoutes.js
+│   ├── entertainmentRoutes.js
+│   ├── educationRoutes.js
+│   ├── constructionRoutes.js
+│   ├── partnerRoutes.js
+│   ├── advertRoutes.js
+│   ├── socialRoutes.js
+│   └── notificationRoutes.js
+├── middleware/
+│   ├── auth.js
+│   ├── errorHandler.js
+│   └── upload.js
+├── utils/
+│   ├── helpers.js
+│   ├── validators.js
+│   └── mailer.js
+└── uploads/          (auto-created)

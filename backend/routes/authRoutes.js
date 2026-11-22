@@ -1,15 +1,28 @@
+/* ============================================================
+   AUTH ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/authController');
-const { protect } = require('../middleware/auth');
-const { registerRules, loginRules, validate } = require('../utils/validators');
+const { requireAuth, optionalAuth } = require('../middleware/auth');
+const {
+    registerRules,
+    loginRules,
+    changePasswordRules,
+    updateProfileRules,
+    validate
+} = require('../utils/validators');
 
+/* Public */
 router.post('/register', registerRules, validate, ctrl.register);
-router.post('/login', loginRules, validate, ctrl.login);
+router.post('/login',    loginRules,    validate, ctrl.login);
 
-router.get('/me', protect, ctrl.me);
-router.patch('/me', protect, ctrl.updateMe);
-router.patch('/password', protect, ctrl.changePassword);
-router.post('/favorites/:id', protect, ctrl.toggleFavorite);
-router.post('/watchlist/:symbol', protect, ctrl.toggleWatchlist);
+/* Authenticated */
+router.get('/me', requireAuth, ctrl.me);
+router.patch('/me', requireAuth, updateProfileRules, validate, ctrl.updateMe);
+router.post('/me/password', requireAuth, changePasswordRules, validate, ctrl.changePassword);
+
+/* Favorites & watchlist (require auth) */
+router.post('/favorites/:id',        requireAuth, ctrl.toggleFavorite);
+router.post('/watchlist/:symbol',    requireAuth, ctrl.toggleWatchlist);
 
 module.exports = router;

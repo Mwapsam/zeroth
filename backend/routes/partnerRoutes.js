@@ -1,14 +1,29 @@
+/* ============================================================
+   PARTNER ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/partnerController');
-const { protect, restrictTo } = require('../middleware/auth');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
-router.get('/', ctrl.list);
-router.get('/:id', ctrl.getOne);
-router.post('/apply', ctrl.apply);
-router.post('/become', ctrl.becomePartner);
+/* Public catalog */
+router.get('/',     ctrl.list);
+router.get('/:id',  ctrl.getOne);
 
-router.post('/', protect, restrictTo('admin'), ctrl.create);
-router.patch('/:id', protect, restrictTo('admin'), ctrl.update);
-router.delete('/:id', protect, restrictTo('admin'), ctrl.remove);
+/* Applications — anyone can apply */
+router.post('/apply',   ctrl.apply);
+router.post('/become',  ctrl.becomePartner);
+
+/* Admin CRUD */
+router.post('/',
+    requireAuth, requireRole('admin'),
+    ctrl.create);
+
+router.patch('/:id',
+    requireAuth, requireRole('admin'),
+    ctrl.update);
+
+router.delete('/:id',
+    requireAuth, requireRole('admin'),
+    ctrl.remove);
 
 module.exports = router;

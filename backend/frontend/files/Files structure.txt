@@ -1,0 +1,9 @@
+project/
+├── files/library/
+│   ├── introduction-to-zambian-history.pdf
+│   └── agricultural-science-handbook.pdf
+├── images/library/
+│   ├── zambian-history.jpg
+│   ├── math-g12.jpg
+│   ├── agri-science.jpg
+│   └── financial-literacy.jpg

@@ -1,12 +1,29 @@
+/* ============================================================
+   APPLICATION ROUTES
+   ============================================================ */
 const router = require('express').Router();
 const ctrl = require('../controllers/applicationController');
-const { protect, optionalAuth, restrictTo } = require('../middleware/auth');
+const { requireAuth, optionalAuth, requireRole } = require('../middleware/auth');
 const { applicationRules, validate } = require('../utils/validators');
 
-router.post('/', optionalAuth, applicationRules, validate, ctrl.create);
+/* Create — guests allowed (loan form, share purchase, etc.) */
+router.post('/',
+    optionalAuth,
+    applicationRules, validate,
+    ctrl.create);
+
+/* Mine — auth OR ?email= for guests */
 router.get('/mine', optionalAuth, ctrl.listMine);
-router.get('/', protect, restrictTo('admin'), ctrl.listAll);
-router.get('/:id', protect, ctrl.getOne);
-router.patch('/:id/status', protect, restrictTo('admin'), ctrl.updateStatus);
+
+/* Admin */
+router.get('/',
+    requireAuth, requireRole('admin'),
+    ctrl.listAll);
+
+/* Specific before :id */
+router.get('/:id',          requireAuth, ctrl.getOne);
+router.patch('/:id/status',
+    requireAuth, requireRole('admin'),
+    ctrl.updateStatus);
 
 module.exports = router;

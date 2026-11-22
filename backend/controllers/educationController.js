@@ -1,62 +1,119 @@
-const { Institution, LibraryBook, TutorRequest } = require('../models/Education');
-const { asyncHandler, paginate, generateRef } = require('../utils/helpers');
+/* ============================================================
+   ENTERTAINMENT CONTROLLER
+   ============================================================ */
+const Entertainment = require('../models/Entertainment');
+const { asyncHandler, paginate } = require('../utils/helpers');
 
-exports.listInstitutions = asyncHandler(async (req, res) => {
-    const { type, q, city } = req.query;
+/* ============================================================
+   LIST
+   ============================================================ */
+exports.list = asyncHandler(async (req, res) => {
+    const { type, q } = req.query;
     const { page, limit, skip } = paginate(req.query);
 
-    const filter = { isActive: true };
+    const filter = { isApproved: true };
     if (type) filter.type = type;
-    if (city) filter['location.city'] = city;
-    if (q) filter.$or = [
-        { name: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } }
-    ];
+    if (q) {
+        filter.$or = [
+            { title: { $regex: q, $options: 'i' } },
+            { artist: { $regex: q, $options: 'i' } }
+        ];
+    }
 
-    const [institutions, total] = await Promise.all([
-        Institution.find(filter).skip(skip).limit(limit).sort({ rating: -1 }),
-        Institution.countDocuments(filter)
+    const [items, total] = await Promise.all([
+        Entertainment.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+        Entertainment.countDocuments(filter)
     ]);
 
-    const counts = await Institution.aggregate([
-        { $match: { isActive: true } },
+    const counts = await Entertainment.aggregate([
+        { $match: { isApproved: true } },
         { $group: { _id: '$type', count: { $sum: 1 } } }
     ]);
 
-    res.json({ success: true, total, page, institutions, counts });
-});
-
-exports.getInstitution = asyncHandler(async (req, res) => {
-    const inst = await Institution.findById(req.params.id);
-    if (!inst) return res.status(404).json({ success: false, message: 'Institution not found' });
-    res.json({ success: true, institution: inst });
-});
-
-exports.listLibrary = asyncHandler(async (req, res) => {
-    const { filter = 'all', q } = req.query;
-    const { page, limit, skip } = paginate(req.query);
-
-    const dbFilter = {};
-    if (filter === 'free') dbFilter.isFree = true;
-    if (filter === 'paid') dbFilter.isFree = false;
-    if (q) dbFilter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { author: { $regex: q, $options: 'i' } }
-    ];
-
-    const [books, total] = await Promise.all([
-        LibraryBook.find(dbFilter).skip(skip).limit(limit).sort({ createdAt: -1 }),
-        LibraryBook.countDocuments(dbFilter)
-    ]);
-    res.json({ success: true, total, page, books });
-});
-
-exports.createTutorRequest = asyncHandler(async (req, res) => {
-    const { subject, level, mode, schedule, name, contact, notes } = req.body;
-    const tutor = await TutorRequest.create({
-        user: req.user?._id,
-        reference: generateRef('TUTOR'),
-        subject, level, mode, schedule, name, contact, notes
+    res.json({
+        success: true,
+        total,
+        page,
+        items: items.map((it) => {
+            const obj = it.toObject();
+            obj.id = String(obj._id);
+            return obj;
+        }),
+        counts
     });
-    res.status(201).json({ success: true, message: 'Tutor requested', tutor });
+});
+
+/* ============================================================
+   GET ONE (increments views)
+   ============================================================ */
+exports.getOne = asyncHandler(async (req, res) => {
+    const item = await Entertainment.findById(req.params.id);
+    if (!item) {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
+    item.views += 1;
+    await item.save({ validateBeforeSave: false });
+
+    const obj = item.toObject();
+    obj.id = String(obj._id);
+    res.json({ success: true, item: obj });
+});
+
+/* ============================================================
+   UPLOAD
+   ============================================================ */
+exports.upload = asyncHandler(async (req, res) => {
+    const provided = req.headers['x-admin-key'];
+    const expected = process.env.ADMIN_KEY || process.env.ADMIN_ACCESS_KEY;
+    const isAdmin = Boolean(provided && expected && provided === expected);
+
+    const { type, title, artist, description } = req.body || {};
+
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const baseUrl = process.env.PUBLIC_URL ||
+        `${req.protocol}://${req.get('host')}`;
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
+    const item = await Entertainment.create({
+        uploadedBy: req.user?._id,
+        uploaderName: req.user?.name || 'Admin',
+        type, title, artist, description,
+        fileUrl,
+        fileSize: req.file.size,
+        mimeType: req.file.mimetype,
+        isApproved: isAdmin
+    });
+
+    const obj = item.toObject();
+    obj.id = String(obj._id);
+    res.status(201).json({ success: true, item: obj });
+});
+
+/* ============================================================
+   LIKE
+   ============================================================ */
+exports.like = asyncHandler(async (req, res) => {
+    const item = await Entertainment.findByIdAndUpdate(
+        req.params.id,
+        { $inc: { likes: 1 } },
+        { new: true }
+    );
+    if (!item) {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
+    res.json({ success: true, likes: item.likes });
+});
+
+/* ============================================================
+   REMOVE
+   ============================================================ */
+exports.remove = asyncHandler(async (req, res) => {
+    const item = await Entertainment.findByIdAndDelete(req.params.id);
+    if (!item) {
+        return res.status(404).json({ success: false, message: 'Not found' });
+    }
+    res.json({ success: true, message: 'Deleted' });
 });

@@ -1,3 +1,6 @@
+/* ============================================================
+   ETF CONTROLLER
+   ============================================================ */
 const { ETFCompany, ETFExchange } = require('../models/ETF');
 const User = require('../models/User');
 const Payment = require('../models/Payment');
@@ -5,11 +8,17 @@ const { asyncHandler, paginate, generateRef } = require('../utils/helpers');
 
 const COMMISSION_RATE = 0.015;
 
+/* ============================================================
+   LIST EXCHANGES
+   ============================================================ */
 exports.listExchanges = asyncHandler(async (_req, res) => {
     const exchanges = await ETFExchange.find({ isActive: true });
     res.json({ success: true, exchanges });
 });
 
+/* ============================================================
+   LIST COMPANIES
+   ============================================================ */
 exports.listCompanies = asyncHandler(async (req, res) => {
     const { exchange, q, sector } = req.query;
     const { page, limit, skip } = paginate(req.query);
@@ -17,24 +26,36 @@ exports.listCompanies = asyncHandler(async (req, res) => {
     const filter = { isActive: true };
     if (exchange) filter.exchange = exchange;
     if (sector) filter.sector = sector;
-    if (q) filter.$or = [
-        { name: { $regex: q, $options: 'i' } },
-        { symbol: { $regex: q, $options: 'i' } }
-    ];
+    if (q) {
+        filter.$or = [
+            { name: { $regex: q, $options: 'i' } },
+            { symbol: { $regex: q, $options: 'i' } }
+        ];
+    }
 
     const [companies, total] = await Promise.all([
         ETFCompany.find(filter).skip(skip).limit(limit).sort({ symbol: 1 }),
         ETFCompany.countDocuments(filter)
     ]);
+
     res.json({ success: true, total, page, companies });
 });
 
+/* ============================================================
+   GET COMPANY
+   ============================================================ */
 exports.getCompany = asyncHandler(async (req, res) => {
-    const company = await ETFCompany.findOne({ symbol: req.params.symbol.toUpperCase() });
-    if (!company) return res.status(404).json({ success: false, message: 'Company not found' });
+    const symbol = String(req.params.symbol || '').toUpperCase();
+    const company = await ETFCompany.findOne({ symbol });
+    if (!company) {
+        return res.status(404).json({ success: false, message: 'Company not found' });
+    }
     res.json({ success: true, company, commission: COMMISSION_RATE });
 });
 
+/* ============================================================
+   LIVE PRICES
+   ============================================================ */
 exports.livePrices = asyncHandler(async (_req, res) => {
     const companies = await ETFCompany.find({ isActive: true }).select(
         'symbol name exchange price currency change changePercent previousClose'
@@ -43,8 +64,9 @@ exports.livePrices = asyncHandler(async (_req, res) => {
     const updated = companies.map((c) => {
         const drift = (Math.random() - 0.5) * 0.02;
         const price = +(c.price * (1 + drift)).toFixed(4);
-        const change = +(price - (c.previousClose || c.price)).toFixed(4);
-        const changePercent = +((change / (c.previousClose || c.price)) * 100).toFixed(3);
+        const prev = c.previousClose || c.price;
+        const change = +(price - prev).toFixed(4);
+        const changePercent = +((change / prev) * 100).toFixed(3);
         return {
             symbol: c.symbol, name: c.name, exchange: c.exchange,
             price, currency: c.currency, change, changePercent,
@@ -55,15 +77,23 @@ exports.livePrices = asyncHandler(async (_req, res) => {
     res.json({ success: true, updatedAt: new Date().toISOString(), companies: updated });
 });
 
+/* ============================================================
+   BUY
+   ============================================================ */
 exports.buy = asyncHandler(async (req, res) => {
-    const { symbol, shares } = req.body;
+    const { symbol, shares } = req.body || {};
     const qty = parseInt(shares, 10);
-    if (!qty || qty < 1)
-        return res.status(400).json({ success: false, message: 'Invalid shares' });
 
-    const company = await ETFCompany.findOne({ symbol: symbol.toUpperCase() });
-    if (!company)
+    if (!qty || qty < 1) {
+        return res.status(400).json({ success: false, message: 'Invalid shares' });
+    }
+
+    const company = await ETFCompany.findOne({
+        symbol: String(symbol || '').toUpperCase()
+    });
+    if (!company) {
         return res.status(404).json({ success: false, message: 'Company not found' });
+    }
 
     const subtotal = +(company.price * qty).toFixed(4);
     const commission = +(subtotal * COMMISSION_RATE).toFixed(4);
@@ -71,7 +101,10 @@ exports.buy = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.user._id);
     if (user.wallet.balance < total) {
-        return res.status(400).json({ success: false, message: 'Insufficient wallet balance' });
+        return res.status(400).json({
+            success: false,
+            message: 'Insufficient wallet balance'
+        });
     }
 
     user.wallet.balance = +(user.wallet.balance - total).toFixed(4);
@@ -85,39 +118,62 @@ exports.buy = asyncHandler(async (req, res) => {
         existing.shares = newShares;
     } else {
         user.etfHoldings.push({
-            symbol: company.symbol, company: company.name,
-            shares: qty, avgPrice: company.price,
-            exchange: company.exchange, currency: company.currency
+            symbol: company.symbol,
+            company: company.name,
+            shares: qty,
+            avgPrice: company.price,
+            exchange: company.exchange,
+            currency: company.currency
         });
     }
     await user.save();
 
     const payment = await Payment.create({
-        user: user._id, amount: total, method: 'wallet',
-        purpose: 'etf-purchase', reference: generateRef('ETF'),
-        status: 'completed', paidAt: new Date(),
-        metadata: { symbol: company.symbol, shares: qty, price: company.price, commission }
+        user: user._id,
+        amount: total,
+        method: 'wallet',
+        purpose: 'etf-purchase',
+        reference: generateRef('ETF'),
+        status: 'completed',
+        paidAt: new Date(),
+        metadata: {
+            symbol: company.symbol,
+            shares: qty,
+            price: company.price,
+            commission
+        }
     });
 
     res.json({
-        success: true, message: 'Purchase complete',
-        payment, holdings: user.etfHoldings, wallet: user.wallet
+        success: true,
+        message: 'Purchase complete',
+        payment,
+        holdings: user.etfHoldings,
+        wallet: user.wallet
     });
 });
 
+/* ============================================================
+   SELL
+   ============================================================ */
 exports.sell = asyncHandler(async (req, res) => {
-    const { symbol, shares } = req.body;
+    const { symbol, shares } = req.body || {};
     const qty = parseInt(shares, 10);
-    if (!qty || qty < 1)
+
+    if (!qty || qty < 1) {
         return res.status(400).json({ success: false, message: 'Invalid shares' });
+    }
 
     const user = await User.findById(req.user._id);
-    const holding = user.etfHoldings.find((h) => h.symbol === symbol.toUpperCase());
+    const holding = user.etfHoldings.find(
+        (h) => h.symbol === String(symbol || '').toUpperCase()
+    );
+
     if (!holding || holding.shares < qty) {
         return res.status(400).json({ success: false, message: 'Not enough shares' });
     }
 
-    const company = await ETFCompany.findOne({ symbol: symbol.toUpperCase() });
+    const company = await ETFCompany.findOne({ symbol: holding.symbol });
     const price = company?.price || holding.avgPrice;
 
     const gross = +(price * qty).toFixed(4);
@@ -132,15 +188,22 @@ exports.sell = asyncHandler(async (req, res) => {
     await user.save();
 
     const payment = await Payment.create({
-        user: user._id, amount: net, method: 'wallet',
-        purpose: 'etf-sale', reference: generateRef('ETF'),
-        status: 'completed', paidAt: new Date(),
-        metadata: { symbol, shares: qty, price, commission }
+        user: user._id,
+        amount: net,
+        method: 'wallet',
+        purpose: 'etf-sale',
+        reference: generateRef('ETF'),
+        status: 'completed',
+        paidAt: new Date(),
+        metadata: { symbol: holding.symbol, shares: qty, price, commission }
     });
 
     res.json({ success: true, message: 'Sale complete', payment, wallet: user.wallet });
 });
 
+/* ============================================================
+   PORTFOLIO
+   ============================================================ */
 exports.portfolio = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     const holdings = [];
@@ -156,9 +219,14 @@ exports.portfolio = asyncHandler(async (req, res) => {
         totalValue += value;
         totalCost += cost;
         holdings.push({
-            symbol: h.symbol, company: h.company, exchange: h.exchange,
-            shares: h.shares, avgPrice: h.avgPrice, currentPrice,
-            value: +value.toFixed(4), cost: +cost.toFixed(4),
+            symbol: h.symbol,
+            company: h.company,
+            exchange: h.exchange,
+            shares: h.shares,
+            avgPrice: h.avgPrice,
+            currentPrice,
+            value: +value.toFixed(4),
+            cost: +cost.toFixed(4),
             profit: +(value - cost).toFixed(4),
             profitPercent: cost ? +(((value - cost) / cost) * 100).toFixed(2) : 0,
             currency: h.currency
